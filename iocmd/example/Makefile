@@ -24,7 +24,7 @@
 
 
 APP_THIS_PATH = .
-BUFF_PATH = ./../../../buff/1
+BUFF_PATH = ./../../buff
 IOCMD_PATH = ./../
 
 UINCDIR  = -I $(APP_THIS_PATH)
