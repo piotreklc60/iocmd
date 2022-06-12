@@ -1,0 +1,4 @@
+iocmd_out.c needs: iocmd_out_utoa.c, iocmd_out_parser.c, iocmd_out_processor.c
+iocmd_log.c needs: iocmd_out.c
+iocmd_in.c  needs: -
+iocmd_cmd.c needs: iocmd_in.c, iocmd_log.c
