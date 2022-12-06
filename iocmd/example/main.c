@@ -840,9 +840,9 @@ static void cmd_status_set(IOCMD_Arg_DT *arg)
 {
    printf("\n\rstatus_set\n\r");
 }
-static void cmd_dupa(IOCMD_Arg_DT *arg)
+static void cmd_test(IOCMD_Arg_DT *arg)
 {
-   printf("\n\rdupa\n\r");
+   printf("\n\rtest\n\r");
 }
 static void cmd_u8(IOCMD_Arg_DT *arg)
 {
@@ -967,7 +967,7 @@ static const IOCMD_Command_Tree_XT cmd_tab[] =
    IOCMD_ELEM(             "set"          , cmd_status_set  , "status_set"),
    IOCMD_GROUP_END(),
    IOCMD_GROUP_END(),
-   IOCMD_ELEM(       "dupa"               , cmd_dupa        , "dupa command"),
+   IOCMD_ELEM(       "test"               , cmd_test        , "test command"),
    IOCMD_GROUP_START("u"                                    , "u"),
    IOCMD_ELEM(          "8"                , cmd_u8         , "8"),
    IOCMD_ELEM(          "16"               , cmd_u16        , "16"),
@@ -999,7 +999,7 @@ int main(int argc, const char* argv[])
    {
       uint16_t u;
       int16_t s;
-   }dupa;
+   }test;
    uint16_t val;
    uint8_t u8;
    uint16_t u16;
@@ -1011,49 +1011,49 @@ int main(int argc, const char* argv[])
    IOCMD_Install_Standard_Output(&main_out);
 
    printf("%.10s\n\r", "len");
-   dupa.s = 0;
-   val = dupa.u;
+   test.s = 0;
+   val = test.u;
    if(0 != (val & 0x8000))
    {
       val = ~val;
       val++;
    }
-   printf(                              "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
-   IOCMD_Printf(                        "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
-   IOCMD_Snprintf(table, sizeof(table), "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
+   printf(                              "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
+   IOCMD_Printf(                        "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
+   IOCMD_Snprintf(table, sizeof(table), "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
    printf("%s", table);
-   dupa.s = 5;
-   val = dupa.u;
+   test.s = 5;
+   val = test.u;
    if(0 != (val & 0x8000))
    {
       val = ~val;
       val++;
    }
-   printf(                              "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
-   IOCMD_Printf(                        "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
-   IOCMD_Snprintf(table, sizeof(table), "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
+   printf(                              "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
+   IOCMD_Printf(                        "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
+   IOCMD_Snprintf(table, sizeof(table), "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
    printf("%s", table);
-   dupa.s = -1;
-   val = dupa.u;
+   test.s = -1;
+   val = test.u;
    if(0 != (val & 0x8000))
    {
       val = ~val;
       val++;
    }
-   printf(                              "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
-   IOCMD_Printf(                        "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
-   IOCMD_Snprintf(table, sizeof(table), "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
+   printf(                              "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
+   IOCMD_Printf(                        "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
+   IOCMD_Snprintf(table, sizeof(table), "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
    printf("%s", table);
-   dupa.s = -4;
-   val = dupa.u;
+   test.s = -4;
+   val = test.u;
    if(0 != (val & 0x8000))
    {
       val = ~val;
       val++;
    }
-   printf(                              "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
-   IOCMD_Printf(                        "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
-   IOCMD_Snprintf(table, sizeof(table), "dupa: 0x%08X -> %d; %d\n", dupa.u, dupa.s, val);
+   printf(                              "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
+   IOCMD_Printf(                        "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
+   IOCMD_Snprintf(table, sizeof(table), "test: 0x%08X -> %d; %d\n", test.u, test.s, val);
    printf("%s", table);
 
    printf(                              "%-08d!\n", -2);
@@ -1066,82 +1066,82 @@ int main(int argc, const char* argv[])
    IOCMD_Snprintf(table, sizeof(table), "%llo\n\r", (uint64_t)0xFFFFFFFFFFFFFFFF);
    printf("%s", table);
 
-   printf(                              "ptr1hh: %hhp\n\r", "dupa");
-   IOCMD_Printf(                        "ptr1hh: %hhp\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "ptr1hh: %hhp\n\r", "dupa");
+   printf(                              "ptr1hh: %hhp\n\r", "test");
+   IOCMD_Printf(                        "ptr1hh: %hhp\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "ptr1hh: %hhp\n\r", "test");
    printf("%s", table);
-   printf(                              "ptr1h:  %hp\n\r", "dupa");
-   IOCMD_Printf(                        "ptr1h:  %hp\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "ptr1h:  %hp\n\r", "dupa");
+   printf(                              "ptr1h:  %hp\n\r", "test");
+   IOCMD_Printf(                        "ptr1h:  %hp\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "ptr1h:  %hp\n\r", "test");
    printf("%s", table);
-   printf(                              "ptr1l:  %lp\n\r", "dupa");
-   IOCMD_Printf(                        "ptr1l:  %lp\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "ptr1l:  %lp\n\r", "dupa");
+   printf(                              "ptr1l:  %lp\n\r", "test");
+   IOCMD_Printf(                        "ptr1l:  %lp\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "ptr1l:  %lp\n\r", "test");
    printf("%s", table);
-   printf(                              "ptr1ll: %llp\n\r", "dupa");
-   IOCMD_Printf(                        "ptr1ll: %llp\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "ptr1ll: %llp\n\r", "dupa");
+   printf(                              "ptr1ll: %llp\n\r", "test");
+   IOCMD_Printf(                        "ptr1ll: %llp\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "ptr1ll: %llp\n\r", "test");
    printf("%s", table);
-   printf(                              "ptr1j:  %jp\n\r", "dupa");
-   IOCMD_Printf(                        "ptr1j:  %jp\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "ptr1j:  %jp\n\r", "dupa");
+   printf(                              "ptr1j:  %jp\n\r", "test");
+   IOCMD_Printf(                        "ptr1j:  %jp\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "ptr1j:  %jp\n\r", "test");
    printf("%s", table);
-   printf(                              "ptr1z:  %zp\n\r", "dupa");
-   IOCMD_Printf(                        "ptr1z:  %zp\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "ptr1z:  %zp\n\r", "dupa");
+   printf(                              "ptr1z:  %zp\n\r", "test");
+   IOCMD_Printf(                        "ptr1z:  %zp\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "ptr1z:  %zp\n\r", "test");
    printf("%s", table);
-   printf(                              "ptr1t:  %tp\n\r", "dupa");
-   IOCMD_Printf(                        "ptr1t:  %tp\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "ptr1t:  %tp\n\r", "dupa");
+   printf(                              "ptr1t:  %tp\n\r", "test");
+   IOCMD_Printf(                        "ptr1t:  %tp\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "ptr1t:  %tp\n\r", "test");
    printf("%s", table);
-   printf(                              "ptr1L:  %Lp\n\r", "dupa");
-   IOCMD_Printf(                        "ptr1L:  %Lp\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "ptr1L:  %Lp\n\r", "dupa");
+   printf(                              "ptr1L:  %Lp\n\r", "test");
+   IOCMD_Printf(                        "ptr1L:  %Lp\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "ptr1L:  %Lp\n\r", "test");
    printf("%s", table);
-   printf(                              "ptr1:   %p\n\r", "dupa");
-   IOCMD_Printf(                        "ptr1:   %p\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "ptr1:   %p\n\r", "dupa");
+   printf(                              "ptr1:   %p\n\r", "test");
+   IOCMD_Printf(                        "ptr1:   %p\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "ptr1:   %p\n\r", "test");
    printf("%s", table);
    printf(                              "ptr2:   %p\n\r", &a);
    IOCMD_Printf(                        "ptr2:   %p\n\r", &a);
    IOCMD_Snprintf(table, sizeof(table), "ptr2:   %p\n\r", &a);
    printf("%s", table);
 
-   printf(                              "str1hh: %hhs\n\r", "dupa");
-   IOCMD_Printf(                        "str1hh: %hhs\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "str1hh: %hhs\n\r", "dupa");
+   printf(                              "str1hh: %hhs\n\r", "test");
+   IOCMD_Printf(                        "str1hh: %hhs\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "str1hh: %hhs\n\r", "test");
    printf("%s", table);
-   printf(                              "str1h:  %hs\n\r", "dupa");
-   IOCMD_Printf(                        "str1h:  %hs\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "str1h:  %hs\n\r", "dupa");
+   printf(                              "str1h:  %hs\n\r", "test");
+   IOCMD_Printf(                        "str1h:  %hs\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "str1h:  %hs\n\r", "test");
    printf("%s", table);
-   printf(                              "str1l:  %ls\n\r", "dupa");
-   IOCMD_Printf(                        "str1l:  %ls\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "str1l:  %ls\n\r", "dupa");
+   printf(                              "str1l:  %ls\n\r", "test");
+   IOCMD_Printf(                        "str1l:  %ls\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "str1l:  %ls\n\r", "test");
    printf("%s", table);
-   printf(                              "str1ll: %lls\n\r", "dupa");
-   IOCMD_Printf(                        "str1ll: %lls\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "str1ll: %lls\n\r", "dupa");
+   printf(                              "str1ll: %lls\n\r", "test");
+   IOCMD_Printf(                        "str1ll: %lls\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "str1ll: %lls\n\r", "test");
    printf("%s", table);
-   printf(                              "str1j:  %js\n\r", "dupa");
-   IOCMD_Printf(                        "str1j:  %js\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "str1j:  %js\n\r", "dupa");
+   printf(                              "str1j:  %js\n\r", "test");
+   IOCMD_Printf(                        "str1j:  %js\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "str1j:  %js\n\r", "test");
    printf("%s", table);
-   printf(                              "str1z:  %zs\n\r", "dupa");
-   IOCMD_Printf(                        "str1z:  %zs\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "str1z:  %zs\n\r", "dupa");
+   printf(                              "str1z:  %zs\n\r", "test");
+   IOCMD_Printf(                        "str1z:  %zs\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "str1z:  %zs\n\r", "test");
    printf("%s", table);
-   printf(                              "str1t:  %ts\n\r", "dupa");
-   IOCMD_Printf(                        "str1t:  %ts\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "str1t:  %ts\n\r", "dupa");
+   printf(                              "str1t:  %ts\n\r", "test");
+   IOCMD_Printf(                        "str1t:  %ts\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "str1t:  %ts\n\r", "test");
    printf("%s", table);
-   printf(                              "str1L:  %Ls\n\r", "dupa");
-   IOCMD_Printf(                        "str1L:  %Ls\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "str1L:  %Ls\n\r", "dupa");
+   printf(                              "str1L:  %Ls\n\r", "test");
+   IOCMD_Printf(                        "str1L:  %Ls\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "str1L:  %Ls\n\r", "test");
    printf("%s", table);
-   printf(                              "str1:   %s\n\r", "dupa");
-   IOCMD_Printf(                        "str1:   %s\n\r", "dupa");
-   IOCMD_Snprintf(table, sizeof(table), "str1:   %s\n\r", "dupa");
+   printf(                              "str1:   %s\n\r", "test");
+   IOCMD_Printf(                        "str1:   %s\n\r", "test");
+   IOCMD_Snprintf(table, sizeof(table), "str1:   %s\n\r", "test");
    printf("%s", table);
 
    printf(                              "c1hh: %hhc\n\r", 'd');
@@ -1724,7 +1724,7 @@ int main(int argc, const char* argv[])
    const char *test_string5 = "out status 12";
    const char *test_string6 = "out status log 12";
    const char *test_string7 = "out status set 12";
-   const char *test_string8 = "dupa 12";
+   const char *test_string8 = "test 12";
    const char *test_string9 = "dummy 12,34,5678674686447646475476  ,.,  4768";
 
    printf("\n\n\r\"%s\"\n\n\r", test_string1);
