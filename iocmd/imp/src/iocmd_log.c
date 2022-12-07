@@ -61,6 +61,10 @@
 #define IOCMD_LOG_DATA_DESC_SIZE                (1 /* flags */ + 1 /* data size type */ + sizeof(uint_fast16_t) /* data size */ + 1 /* data pointer type */ + sizeof(void*)/* data pointer if in program memory */)
 #define IOCMD_LOG_OS_SWITCH_CONTEXT_DESC_SIZE   (1/*size*/ + IOCMD_LOG_GLOBAL_CNTR_SIZE + IOCMD_LOG_GLOBAL_CNTR_SIZE + IOCMD_LOG_HEADER_TIME_PART_SIZE + 1/*level*/ + sizeof(IOCMD_Context_ID_DT) + sizeof(IOCMD_Context_ID_DT))
 
+#ifndef MAX
+#define MAX(a,b)     (((a) > (b)) ? (a) : (b))
+#endif
+
 typedef struct IOCMD_Log_Level_Params_eXtended_Tag
 {
    const IOCMD_Log_Level_Const_Params_XT *const_tab;
@@ -933,9 +937,9 @@ static void IOCMD_log_data(
    {
       IOCMD_print_main_cntr(exe, header, IOCMD_FALSE);
 
-      if((data_size - cntr) >= 32)
+      if((data_size - cntr) >= (8 * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT))
       {
-         asciicntr = 32;
+         asciicntr = (8 * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT);
       }
       else
       {
@@ -945,11 +949,11 @@ static void IOCMD_log_data(
       IOCMD_Oprintf(exe, "  %0*d-%0*d/%0*d: ",
          pos_marker_len, cntr, pos_marker_len, cntr + asciicntr - 1, pos_marker_len, data_size);
 
-      IOCMD_print_data(temp, exe, data, data_size - cntr, 32);
+      IOCMD_print_data(temp, exe, data, data_size - cntr, (8 * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT));
 
       (void)exe->print_string(exe->dev, "-> ");
 
-      data = IOCMD_print_ascii(temp, exe, data, asciicntr, 32, IOCMD_TRUE);
+      data = IOCMD_print_ascii(temp, exe, data, asciicntr, (8 * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT), IOCMD_TRUE);
 
       cntr += asciicntr;
 
@@ -996,9 +1000,9 @@ static void IOCMD_compare_data(
    {
       IOCMD_print_main_cntr(exe, header, IOCMD_FALSE);
 
-      if((data_size - cntr) >= 16)
+      if((data_size - cntr) >= (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT))
       {
-         asciicntr = 16;
+         asciicntr = (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT);
       }
       else
       {
@@ -1007,9 +1011,9 @@ static void IOCMD_compare_data(
 
       if(size1 > cntr)
       {
-         if((size1 - cntr) >= 16)
+         if((size1 - cntr) >= (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT))
          {
-            asciicntr1 = 16;
+            asciicntr1 = (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT);
          }
          else
          {
@@ -1023,9 +1027,9 @@ static void IOCMD_compare_data(
 
       if(size2 > cntr)
       {
-         if((size2 - cntr) >= 16)
+         if((size2 - cntr) >= (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT))
          {
-            asciicntr2 = 16;
+            asciicntr2 = (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT);
          }
          else
          {
@@ -1040,18 +1044,18 @@ static void IOCMD_compare_data(
       IOCMD_Oprintf(exe, "  %0*d-%0*d/%0*d: ",
          pos_marker_len, cntr, pos_marker_len, cntr + asciicntr - 1, pos_marker_len, data_size);
 
-      IOCMD_print_data(temp, exe, data1, asciicntr1, 16);
+      IOCMD_print_data(temp, exe, data1, asciicntr1, (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT));
 
 #if(IOCMD_DATA_COMPARE_PRINT_BOTH_CONTEXTS)
       (void)exe->print_string(exe->dev, "<-> ");
 
-      IOCMD_print_data(temp, exe, data2, asciicntr2, 16);
+      IOCMD_print_data(temp, exe, data2, asciicntr2, (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT));
 
 #endif
 
       (void)exe->print_string(exe->dev, "dif in 2: ");
 
-      for(cntr2 = 0; cntr2 < 16; cntr2 += 8)
+      for(cntr2 = 0; cntr2 < (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT); cntr2 += 8)
       {
          if((asciicntr1 > cntr2) && (asciicntr2 > cntr2))
          {
@@ -1069,19 +1073,19 @@ static void IOCMD_compare_data(
 
       asciicntr = (asciicntr1 > asciicntr2) ? asciicntr2 : asciicntr1;
 
-      (void)IOCMD_print_ascii(temp, exe, data1, asciicntr1, 16, IOCMD_FALSE);
+      (void)IOCMD_print_ascii(temp, exe, data1, asciicntr1, (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT), IOCMD_FALSE);
 
 #if(IOCMD_DATA_COMPARE_PRINT_BOTH_CONTEXTS)
       (void)exe->print_string(exe->dev, " <-> ");
 
-      (void)IOCMD_print_ascii(temp, exe, data2, asciicntr2, 16, IOCMD_FALSE);
+      (void)IOCMD_print_ascii(temp, exe, data2, asciicntr2, (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT), IOCMD_FALSE);
 
 #endif
       (void)exe->print_string(exe->dev, " dif in 2: ");
 
       ptr = temp;
 
-      temp[16] = '\0';
+      temp[8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT] = '\0';
       cntr2 = 0;
       asciicntr1 = asciicntr;
       while(0 != asciicntr)
@@ -1112,8 +1116,8 @@ static void IOCMD_compare_data(
          cntr2++;
          asciicntr--;
       }
-      data1 += 16;
-      data2 += 16;
+      data1 += 8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT;
+      data2 += 8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT;
       *ptr = '\0';
       (void)exe->print_string(exe->dev, temp);
       exe->print_endl_repeat(exe->dev, 1);
@@ -1159,7 +1163,9 @@ static void IOCMD_proc_one_buffered_log(
 #if(IOCMD_SUPPORT_DATA_COMPARISON)
    uint8_t data_too_big2 = 0;
 #endif
-   char temp[33];
+#if(IOCMD_SUPPORT_DATA_COMPARISON || IOCMD_SUPPORT_DATA_LOGGING)
+   char temp[(MAX(IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT, IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT) * 8) + 1];
+#endif
    IOCMD_Bool_DT failed = IOCMD_FALSE;
    IOCMD_Bool_DT ommit;
 
