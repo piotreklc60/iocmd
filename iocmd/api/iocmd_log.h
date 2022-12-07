@@ -984,6 +984,11 @@ typedef uint32_t IOCMD_Time_DT;
 
 #if(IOCMD_SUPPORT_DATA_LOGGING)
 
+#ifndef IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT
+/** Number of columns (8 bytes of data per column) to be printed in one line by IOCMD_LOG_DATA_xxxxx */
+#define IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT     4
+#endif
+
 #define IOCMD_LOG_DATA_EMERG(      id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data, size, description)
 #define IOCMD_LOG_DATA_EMERG_1(    id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_EMERG_2(    id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data, size, description, a1, a2)
@@ -1109,6 +1114,11 @@ typedef uint32_t IOCMD_Time_DT;
 #endif
 
 #if(IOCMD_SUPPORT_DATA_COMPARISON)
+
+#ifndef IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT
+/** Number of columns (8 bytes of data per column) to be printed in one line by IOCMD_COMPARE_DATA_xxxxx */
+#define IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT    1
+#endif
 
 #define IOCMD_COMPARE_DATA_EMERG(      id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
 #define IOCMD_COMPARE_DATA_EMERG_1(    id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
