@@ -652,6 +652,9 @@ typedef enum IOCMD_Break_Types_Enum_Tag
    IOCMD_BREAK_PRINT_HISTORY  = 0x10
 }IOCMD_Break_Types_ET;
 
+#ifdef IOCMD_LOG_GET_NAME
+#undef IOCMD_LOG_GET_NAME
+#endif
 #ifdef IOCMD_LOG_ADD_MODULE
 #undef IOCMD_LOG_ADD_MODULE
 #endif
@@ -662,9 +665,11 @@ typedef enum IOCMD_Break_Types_Enum_Tag
 #undef IOCMD_LOG_ADD_ITEM
 #endif
 
-#define IOCMD_LOG_ADD_MODULE(name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)   name,
-#define IOCMD_LOG_ADD_GROUP( name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)   name,
-#define IOCMD_LOG_ADD_ITEM(  name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)   name,
+#define IOCMD_LOG_GET_NAME(_name)      _name
+
+#define IOCMD_LOG_ADD_MODULE(name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)   IOCMD_LOG_GET_NAME(name),
+#define IOCMD_LOG_ADD_GROUP( name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)   IOCMD_LOG_GET_NAME(name),
+#define IOCMD_LOG_ADD_ITEM(  name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)   IOCMD_LOG_GET_NAME(name),
 
 typedef enum
 {
@@ -672,13 +677,18 @@ typedef enum
    IOCMD_LOG_ID_LAST
 }IOCMD_Log_ID_ET;
 
+#ifdef IOCMD_LOG_MAKE_COMPIL_LOG_MASKS
+#undef IOCMD_LOG_MAKE_COMPIL_LOG_MASKS
+#endif
 #undef IOCMD_LOG_ADD_MODULE
 #undef IOCMD_LOG_ADD_GROUP
 #undef IOCMD_LOG_ADD_ITEM
 
-#define IOCMD_LOG_ADD_MODULE(name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)    name ## _COMPIL_LOG_MASK = cs_lvl ## _COMPIL_LOG_MASK, name ## _COMPIL_ENT_MASK = cs_ent ## _COMPIL_ENT_MASK,
-#define IOCMD_LOG_ADD_GROUP( name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)    name ## _COMPIL_LOG_MASK = cs_lvl ## _COMPIL_LOG_MASK, name ## _COMPIL_ENT_MASK = cs_ent ## _COMPIL_ENT_MASK,
-#define IOCMD_LOG_ADD_ITEM(  name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)    name ## _COMPIL_LOG_MASK = cs_lvl ## _COMPIL_LOG_MASK, name ## _COMPIL_ENT_MASK = cs_ent ## _COMPIL_ENT_MASK,
+#define IOCMD_LOG_MAKE_COMPIL_LOG_MASKS(name, cs_lvl, cs_ent)      name ## _COMPIL_LOG_MASK = cs_lvl ## _COMPIL_LOG_MASK, name ## _COMPIL_ENT_MASK = cs_ent ## _COMPIL_ENT_MASK
+
+#define IOCMD_LOG_ADD_MODULE(name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)    IOCMD_LOG_MAKE_COMPIL_LOG_MASKS(name, cs_lvl, cs_ent),
+#define IOCMD_LOG_ADD_GROUP( name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)    IOCMD_LOG_MAKE_COMPIL_LOG_MASKS(name, cs_lvl, cs_ent),
+#define IOCMD_LOG_ADD_ITEM(  name, cs_lvl, cs_ent, def_lvl, def_sil_lvl_log, def_ent_state, desc)    IOCMD_LOG_MAKE_COMPIL_LOG_MASKS(name, cs_lvl, cs_ent),
 
 typedef enum
 {
