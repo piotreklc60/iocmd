@@ -72,10 +72,18 @@
 #endif
 
 /**
+ * If set to IOCMD_FEATURE_ENABLED then library supports variadic macros (logging macros without number at end is variadic).
+ * If set to IOCMD_FEATURE_DISABLED then variadic macros are not used.
+ */
+#ifndef IOCMD_SUPPORT_VARIADIC_MACROS
+#define IOCMD_SUPPORT_VARIADIC_MACROS           IOCMD_FEATURE_DISABLED
+#endif
+
+/**
  * If IOCMD_DATA_COMPARE_PRINT_BOTH_CONTEXTS was declared to IOCMD_FEATURE_ENABLED then comparision of data will be printed in format:
  * <data_1> <-> <data_2>, dif in 2: <dif> -> <data_1(ASCII)> <-> <data_2(ASCII)>, dif in 2: <dif(ASCII)>
- * <data_1>, dif in 2: <dif> -> <data_1(ASCII)>, dif in 2: <dif(ASCII)>
  * of defined to IOCMD_FEATURE_DISABLED, then comparision of data will be printed  in format:
+ * <data_1>, dif in 2: <dif> -> <data_1(ASCII)>, dif in 2: <dif(ASCII)>
  */
 #ifndef IOCMD_DATA_COMPARE_PRINT_BOTH_CONTEXTS
 #define IOCMD_DATA_COMPARE_PRINT_BOTH_CONTEXTS  IOCMD_FEATURE_DISABLED
@@ -787,7 +795,11 @@ typedef uint32_t IOCMD_Time_DT;
 #endif
 
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_EMERG(id, ...)                                                                          if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,    IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_EMERG(id, format)                                                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,    IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_EMERG_1(id,  format, a1)                                                                if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,    IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_EMERG_2(id,  format, a1, a2)                                                            if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,    IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_EMERG_3(id,  format, a1, a2, a3)                                                        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,    IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -804,7 +816,11 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_EMERG_14(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)            if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,    IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)
 #define IOCMD_EMERG_15(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,    IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)
 #define IOCMD_EMERG_16(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)    if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,    IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_ALERT(id, ...)                                                                          if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,    IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_ALERT(id, format)                                                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,    IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_ALERT_1(id,  format, a1)                                                                if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,    IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_ALERT_2(id,  format, a1, a2)                                                            if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,    IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_ALERT_3(id,  format, a1, a2, a3)                                                        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,    IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -821,7 +837,11 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_ALERT_14(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)            if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,    IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)
 #define IOCMD_ALERT_15(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,    IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)
 #define IOCMD_ALERT_16(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)    if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,    IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_CRIT(id, ...)                                                                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,     IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_CRIT(id, format)                                                                        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,     IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_CRIT_1(id,  format, a1)                                                                 if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,     IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_CRIT_2(id,  format, a1, a2)                                                             if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,     IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_CRIT_3(id,  format, a1, a2, a3)                                                         if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,     IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -838,7 +858,11 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_CRIT_14(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)             if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,     IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)
 #define IOCMD_CRIT_15(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)         if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,     IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)
 #define IOCMD_CRIT_16(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)     if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,     IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_ERROR(id, ...)                                                                          if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,    IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_ERROR(id, format)                                                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,    IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_ERROR_1(id,  format, a1)                                                                if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,    IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_ERROR_2(id,  format, a1, a2)                                                            if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,    IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_ERROR_3(id,  format, a1, a2, a3)                                                        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,    IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -855,7 +879,11 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_ERROR_14(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)            if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,    IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)
 #define IOCMD_ERROR_15(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,    IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)
 #define IOCMD_ERROR_16(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)    if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,    IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_WARN(id, ...)                                                                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,     IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_WARN(id, format)                                                                        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,     IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_WARN_1(id,  format, a1)                                                                 if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,     IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_WARN_2(id,  format, a1, a2)                                                             if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,     IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_WARN_3(id,  format, a1, a2, a3)                                                         if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,     IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -872,7 +900,11 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_WARN_14(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)             if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,     IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)
 #define IOCMD_WARN_15(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)         if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,     IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)
 #define IOCMD_WARN_16(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)     if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,     IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_NOTICE(id, ...)                                                                         if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,   IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_NOTICE(id, format)                                                                      if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,   IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_NOTICE_1(id,  format, a1)                                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,   IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_NOTICE_2(id,  format, a1, a2)                                                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,   IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_NOTICE_3(id,  format, a1, a2, a3)                                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,   IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -889,7 +921,11 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_NOTICE_14(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,   IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)
 #define IOCMD_NOTICE_15(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,   IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)
 #define IOCMD_NOTICE_16(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,   IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_INFO_HI(id, ...)                                                                        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,   IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_INFO_HI(id, format)                                                                     if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,   IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_INFO_HI_1(id,  format, a1)                                                              if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,   IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_INFO_HI_2(id,  format, a1, a2)                                                          if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,   IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_INFO_HI_3(id,  format, a1, a2, a3)                                                      if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,   IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -906,7 +942,11 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_INFO_HI_14(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)          if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,   IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)
 #define IOCMD_INFO_HI_15(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)      if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,   IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)
 #define IOCMD_INFO_HI_16(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)  if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,   IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_INFO_MID(id, ...)                                                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,  IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_INFO_MID(id, format)                                                                    if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,  IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_INFO_MID_1(id,  format, a1)                                                             if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,  IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_INFO_MID_2(id,  format, a1, a2)                                                         if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,  IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_INFO_MID_3(id,  format, a1, a2, a3)                                                     if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,  IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -923,7 +963,11 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_INFO_MID_14(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)         if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,  IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)
 #define IOCMD_INFO_MID_15(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)     if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,  IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)
 #define IOCMD_INFO_MID_16(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG) if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,  IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_INFO_LO(id, ...)                                                                        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,   IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_INFO_LO(id, format)                                                                     if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,   IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_INFO_LO_1(id,  format, a1)                                                              if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,   IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_INFO_LO_2(id,  format, a1, a2)                                                          if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,   IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_INFO_LO_3(id,  format, a1, a2, a3)                                                      if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,   IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -940,7 +984,11 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_INFO_LO_14(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)          if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,   IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)
 #define IOCMD_INFO_LO_15(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)      if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,   IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)
 #define IOCMD_INFO_LO_16(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)  if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,   IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_DEBUG_HI(id, ...)                                                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,  IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_DEBUG_HI(id, format)                                                                    if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,  IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_DEBUG_HI_1(id,  format, a1)                                                             if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,  IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_DEBUG_HI_2(id,  format, a1, a2)                                                         if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,  IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_DEBUG_HI_3(id,  format, a1, a2, a3)                                                     if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,  IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -957,7 +1005,11 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_DEBUG_HI_14(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)         if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,  IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)
 #define IOCMD_DEBUG_HI_15(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)     if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,  IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)
 #define IOCMD_DEBUG_HI_16(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG) if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,  IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_DEBUG_MID(id, ...)                                                                      if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID, IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_DEBUG_MID(id, format)                                                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID, IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_DEBUG_MID_1(id,  format, a1)                                                            if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID, IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_DEBUG_MID_2(id,  format, a1, a2)                                                        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID, IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_DEBUG_MID_3(id,  format, a1, a2, a3)                                                    if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID, IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -974,7 +1026,11 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_DEBUG_MID_14(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)        if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID, IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE)
 #define IOCMD_DEBUG_MID_15(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)    if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID, IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF)
 #define IOCMD_DEBUG_MID_16(id, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF,aG) if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID, IOCMD__FILE__LOCAL, format, a1, a2, a3, a4, a5, a6, a7, a8, a9, aA, aB, aC, aD, aE, aF, aG)
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_DEBUG_LO(id, ...)                                                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,  IOCMD__FILE__LOCAL, __VA_ARGS__)
+#else
 #define IOCMD_DEBUG_LO(id, format)                                                                    if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,  IOCMD__FILE__LOCAL, format)
+#endif
 #define IOCMD_DEBUG_LO_1(id,  format, a1)                                                             if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,  IOCMD__FILE__LOCAL, format, a1)
 #define IOCMD_DEBUG_LO_2(id,  format, a1, a2)                                                         if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,  IOCMD__FILE__LOCAL, format, a1, a2)
 #define IOCMD_DEBUG_LO_3(id,  format, a1, a2, a3)                                                     if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,  IOCMD__FILE__LOCAL, format, a1, a2, a3)
@@ -999,62 +1055,110 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT     4
 #endif
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_EMERG(      id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_EMERG(      id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_EMERG_1(    id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_EMERG_2(    id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_EMERG_3(    id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_ALERT(      id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,       IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_ALERT(      id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,       IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_ALERT_1(    id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,       IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_ALERT_2(    id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,       IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_ALERT_3(    id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,       IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_CRIT(       id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,        IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_CRIT(       id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,        IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_CRIT_1(     id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,        IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_CRIT_2(     id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,        IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_CRIT_3(     id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,        IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_ERROR(      id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,       IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_ERROR(      id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,       IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_ERROR_1(    id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,       IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_ERROR_2(    id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,       IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_ERROR_3(    id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,       IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_WARN(       id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,        IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_WARN(       id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,        IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_WARN_1(     id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,        IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_WARN_2(     id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,        IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_WARN_3(     id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,        IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_NOTICE(     id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,      IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_NOTICE(     id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,      IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_NOTICE_1(   id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,      IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_NOTICE_2(   id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,      IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_NOTICE_3(   id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,      IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_INFO_HI(    id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,     IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_INFO_HI(    id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,     IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_INFO_HI_1(  id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,     IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_INFO_HI_2(  id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,     IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_INFO_HI_3(  id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,     IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_INFO_MID(   id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,    IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_INFO_MID(   id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,    IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_INFO_MID_1( id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,    IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_INFO_MID_2( id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,    IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_INFO_MID_3( id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,    IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_INFO_LO(    id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,     IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_INFO_LO(    id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,     IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_INFO_LO_1(  id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,     IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_INFO_LO_2(  id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,     IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_INFO_LO_3(  id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,     IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_DEBUG_HI(   id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,    IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_DEBUG_HI(   id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,    IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_DEBUG_HI_1( id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,    IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_DEBUG_HI_2( id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,    IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_DEBUG_HI_3( id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,    IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_DEBUG_MID(  id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID,   IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_DEBUG_MID(  id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID,   IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_DEBUG_MID_1(id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID,   IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_DEBUG_MID_2(id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID,   IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_DEBUG_MID_3(id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID,   IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_DEBUG_LO(   id, data, size, ...)                                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,    IOCMD__FILE__LOCAL, data, size, __VA_ARGS__)
+#else
 #define IOCMD_LOG_DATA_DEBUG_LO(   id, data, size, description)                                       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,    IOCMD__FILE__LOCAL, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_DEBUG_LO_1( id, data, size, description, a1)                                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,    IOCMD__FILE__LOCAL, data, size, description, a1)
 #define IOCMD_LOG_DATA_DEBUG_LO_2( id, data, size, description, a1, a2)                               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,    IOCMD__FILE__LOCAL, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_DEBUG_LO_3( id, data, size, description, a1, a2, a3)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log_Data_Context(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,    IOCMD__FILE__LOCAL, data, size, description, a1, a2, a3)
@@ -1130,62 +1234,110 @@ typedef uint32_t IOCMD_Time_DT;
 #define IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT    1
 #endif
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_EMERG(      id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_EMERG(      id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_EMERG_1(    id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_EMERG_2(    id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_EMERG_3(    id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_EMERG))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_EMERG,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_ALERT(      id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_ALERT(      id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_ALERT_1(    id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_ALERT_2(    id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_ALERT_3(    id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ALERT))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ALERT,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_CRIT(       id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,        IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_CRIT(       id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,        IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_CRIT_1(     id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,        IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_CRIT_2(     id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,        IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_CRIT_3(     id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_CRIT))        IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_CRIT,        IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_ERROR(      id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_ERROR(      id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_ERROR_1(    id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_ERROR_2(    id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_ERROR_3(    id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_ERROR))       IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_ERROR,       IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_WARN(       id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,        IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_WARN(       id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,        IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_WARN_1(     id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,        IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_WARN_2(     id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,        IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_WARN_3(     id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_WARN))        IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_WARN,        IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_NOTICE(     id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,      IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_NOTICE(     id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,      IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_NOTICE_1(   id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,      IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_NOTICE_2(   id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,      IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_NOTICE_3(   id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_NOTICE))      IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_NOTICE,      IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_INFO_HI(    id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,     IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_INFO_HI(    id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,     IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_INFO_HI_1(  id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,     IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_INFO_HI_2(  id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,     IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_INFO_HI_3(  id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_HI))     IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_HI,     IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_INFO_MID(   id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_INFO_MID(   id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_INFO_MID_1( id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_INFO_MID_2( id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_INFO_MID_3( id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_MID))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_MID,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_INFO_LO(    id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,     IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_INFO_LO(    id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,     IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_INFO_LO_1(  id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,     IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_INFO_LO_2(  id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,     IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_INFO_LO_3(  id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_INFO_LO))     IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_INFO_LO,     IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_DEBUG_HI(   id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_DEBUG_HI(   id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_DEBUG_HI_1( id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_DEBUG_HI_2( id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_DEBUG_HI_3( id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_HI))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_HI,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_DEBUG_MID(  id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID,   IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_DEBUG_MID(  id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID,   IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_DEBUG_MID_1(id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID,   IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_DEBUG_MID_2(id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID,   IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_DEBUG_MID_3(id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_MID))   IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_MID,   IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_DEBUG_LO(   id, data1, size1, data2, size2, ...)                           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, __VA_ARGS__)
+#else
 #define IOCMD_COMPARE_DATA_DEBUG_LO(   id, data1, size1, data2, size2, description)                   if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_DEBUG_LO_1( id, data1, size1, data2, size2, description, a1)               if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_DEBUG_LO_2( id, data1, size1, data2, size2, description, a1, a2)           if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_DEBUG_LO_3( id, data1, size1, data2, size2, description, a1, a2, a3)       if(IOCMD_COMPILATION_SWITCH_LOG(id, IOCMD_LOG_LEVEL_DEBUG_LO))    IOCMD_Log_Data_Comparision(id, IOCMD__LINE__LOCAL, IOCMD_LOG_LEVEL_DEBUG_LO,    IOCMD__FILE__LOCAL, data1, size1, data2, size2, description, a1, a2, a3)
@@ -1327,4 +1479,3 @@ void IOCMD_Debug_Table_Critical(const IOCMD_Print_Exe_Params_XT *exe, const char
 
 
 #endif
-
