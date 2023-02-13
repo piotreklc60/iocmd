@@ -1281,14 +1281,14 @@ void IOCMD_Log(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, c
 #if(IOCMD_SUPPORT_DATA_LOGGING)
 void IOCMD_Log_Data_Context(
    IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, const char *file,
-   const uint8_t *data, uint_fast16_t size, const char *format, ...);
+   const void *data, uint_fast16_t size, const char *format, ...);
 #endif
 
 
 #if(IOCMD_SUPPORT_DATA_COMPARISON)
 void IOCMD_Log_Data_Comparision(
    IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, const char *file,
-   const uint8_t *data1, uint_fast16_t size1, const uint8_t *data2, uint_fast16_t size2, const char *format, ...);
+   const void *data1, uint_fast16_t size1, const void *data2, uint_fast16_t size2, const char *format, ...);
 #endif
 
 
