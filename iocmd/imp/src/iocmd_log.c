@@ -708,7 +708,7 @@ static uint_fast16_t IOCMD_add_standard_header_and_main_string_to_buf(
 
 #if(IOCMD_SUPPORT_DATA_COMPARISON || IOCMD_SUPPORT_DATA_LOGGING)
 static void IOCMD_add_data_tab_to_buf(
-   uint8_t *buf, uint_fast16_t buf_size, const uint8_t *data, uint_fast16_t data_size, Buff_Readable_Vector_XT *table)
+   uint8_t *buf, uint_fast16_t buf_size, const void *data, uint_fast16_t data_size, Buff_Readable_Vector_XT *table)
 {
    IOCMD_Buffer_Convert_UT convert;
    Buff_Size_DT cntr = 0;
@@ -730,7 +730,7 @@ static void IOCMD_add_data_tab_to_buf(
        * format string pointer if located inside of program memory (read only)
        * 2-9 bytes, depend on program memory size
        */
-      convert.ptr_field.ptr.ptr = (const void*)(((const void*)data) - ((const void*)IOCMD_PROGRAM_MEMORY_BEGIN));
+      convert.ptr_field.ptr.ptr = (const void*)(data - ((const void*)IOCMD_PROGRAM_MEMORY_BEGIN));
 
 #if ((IOCMD_PROGRAM_MEMORY_END - IOCMD_PROGRAM_MEMORY_BEGIN) <= 0xFFFFFFFF)
       cntr = IOCMD_add_u32_to_buf(&convert, buf, buf_size - cntr, cntr, IOCMD_LOG_BUF_DATA_TYPE_PTAB_1B);
@@ -2590,7 +2590,7 @@ void IOCMD_Log(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, c
 #if(IOCMD_SUPPORT_DATA_LOGGING)
 void IOCMD_Log_Data_Context(
    IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, const char *file,
-   const uint8_t *data, uint_fast16_t size, const char *format, ...)
+   const void *data, uint_fast16_t size, const char *format, ...)
 {
    uint8_t *ptr;
    va_list arg;
@@ -2612,7 +2612,7 @@ void IOCMD_Log_Data_Context(
 #endif
       {
          if(IOCMD_LIKELY(IOCMD_CHECK_PTR(const char, file) && IOCMD_CHECK_PTR(const char, format)
-            && IOCMD_CHECK_PTR(const uint8_t, data)))
+            && IOCMD_CHECK_PTR(const void, data)))
          {
             cntr = IOCMD_add_standard_header_and_main_string_to_buf(
                buf, sizeof(buf), 2, line, level + IOCMD_LOG_DATA_PRINT_CONTEXT_BEGIN, file, format);
@@ -2747,7 +2747,7 @@ void IOCMD_Log_Data_Context(
 #if(IOCMD_SUPPORT_DATA_COMPARISON)
 void IOCMD_Log_Data_Comparision(
    IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, const char *file,
-   const uint8_t *data1, uint_fast16_t size1, const uint8_t *data2, uint_fast16_t size2, const char *format, ...)
+   const void *data1, uint_fast16_t size1, const void *data2, uint_fast16_t size2, const char *format, ...)
 {
    uint8_t                      *ptr;
    va_list                       arg;
@@ -2771,7 +2771,7 @@ void IOCMD_Log_Data_Comparision(
 #endif
       {
          if(IOCMD_LIKELY(IOCMD_CHECK_PTR(const char, file) && IOCMD_CHECK_PTR(const char, format)
-            && IOCMD_CHECK_PTR(const uint8_t, data1) && IOCMD_CHECK_PTR(const uint8_t, data2)))
+            && IOCMD_CHECK_PTR(const void, data1) && IOCMD_CHECK_PTR(const void, data2)))
          {
             cntr = IOCMD_add_standard_header_and_main_string_to_buf(
                buf, sizeof(buf), 2, line, level + IOCMD_LOG_DATA_COMPARE_CONTEXT_BEGIN, file, format);
@@ -3470,4 +3470,3 @@ void IOCMD_Set_All_Entrances(uint8_t entrance_level)
       IOCMD_Params.levels_tab_data[i].entrance_logging_state  = entrance_level;
    }
 }
-
