@@ -29,34 +29,34 @@
 #include "iocmd_log_internal.h"
 #include "buff.h"
 
-#define IOCMD_LOG_BUF_DATA_TYPE_STRING       0
-#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING1B    1
-#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING2B    2
-#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING3B    3
-#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING4B    4
-#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING5B    5
-#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING6B    6
-#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING7B    7
-#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING8B    8
-#define IOCMD_LOG_BUF_DATA_TYPE_1BYTE        9
-#define IOCMD_LOG_BUF_DATA_TYPE_2BYTE       10
-#define IOCMD_LOG_BUF_DATA_TYPE_3BYTE       11
-#define IOCMD_LOG_BUF_DATA_TYPE_4BYTE       12
-#define IOCMD_LOG_BUF_DATA_TYPE_5BYTE       13
-#define IOCMD_LOG_BUF_DATA_TYPE_6BYTE       14
-#define IOCMD_LOG_BUF_DATA_TYPE_7BYTE       15
-#define IOCMD_LOG_BUF_DATA_TYPE_8BYTE       16
-#define IOCMD_LOG_BUF_DATA_TYPE_PVOID       17
-#define IOCMD_LOG_BUF_DATA_TYPE_CHAR        18
-#define IOCMD_LOG_BUF_DATA_TYPE_TAB         19
-#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_1B     20
-#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_2B     21
-#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_3B     22
-#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_4B     23
-#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_5B     24
-#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_6B     25
-#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_7B     26
-#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_8B     27
+#define IOCMD_LOG_BUF_DATA_TYPE_STRING       0U
+#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING1B    1U
+#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING2B    2U
+#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING3B    3U
+#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING4B    4U
+#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING5B    5U
+#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING6B    6U
+#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING7B    7U
+#define IOCMD_LOG_BUF_DATA_TYPE_PSTRING8B    8U
+#define IOCMD_LOG_BUF_DATA_TYPE_1BYTE        9U
+#define IOCMD_LOG_BUF_DATA_TYPE_2BYTE       10U
+#define IOCMD_LOG_BUF_DATA_TYPE_3BYTE       11U
+#define IOCMD_LOG_BUF_DATA_TYPE_4BYTE       12U
+#define IOCMD_LOG_BUF_DATA_TYPE_5BYTE       13U
+#define IOCMD_LOG_BUF_DATA_TYPE_6BYTE       14U
+#define IOCMD_LOG_BUF_DATA_TYPE_7BYTE       15U
+#define IOCMD_LOG_BUF_DATA_TYPE_8BYTE       16U
+#define IOCMD_LOG_BUF_DATA_TYPE_PVOID       17U
+#define IOCMD_LOG_BUF_DATA_TYPE_CHAR        18U
+#define IOCMD_LOG_BUF_DATA_TYPE_TAB         19U
+#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_1B     20U
+#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_2B     21U
+#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_3B     22U
+#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_4B     23U
+#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_5B     24U
+#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_6B     25U
+#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_7B     26U
+#define IOCMD_LOG_BUF_DATA_TYPE_PTAB_8B     27U
 
 #define IOCMD_LOG_DATA_DESC_SIZE                (1 /* flags */ + 1 /* data size type */ + sizeof(uint_fast16_t) /* data size */ + 1 /* data pointer type */ + sizeof(void*)/* data pointer if in program memory */)
 #define IOCMD_LOG_OS_SWITCH_CONTEXT_DESC_SIZE   (1/*size*/ + IOCMD_LOG_GLOBAL_CNTR_SIZE + IOCMD_LOG_GLOBAL_CNTR_SIZE + IOCMD_LOG_HEADER_TIME_PART_SIZE + 1/*level*/ + sizeof(IOCMD_Context_ID_DT) + sizeof(IOCMD_Context_ID_DT))
@@ -195,13 +195,13 @@ const uint_fast8_t *IOCMD_Os_Critical_Switch = &iocmd_os_critical_switch_const;
 static uint8_t IOCMD_debug_format_u8(char *buf, const uint8_t *data, size_t data_size)
 {
    int cntr = 0;
-   size_t result = 0;
+   size_t result;
 
-   for(result = 0; result < 8; result++)
+   for(result = 0U; result < 8U; ++result)
    {
       if(data_size > result)
       {
-         cntr += IOCMD_Utoa8(&buf[cntr], data[result], 16, 2, '0', IOCMD_TRUE);
+         cntr += IOCMD_Utoa8(&buf[cntr], data[result], 16U, 2U, '0', IOCMD_TRUE);
          buf[cntr++] = ',';
       }
       else
@@ -228,13 +228,13 @@ static uint8_t IOCMD_debug_format_dif8(
    uint_fast16_t result;
    uint_fast16_t data_size = (data1_size > data2_size) ? data2_size : data1_size;
 
-   for(result = 0; result < 8; result++)
+   for(result = 0U; result < 8U; ++result)
    {
       if(data_size > result)
       {
          if(data1[result] != data2[result])
          {
-            cntr += IOCMD_Utoa8(&buf[cntr], data2[result], 16, 2, '0', IOCMD_TRUE);
+            cntr += IOCMD_Utoa8(&buf[cntr], data2[result], 16U, 2U, '0', IOCMD_TRUE);
             buf[cntr++] = ',';
          }
          else
@@ -262,7 +262,7 @@ static uint8_t IOCMD_debug_format_dif8(
 
 static const char *IOCMD_file_name_remove_path(const char* name)
 {
-   int i = 0;
+   int i   = 0;
    int pos = 0;
 
    while('\0' != name[i])
@@ -271,7 +271,7 @@ static const char *IOCMD_file_name_remove_path(const char* name)
       {
          pos = i + 1;
       }
-      i++;
+      ++i;
    }
 
    return(&name[pos]);
@@ -283,7 +283,7 @@ static void IOCMD_reduce_buf(Buff_Ring_XT *buf, Buff_Size_DT length)
    Buff_Size_DT len;
    Buff_Size_DT blen8;
 
-   blen8 = buf->size / 8;
+   blen8 = buf->size / 8U;
 
    if(BUFF_LIKELY(length < blen8))
    {
@@ -292,10 +292,10 @@ static void IOCMD_reduce_buf(Buff_Ring_XT *buf, Buff_Size_DT length)
 
    do
    {
-      (void)Buff_Ring_Peak(buf, size, sizeof(size), 0, BUFF_FALSE);
+      (void)Buff_Ring_Peak(buf, size, sizeof(size), 0U, BUFF_FALSE);
 
-      len = ((Buff_Size_DT)(size[0])) & 0x7F;
-      if(0 != (size[0] & 0x80))
+      len = ((Buff_Size_DT)(size[0])) & 0x7FU;
+      if(0U != (size[0] & 0x80U))
       {
          len = IOCMD_MUL_BY_POWER_OF_2(len, 8);
          len += size[1];
@@ -307,38 +307,38 @@ static void IOCMD_reduce_buf(Buff_Ring_XT *buf, Buff_Size_DT length)
 
 static uint_fast16_t IOCMD_add_u32_to_buf(IOCMD_Buffer_Convert_UT *data, uint8_t *buf, uint_fast16_t buf_size, uint_fast16_t result, uint8_t base_type)
 {
-   if(0 == data->u16_field.u16_1)
+   if(0U == data->u16_field.u16_1)
    {
-      if(0 == data->u8_field.u8_1)
+      if(0U == data->u8_field.u8_1)
       {
-         if(buf_size >= 2)
+         if(buf_size >= 2U)
          {
             buf[result++] = base_type;
             buf[result++] = data->u8_field.u8_0;
          }
       }
-      else if(buf_size >= 3)
+      else if(buf_size >= 3U)
       {
-         buf[result++] = base_type + 1;
+         buf[result++] = base_type + 1U;
          buf[result++] = data->u8_field.u8_0;
          buf[result++] = data->u8_field.u8_1;
       }
    }
    else
    {
-      if(0 == data->u8_field.u8_3)
+      if(0U == data->u8_field.u8_3)
       {
-         if(buf_size >= 4)
+         if(buf_size >= 4U)
          {
-            buf[result++] = base_type + 2;
+            buf[result++] = base_type + 2U;
             buf[result++] = data->u8_field.u8_0;
             buf[result++] = data->u8_field.u8_1;
             buf[result++] = data->u8_field.u8_2;
          }
       }
-      else if(buf_size >= 5)
+      else if(buf_size >= 5U)
       {
-         buf[result++] = base_type + 3;
+         buf[result++] = base_type + 3U;
          buf[result++] = data->u8_field.u8_0;
          buf[result++] = data->u8_field.u8_1;
          buf[result++] = data->u8_field.u8_2;
@@ -354,47 +354,47 @@ static uint_fast16_t IOCMD_add_u64_to_buf(IOCMD_Buffer_Convert_UT *data, uint8_t
 {
    uint8_t *ptr;
 
-   if(0 == data->u32_field.u32_1)
+   if(0U == data->u32_field.u32_1)
    {
       result = IOCMD_add_u32_to_buf(data, buf, buf_size, result, base_type);
    }
-   else if((buf_size - result) >= 6)
+   else if((buf_size - result) >= 6U)
    {
       ptr = &buf[result + 1];
 
-      if(0 == data->u16_field.u16_3)
+      if(0U == data->u16_field.u16_3)
       {
-         if(0 == data->u8_field.u8_5)
+         if(0U == data->u8_field.u8_5)
          {
-            buf[result] = base_type + 4;
-            result += 5;
+            buf[result]   = base_type + 4U;
+            result       += 5U;
             buf[result++] = data->u8_field.u8_4;
          }
-         else if((buf_size - result) >= 7)
+         else if((buf_size - result) >= 7U)
          {
-            buf[result] = base_type + 5;
-            result += 5;
+            buf[result]   = base_type + 5U;
+            result       += 5U;
             buf[result++] = data->u8_field.u8_4;
             buf[result++] = data->u8_field.u8_5;
          }
       }
       else
       {
-         if(0 == data->u8_field.u8_7)
+         if(0U == data->u8_field.u8_7)
          {
-            if((buf_size - result) >= 8)
+            if((buf_size - result) >= 8U)
             {
-               buf[result] = base_type + 6;
-               result += 5;
+               buf[result]   = base_type + 6U;
+               result       += 5U;
                buf[result++] = data->u8_field.u8_4;
                buf[result++] = data->u8_field.u8_5;
                buf[result++] = data->u8_field.u8_6;
             }
          }
-         else if((buf_size - result) >= 9)
+         else if((buf_size - result) >= 9U)
          {
-            buf[result] = base_type + 7;
-            result += 5;
+            buf[result]   = base_type + 7U;
+            result       += 5U;
             buf[result++] = data->u8_field.u8_4;
             buf[result++] = data->u8_field.u8_5;
             buf[result++] = data->u8_field.u8_6;
@@ -429,13 +429,13 @@ static void IOCMD_reduce_int_in_buf(int data, uint8_t *buf, uint_fast16_t buf_si
       buf[pos++] = convert.u8_field.u8_0;
       buf[pos]   = convert.u8_field.u8_1;
    }
-   else if((IOCMD_LOG_BUF_DATA_TYPE_3BYTE == type) && (sizeof(int) > 2))
+   else if((IOCMD_LOG_BUF_DATA_TYPE_3BYTE == type) && (sizeof(int) > 2U))
    {
       buf[pos++] = convert.u8_field.u8_0;
       buf[pos++] = convert.u8_field.u8_1;
       buf[pos]   = convert.u8_field.u8_2;
    }
-   else if((IOCMD_LOG_BUF_DATA_TYPE_4BYTE == type) && (sizeof(int) > 2))
+   else if((IOCMD_LOG_BUF_DATA_TYPE_4BYTE == type) && (sizeof(int) > 2U))
    {
       buf[pos++] = convert.u8_field.u8_0;
       buf[pos++] = convert.u8_field.u8_1;
@@ -452,17 +452,17 @@ static IOCMD_Bool_DT IOCMD_get_u64(IOCMD_Buffer_Convert_UT *data, uint_fast16_t 
    IOCMD_Bool_DT result = IOCMD_FALSE;
 
 #if(((IOCMD_PROGRAM_MEMORY_END - IOCMD_PROGRAM_MEMORY_BEGIN) > 0xFFFFFFFF) || IOCMD_OUT_SUPPORT_U64)
-   data->u64_field.u64 = 0;
+   data->u64_field.u64 = 0U;
 #else
-   data->u32_field.u32_0 = 0;
+   data->u32_field.u32_0 = 0U;
 #endif
 
    if(buf_size > pos)
    {
-      data_type = (uint_fast8_t)buf[pos] & 0xFF;
+      data_type = (uint_fast8_t)buf[pos] & 0xFFU;
 
-      if((data_type >= type_base) && (data_type <= (type_base+ 7))
-         && ((buf_size - pos) > (data_type - type_base + 1)))
+      if((data_type >= type_base) && (data_type <= (type_base + 7U))
+         && ((buf_size - pos) > (data_type - type_base + 1U)))
       {
          pos++;
 
@@ -470,23 +470,23 @@ static IOCMD_Bool_DT IOCMD_get_u64(IOCMD_Buffer_Convert_UT *data, uint_fast16_t 
          if(data_type > type_base)
          {
             data->u8_field.u8_1 = buf[pos++];
-            if(data_type > (type_base + 1))
+            if(data_type > (type_base + 1U))
             {
                data->u8_field.u8_2 = buf[pos++];
-               if(data_type > (type_base + 2))
+               if(data_type > (type_base + 2U))
                {
                   data->u8_field.u8_3 = buf[pos++];
 #if(((IOCMD_PROGRAM_MEMORY_END - IOCMD_PROGRAM_MEMORY_BEGIN) > 0xFFFFFFFF) || IOCMD_OUT_SUPPORT_U64)
-                  if(data_type > (type_base + 3))
+                  if(data_type > (type_base + 3U))
                   {
                      data->u8_field.u8_4 = buf[pos++];
-                     if(data_type > (type_base + 4))
+                     if(data_type > (type_base + 4U))
                      {
                         data->u8_field.u8_5 = buf[pos++];
-                        if(data_type > (type_base + 5))
+                        if(data_type > (type_base + 5U))
                         {
                            data->u8_field.u8_6 = buf[pos++];
-                           if(data_type > (type_base + 6))
+                           if(data_type > (type_base + 6U))
                            {
                               data->u8_field.u8_7 = buf[pos++];
                            }
@@ -510,21 +510,21 @@ static uint_fast8_t IOCMD_get_char(IOCMD_Buffer_Convert_UT *data, const uint8_t 
 {
    uint_fast16_t pos = *ppos;
    uint_fast8_t data_type;
-   uint_fast8_t cntr = 0xFF;
+   uint_fast8_t cntr = 0xFFU;
 
 #if(IOCMD_OUT_SUPPORT_U64)
-      data->u64_field.u64 = 0;
+      data->u64_field.u64 = 0U;
 #else
-      data->u32_field.u32_0 = 0;
+      data->u32_field.u32_0 = 0U;
 #endif
 
-   data_type = (uint_fast8_t)buf[pos] & 0xFF;
+   data_type = (uint_fast8_t)buf[pos] & 0xFFU;
 
    if(IOCMD_LOG_BUF_DATA_TYPE_CHAR == data_type)
    {
       pos++;
       data->char_field.c = (char)(buf[pos++]);
-      cntr = 1;
+      cntr = 1U;
    }
 
    *ppos = pos;
@@ -609,27 +609,27 @@ static uint_fast16_t IOCMD_add_standard_header_and_main_string_to_buf(
    /* global cntr - will be added just before putting to ring buffer */
 #if(1 == IOCMD_LOG_GLOBAL_CNTR_SIZE)
    /* reserve 1 byte for main cntr and 1 byte for global cntr */
-   pos += 2;
+   pos += 2U;
 #elif (2 == IOCMD_LOG_GLOBAL_CNTR_SIZE)
    /* reserve 2 byte for main cntr and 2 byte for global cntr */
-   pos += 4;
+   pos += 4U;
 #else
    /* reserve 4 byte for main cntr and 4 byte for global cntr */
-   pos += 8;
+   pos += 8U;
 #endif
 
 #if (IOCMD_LOG_PRINT_TIME)
    /* time - 1 to 8 bytes; depend on time size */
    time = IOCMD_OS_GET_CURRENT_TIME();
    buf[pos++] = ((uint8_t*)(&time))[0];
-   if(sizeof(IOCMD_Time_DT) > 1)
+   if(sizeof(IOCMD_Time_DT) > 1U)
    {
       buf[pos++] = ((uint8_t*)(&time))[1];
-      if(sizeof(IOCMD_Time_DT) > 2)
+      if(sizeof(IOCMD_Time_DT) > 2U)
       {
          buf[pos++] = ((uint8_t*)(&time))[2];
          buf[pos++] = ((uint8_t*)(&time))[3];
-         if(sizeof(IOCMD_Time_DT) > 4)
+         if(sizeof(IOCMD_Time_DT) > 4U)
          {
             buf[pos++] = ((uint8_t*)(&time))[4];
             buf[pos++] = ((uint8_t*)(&time))[5];
@@ -651,10 +651,10 @@ static uint_fast16_t IOCMD_add_standard_header_and_main_string_to_buf(
    /* context ID - 1 to 4 bytes, depend on context ID size */
    context_id = IOCMD_OS_GET_CURRENT_CONTEXT_ID();
    buf[pos++] = ((uint8_t*)(&context_id))[0];
-   if(sizeof(IOCMD_Context_ID_DT) > 1)
+   if(sizeof(IOCMD_Context_ID_DT) > 1U)
    {
       buf[pos++] = ((uint8_t*)(&context_id))[1];
-      if(sizeof(IOCMD_Context_ID_DT) > 2)
+      if(sizeof(IOCMD_Context_ID_DT) > 2U)
       {
          buf[pos++] = ((uint8_t*)(&context_id))[2];
          buf[pos++] = ((uint8_t*)(&context_id))[3];
@@ -711,18 +711,18 @@ static void IOCMD_add_data_tab_to_buf(
    uint8_t *buf, uint_fast16_t buf_size, const void *data, uint_fast16_t data_size, Buff_Readable_Vector_XT *table)
 {
    IOCMD_Buffer_Convert_UT convert;
-   Buff_Size_DT cntr = 0;
+   Buff_Size_DT cntr = 0U;
 
    /**
     * flags:
     * bit0: data was cut
     * bit1: print addresses as hex
     */
-   buf[0] = 0;
+   buf[0] = 0U;
 
    /* data size */
    convert.int_field.i = (int)data_size;
-   cntr = IOCMD_add_u32_to_buf(&convert, buf, buf_size - 1, 1, IOCMD_LOG_BUF_DATA_TYPE_1BYTE);
+   cntr = IOCMD_add_u32_to_buf(&convert, buf, buf_size - 1U, 1U, IOCMD_LOG_BUF_DATA_TYPE_1BYTE);
 
    if((!IOCMD_FORCE_STRINGS_COPYING) && IOCMD_IS_PTR_IN_PROGRAM_MEMORY(data))
    {
@@ -739,7 +739,7 @@ static void IOCMD_add_data_tab_to_buf(
 #endif
 
       table[1].data = IOCMD_MAKE_INVALID_PTR(const void);
-      table[1].size = 0;
+      table[1].size = 0U;
    }
    else
    {
@@ -757,7 +757,7 @@ static void IOCMD_add_data_tab_to_buf(
 static uint_fast16_t IOCMD_get_log_header_main_cntr_time_and_level_from_buf(
    IOCMD_standard_header_and_main_string_XT *header, const uint8_t *buf)
 {
-   uint_fast16_t cntr = 0;
+   uint_fast16_t cntr = 0U;
 
    /* main_cntr */
    ( (uint8_t*)(&(header->main_cntr)) )[0] = buf[cntr++];
@@ -772,14 +772,14 @@ static uint_fast16_t IOCMD_get_log_header_main_cntr_time_and_level_from_buf(
 #if (IOCMD_LOG_PRINT_TIME)
    /* time - 1 to 8 bytes; depend on time size */
    ((uint8_t*)(&(header->time)))[0] = buf[cntr++];
-   if(sizeof(IOCMD_Time_DT) > 1)
+   if(sizeof(IOCMD_Time_DT) > 1U)
    {
       ((uint8_t*)(&(header->time)))[1] = buf[cntr++];
-      if(sizeof(IOCMD_Time_DT) > 2)
+      if(sizeof(IOCMD_Time_DT) > 2U)
       {
          ((uint8_t*)(&(header->time)))[2] = buf[cntr++];
          ((uint8_t*)(&(header->time)))[3] = buf[cntr++];
-         if(sizeof(IOCMD_Time_DT) > 4)
+         if(sizeof(IOCMD_Time_DT) > 4U)
          {
             ((uint8_t*)(&(header->time)))[4] = buf[cntr++];
             ((uint8_t*)(&(header->time)))[5] = buf[cntr++];
@@ -798,7 +798,7 @@ static uint_fast16_t IOCMD_get_log_header_main_cntr_time_and_level_from_buf(
 static uint_fast16_t IOCMD_get_rest_of_log_header_and_main_string_from_buf(
    IOCMD_Buffer_Convert_UT *convert, IOCMD_standard_header_and_main_string_XT *header, const uint8_t *buf, uint_fast16_t buf_size)
 {
-   uint_fast16_t cntr = 0;
+   uint_fast16_t cntr = 0U;
 
    /* line - 2 bytes */
    ((uint8_t*)(&(header->line)))[0] = buf[cntr++];
@@ -807,10 +807,10 @@ static uint_fast16_t IOCMD_get_rest_of_log_header_and_main_string_from_buf(
 #if (IOCMD_LOG_PRINT_OS_CONTEXT)
    /* context ID - 1 to 4 bytes, depend on context ID size */
    ((uint8_t*)(&(header->context_id)))[0] = buf[cntr++];
-   if(sizeof(IOCMD_Context_ID_DT) > 1)
+   if(sizeof(IOCMD_Context_ID_DT) > 1U)
    {
       ((uint8_t*)(&(header->context_id)))[1] = buf[cntr++];
-      if(sizeof(IOCMD_Context_ID_DT) > 2)
+      if(sizeof(IOCMD_Context_ID_DT) > 2U)
       {
          ((uint8_t*)(&(header->context_id)))[2] = buf[cntr++];
          ((uint8_t*)(&(header->context_id)))[3] = buf[cntr++];
@@ -868,7 +868,7 @@ static void IOCMD_print_main_cntr(
 static void IOCMD_print_data(char *temp, const IOCMD_Print_Exe_Params_XT *exe, const uint8_t *data, uint_fast16_t data_size, uint_fast16_t num_bytes_to_print)
 {
    uint_fast16_t cntr;
-   for(cntr = 0; cntr < num_bytes_to_print; cntr += 8)
+   for(cntr = 0U; cntr < num_bytes_to_print; cntr += 8U)
    {
       if(data_size > cntr)
       {
@@ -887,7 +887,7 @@ static const uint8_t *IOCMD_print_ascii(
 {
    char *ptr = temp;
 
-   while(0 != data_size)
+   while(0U != data_size)
    {
       if((*data >= ' ') && (*data <= '~'))
       {
@@ -924,30 +924,30 @@ static void IOCMD_log_data(
    uint8_t asciicntr;
    uint8_t pos_marker_len;
 
-   if(data_size < 100)
+   if(data_size < 100U)
    {
-      pos_marker_len = 2;
+      pos_marker_len = 2U;
    }
-   else if(data_size < 1000)
+   else if(data_size < 1000U)
    {
-      pos_marker_len = 3;
+      pos_marker_len = 3U;
    }
-   else if(data_size < 10000)
+   else if(data_size < 10000U)
    {
-      pos_marker_len = 4;
+      pos_marker_len = 4U;
    }
    else
    {
-      pos_marker_len = 5;
+      pos_marker_len = 5U;
    }
 
-   for(cntr = 0; cntr < data_size;)
+   for(cntr = 0U; cntr < data_size;)
    {
       IOCMD_print_main_cntr(exe, header, IOCMD_FALSE);
 
-      if((data_size - cntr) >= (8 * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT))
+      if((data_size - cntr) >= (8U * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT))
       {
-         asciicntr = (8 * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT);
+         asciicntr = (8U * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT);
       }
       else
       {
@@ -955,13 +955,13 @@ static void IOCMD_log_data(
       }
 
       IOCMD_Oprintf(exe, "  %0*d-%0*d/%0*d: ",
-         pos_marker_len, cntr, pos_marker_len, cntr + asciicntr - 1, pos_marker_len, data_size);
+         pos_marker_len, cntr, pos_marker_len, cntr + asciicntr - 1U, pos_marker_len, data_size);
 
-      IOCMD_print_data(temp, exe, data, data_size - cntr, (8 * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT));
+      IOCMD_print_data(temp, exe, data, data_size - cntr, (8U * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT));
 
       (void)exe->print_string(exe->dev, "-> ");
 
-      data = IOCMD_print_ascii(temp, exe, data, asciicntr, (8 * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT), IOCMD_TRUE);
+      data = IOCMD_print_ascii(temp, exe, data, asciicntr, (8U * IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT), IOCMD_TRUE);
 
       cntr += asciicntr;
 
@@ -987,30 +987,30 @@ static void IOCMD_compare_data(
    uint8_t asciicntr2;
    uint8_t pos_marker_len;
 
-   if(data_size < 100)
+   if(data_size < 100U)
    {
-      pos_marker_len = 2;
+      pos_marker_len = 2U;
    }
-   else if(data_size < 1000)
+   else if(data_size < 1000U)
    {
-      pos_marker_len = 3;
+      pos_marker_len = 3U;
    }
-   else if(data_size < 10000)
+   else if(data_size < 10000U)
    {
-      pos_marker_len = 4;
+      pos_marker_len = 4U;
    }
    else
    {
-      pos_marker_len = 5;
+      pos_marker_len = 5U;
    }
 
-   for(cntr = 0; cntr < data_size;)
+   for(cntr = 0U; cntr < data_size;)
    {
       IOCMD_print_main_cntr(exe, header, IOCMD_FALSE);
 
-      if((data_size - cntr) >= (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT))
+      if((data_size - cntr) >= (8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT))
       {
-         asciicntr = (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT);
+         asciicntr = (8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT);
       }
       else
       {
@@ -1019,9 +1019,9 @@ static void IOCMD_compare_data(
 
       if(size1 > cntr)
       {
-         if((size1 - cntr) >= (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT))
+         if((size1 - cntr) >= (8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT))
          {
-            asciicntr1 = (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT);
+            asciicntr1 = (8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT);
          }
          else
          {
@@ -1030,14 +1030,14 @@ static void IOCMD_compare_data(
       }
       else
       {
-         asciicntr1 = 0;
+         asciicntr1 = 0U;
       }
 
       if(size2 > cntr)
       {
-         if((size2 - cntr) >= (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT))
+         if((size2 - cntr) >= (8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT))
          {
-            asciicntr2 = (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT);
+            asciicntr2 = (8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT);
          }
          else
          {
@@ -1046,24 +1046,24 @@ static void IOCMD_compare_data(
       }
       else
       {
-         asciicntr2 = 0;
+         asciicntr2 = 0U;
       }
 
       IOCMD_Oprintf(exe, "  %0*d-%0*d/%0*d: ",
-         pos_marker_len, cntr, pos_marker_len, cntr + asciicntr - 1, pos_marker_len, data_size);
+         pos_marker_len, cntr, pos_marker_len, cntr + asciicntr - 1U, pos_marker_len, data_size);
 
-      IOCMD_print_data(temp, exe, data1, asciicntr1, (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT));
+      IOCMD_print_data(temp, exe, data1, asciicntr1, (8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT));
 
 #if(IOCMD_DATA_COMPARE_PRINT_BOTH_CONTEXTS)
       (void)exe->print_string(exe->dev, "<-> ");
 
-      IOCMD_print_data(temp, exe, data2, asciicntr2, (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT));
+      IOCMD_print_data(temp, exe, data2, asciicntr2, (8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT));
 
 #endif
 
       (void)exe->print_string(exe->dev, "dif in 2: ");
 
-      for(cntr2 = 0; cntr2 < (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT); cntr2 += 8)
+      for(cntr2 = 0U; cntr2 < (8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT); cntr2 += 8U)
       {
          if((asciicntr1 > cntr2) && (asciicntr2 > cntr2))
          {
@@ -1081,12 +1081,12 @@ static void IOCMD_compare_data(
 
       asciicntr = (asciicntr1 > asciicntr2) ? asciicntr2 : asciicntr1;
 
-      (void)IOCMD_print_ascii(temp, exe, data1, asciicntr1, (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT), IOCMD_FALSE);
+      (void)IOCMD_print_ascii(temp, exe, data1, asciicntr1, (8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT), IOCMD_FALSE);
 
 #if(IOCMD_DATA_COMPARE_PRINT_BOTH_CONTEXTS)
       (void)exe->print_string(exe->dev, " <-> ");
 
-      (void)IOCMD_print_ascii(temp, exe, data2, asciicntr2, (8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT), IOCMD_FALSE);
+      (void)IOCMD_print_ascii(temp, exe, data2, asciicntr2, (8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT), IOCMD_FALSE);
 
 #endif
       (void)exe->print_string(exe->dev, " dif in 2: ");
@@ -1124,8 +1124,8 @@ static void IOCMD_compare_data(
          cntr2++;
          asciicntr--;
       }
-      data1 += 8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT;
-      data2 += 8 * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT;
+      data1 += 8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT;
+      data2 += 8U * IOCMD_COMPARE_DATA_NUM_COLUMNS_TO_PRINT;
       *ptr = '\0';
       (void)exe->print_string(exe->dev, temp);
       exe->print_endl_repeat(exe->dev, 1);
@@ -1150,10 +1150,10 @@ static void IOCMD_proc_one_buffered_log(
    const uint8_t *data2 = IOCMD_MAKE_INVALID_PTR(const uint8_t);
 #endif
 #if(IOCMD_SUPPORT_DATA_COMPARISON || IOCMD_SUPPORT_DATA_LOGGING)
-   uint_fast16_t size1 = 0;
+   uint_fast16_t size1 = 0U;
 #endif
 #if(IOCMD_SUPPORT_DATA_COMPARISON)
-   uint_fast16_t size2 = 0;
+   uint_fast16_t size2 = 0U;
 #endif
 #if (IOCMD_LOG_PRINT_OS_CONTEXT_NAME)
    uint_fast16_t context_name_len;
@@ -1166,10 +1166,10 @@ static void IOCMD_proc_one_buffered_log(
    uint_fast16_t len;
    uint_fast16_t cntr;
 #if(IOCMD_SUPPORT_DATA_COMPARISON || IOCMD_SUPPORT_DATA_LOGGING)
-   uint8_t data_too_big1 = 0;
+   uint8_t data_too_big1 = 0U;
 #endif
 #if(IOCMD_SUPPORT_DATA_COMPARISON)
-   uint8_t data_too_big2 = 0;
+   uint8_t data_too_big2 = 0U;
 #endif
 #if(IOCMD_SUPPORT_DATA_COMPARISON || IOCMD_SUPPORT_DATA_LOGGING)
    char temp[IOCMD_PROC_ONE_BUFFERED_LOG_TEMP_BUF_SIZE];
@@ -1179,11 +1179,11 @@ static void IOCMD_proc_one_buffered_log(
 
    /* ommit global_cntr - we don't use it in this function */
 #if (1 == IOCMD_LOG_GLOBAL_CNTR_SIZE)
-   cntr = 1;
+   cntr = 1U;
 #elif (2 == IOCMD_LOG_GLOBAL_CNTR_SIZE)
-   cntr = 2;
+   cntr = 2U;
 #else
-   cntr = 4;
+   cntr = 4U;
 #endif
 
    memset(&header, 0, sizeof(header));
@@ -1193,8 +1193,8 @@ static void IOCMD_proc_one_buffered_log(
    if( ( (header.level <= IOCMD_LOG_LEVEL_EXT_EXIT)
          || ((header.level >= IOCMD_LOG_DATA_PRINT_CONTEXT_BEGIN) && (header.level <= IOCMD_LOG_DATA_COMPARE_CONTEXT_END)) )
       && (buf_size >= (IOCMD_LOG_GLOBAL_CNTR_SIZE + IOCMD_LOG_GLOBAL_CNTR_SIZE + IOCMD_LOG_HEADER_TIME_PART_SIZE \
-         + 1/*level*/ + 2/*line num*/ + IOCMD_LOG_HEADER_CONTEXT_PART_SIZE/* context num + context type */
-         + 1/*filename type*/ + 1/* minimal filename */ + 1/*format type*/ + 1/* minimal format */)) )
+         + 1U/*level*/ + 2U/*line num*/ + IOCMD_LOG_HEADER_CONTEXT_PART_SIZE/* context num + context type */
+         + 1U/*filename type*/ + 1U/* minimal filename */ + 1U/*format type*/ + 1U/* minimal format */)) )
    {
       cntr += IOCMD_get_rest_of_log_header_and_main_string_from_buf(&convert, &header, &buf[cntr], buf_size - cntr);
 
@@ -1209,7 +1209,7 @@ static void IOCMD_proc_one_buffered_log(
             if(IOCMD_BOOL_IS_FALSE(IOCMD_get_u64(&convert, &cntr, buf, buf_size, IOCMD_LOG_BUF_DATA_TYPE_1BYTE)))
             {
                failed = IOCMD_TRUE;
-               size1  = 0;
+               size1  = 0U;
             }
             else
             {
@@ -1220,14 +1220,14 @@ static void IOCMD_proc_one_buffered_log(
                if(!IOCMD_CHECK_PTR(const uint8_t, data1))
                {
                   failed = IOCMD_TRUE;
-                  size1  = 0;
+                  size1  = 0U;
                }
             }
          }
          else
          {
             failed = IOCMD_TRUE;
-            size1  = 0;
+            size1  = 0U;
          }
       }
 #endif
@@ -1243,7 +1243,7 @@ static void IOCMD_proc_one_buffered_log(
             if(IOCMD_BOOL_IS_FALSE(IOCMD_get_u64(&convert, &cntr, buf, buf_size, IOCMD_LOG_BUF_DATA_TYPE_1BYTE)))
             {
                failed = IOCMD_TRUE;
-               size2  = 0;
+               size2  = 0U;
             }
             else
             {
@@ -1254,14 +1254,14 @@ static void IOCMD_proc_one_buffered_log(
                if(!IOCMD_CHECK_PTR(const uint8_t, data2))
                {
                   failed = IOCMD_TRUE;
-                  size2  = 0;
+                  size2  = 0U;
                }
             }
          }
          else
          {
             failed = IOCMD_TRUE;
-            size2  = 0;
+            size2  = 0U;
          }
       }
 #endif
@@ -1286,9 +1286,9 @@ static void IOCMD_proc_one_buffered_log(
 #if (IOCMD_LOG_PRINT_OS_CONTEXT_NAME)
          context_name     = IOCMD_OS_GET_CONTEXT_NAME(header.context_type, header.context_id);
          context_name_len = strlen(context_name);
-         if(context_name_len > 16)
+         if(context_name_len > 16U)
          {
-            context_name_len = 16;
+            context_name_len = 16U;
          }
 #endif
 
@@ -1317,7 +1317,7 @@ static void IOCMD_proc_one_buffered_log(
    #endif
 #endif
 #if (IOCMD_LOG_PRINT_OS_CONTEXT && IOCMD_LOG_PRINT_OS_CONTEXT_NAME)
-            IOCMD_MAX_FILE_NAME_SIZE + 16 - context_name_len,
+            IOCMD_MAX_FILE_NAME_SIZE + 16U - context_name_len,
 #else
             IOCMD_MAX_FILE_NAME_SIZE,
 #endif
@@ -1334,7 +1334,7 @@ static void IOCMD_proc_one_buffered_log(
          else
 #endif
          {
-            for(format_pos = 0; format_pos < IOCMD_MAX_STRING_LENGTH; format_pos++)
+            for(format_pos = 0U; format_pos < IOCMD_MAX_STRING_LENGTH; format_pos++)
             {
                if('%' == header.main_string[format_pos])
                {
@@ -1388,7 +1388,7 @@ static void IOCMD_proc_one_buffered_log(
                            {
                               parse.length = sizeof(char) / sizeof(uint8_t);
 
-                              if(0xFF == IOCMD_get_char(&convert, buf, &cntr))
+                              if(0xFFU == IOCMD_get_char(&convert, buf, &cntr))
                               {
                                  failed = IOCMD_TRUE;
                               }
@@ -1485,7 +1485,7 @@ static void IOCMD_proc_one_buffered_log(
                }
                else
                {
-                  for(len = 0; (len + format_pos) < IOCMD_MAX_STRING_LENGTH ; len++)
+                  for(len = 0U; (len + format_pos) < IOCMD_MAX_STRING_LENGTH ; ++len)
                   {
                      if(('%' == header.main_string[len + format_pos])
                         || ('\0' == header.main_string[len + format_pos])
@@ -1498,7 +1498,7 @@ static void IOCMD_proc_one_buffered_log(
 
                   (void)exe->print_string_len(exe->dev, &(header.main_string[format_pos]), len);
 
-                  format_pos += len - 1;
+                  format_pos += len - 1U;
                }
             }
          }
@@ -1509,7 +1509,7 @@ static void IOCMD_proc_one_buffered_log(
          {
             header.level -= IOCMD_LOG_DATA_PRINT_CONTEXT_BEGIN;
             IOCMD_log_data(temp, exe, &header, data1, size1);
-            if(0 != data_too_big1)
+            if(0U != data_too_big1)
             {
                IOCMD_print_main_cntr(exe, &header, IOCMD_FALSE);
                IOCMD_Oprintf(exe, "  rest of %s was cut during logging\n", "data");
@@ -1524,14 +1524,14 @@ static void IOCMD_proc_one_buffered_log(
          {
             header.level -= IOCMD_LOG_DATA_COMPARE_CONTEXT_BEGIN;
             IOCMD_compare_data(temp, exe, &header, data1, data2, size1, size2);
-            if((0 != data_too_big1) || (0 != data_too_big2))
+            if((0U != data_too_big1) || (0U != data_too_big2))
             {
                IOCMD_print_main_cntr(exe, &header, IOCMD_FALSE);
-               if((0 != data_too_big1) && (0 != data_too_big2))
+               if((0U != data_too_big1) && (0U != data_too_big2))
                {
                   level = "data1 and data2";
                }
-               else if(0 != data_too_big1)
+               else if(0U != data_too_big1)
                {
                   level = "data1";
                }
@@ -1549,10 +1549,10 @@ static void IOCMD_proc_one_buffered_log(
    else if(IOCMD_LOG_OS_CONTEXT_SWITCH == header.level)
    {
       ((uint8_t*)(&previous_context))[0] = buf[cntr++];
-      if(sizeof(IOCMD_Context_ID_DT) > 1)
+      if(sizeof(IOCMD_Context_ID_DT) > 1U)
       {
          ((uint8_t*)(&previous_context))[1] = buf[cntr++];
-         if(sizeof(IOCMD_Context_ID_DT) > 2)
+         if(sizeof(IOCMD_Context_ID_DT) > 2U)
          {
             ((uint8_t*)(&previous_context))[2] = buf[cntr++];
             ((uint8_t*)(&previous_context))[3] = buf[cntr++];
@@ -1560,10 +1560,10 @@ static void IOCMD_proc_one_buffered_log(
       }
 
       ((uint8_t*)(&current_context))[0] = buf[cntr++];
-      if(sizeof(IOCMD_Context_ID_DT) > 1)
+      if(sizeof(IOCMD_Context_ID_DT) > 1U)
       {
          ((uint8_t*)(&current_context))[1] = buf[cntr++];
-         if(sizeof(IOCMD_Context_ID_DT) > 2)
+         if(sizeof(IOCMD_Context_ID_DT) > 2U)
          {
             ((uint8_t*)(&current_context))[2] = buf[cntr++];
             ((uint8_t*)(&current_context))[3] = buf[cntr++];
@@ -1619,7 +1619,7 @@ uint_fast16_t IOCMD_Compress_Param(
 {
    const char    *pstr;
    IOCMD_Buffer_Convert_UT var;
-   uint_fast16_t  buf_pos = 0;
+   uint_fast16_t  buf_pos = 0U;
 
    if(IOCMD_BOOL_IS_TRUE(params->width_variadic))
    {
@@ -1639,7 +1639,7 @@ uint_fast16_t IOCMD_Compress_Param(
 #if((!IOCMD_PROMOTION_INT8_TO_INT16) && (!IOCMD_PROMOTION_INT16_TO_INT32))
       if((sizeof(uint8_t) / sizeof(uint8_t)) == params->length)
       {
-         if((buf_size - buf_pos) >= 2)
+         if((buf_size - buf_pos) >= 2U)
          {
             buf[buf_pos++] = IOCMD_LOG_BUF_DATA_TYPE_1BYTE;
             buf[buf_pos++] = data->u8_field.u8_0;
@@ -1678,7 +1678,7 @@ uint_fast16_t IOCMD_Compress_Param(
    } /* d,i,u,o,x,X */
    else if('c' == params->specifier)
    {
-      if((buf_size - buf_pos) >= 2)
+      if((buf_size - buf_pos) >= 2U)
       {
          buf[buf_pos++] = IOCMD_LOG_BUF_DATA_TYPE_CHAR;
          buf[buf_pos++] = (uint8_t)(data->char_field.c);
@@ -1701,7 +1701,7 @@ uint_fast16_t IOCMD_Compress_Param(
       }
       else
       {
-         if((buf_size - buf_pos) >= 2)
+         if((buf_size - buf_pos) >= 2U)
          {
             buf[buf_pos++] = IOCMD_LOG_BUF_DATA_TYPE_STRING;
             /* reserve one byte for NULL terminator */
@@ -1729,7 +1729,7 @@ uint_fast16_t IOCMD_Compress_Param(
       *buf_ppos += buf_pos;
    }
 
-   return 0;
+   return 0U;
 } /* IOCMD_Compress_Param */
 
 #else
@@ -1744,10 +1744,10 @@ uint_fast16_t IOCMD_Compress_Param(
    const char    *pstr;
    const char    *pstr_start;
    IOCMD_Buffer_Convert_UT var;
-   uint_fast16_t  buf_pos = 0;
-   uint_fast16_t  str_pos = 0;
-   IOCMD_String_Pos_DT  out_pos = 0;
-   IOCMD_String_Pos_DT  cntr = 0;
+   uint_fast16_t  buf_pos = 0U;
+   uint_fast16_t  str_pos = 0U;
+   IOCMD_String_Pos_DT  out_pos   = 0;
+   IOCMD_String_Pos_DT  cntr      = 0;
    IOCMD_String_Pos_DT  sign_size = 0;
    IOCMD_String_Pos_DT  x_size    = 0;
    uint_fast8_t   base;
@@ -1770,7 +1770,7 @@ uint_fast16_t IOCMD_Compress_Param(
    {
       if(('d' == params->specifier) || ('i' == params->specifier) || ('u' == params->specifier))
       {
-         base = 10;
+         base = 10U;
 
          if('u' == params->specifier)
          {
@@ -1781,12 +1781,12 @@ uint_fast16_t IOCMD_Compress_Param(
       }
       else if('o' == params->specifier)
       {
-         base = 8;
+         base = 8U;
 
 #if(IOCMD_OUT_SUPPORT_U64)
-         if(0 != data->u64_field.u64)
+         if(0U != data->u64_field.u64)
 #else
-         if(0 != data->u32_field.u32_0)
+         if(0U != data->u32_field.u32_0)
 #endif
          {
             if(IOCMD_BOOL_IS_TRUE(params->flags_show_0x))
@@ -1800,7 +1800,7 @@ uint_fast16_t IOCMD_Compress_Param(
       }
       else if('p' == params->specifier)
       {
-         base   = 16;
+         base   = 16U;
          x_size = 2;
 
          params->flags_show_0x       = IOCMD_TRUE;
@@ -1811,12 +1811,12 @@ uint_fast16_t IOCMD_Compress_Param(
       }
       else
       {
-         base = 16;
+         base = 16U;
 
 #if(IOCMD_OUT_SUPPORT_U64)
-         if(0 != data->u64_field.u64)
+         if(0U != data->u64_field.u64)
 #else
-         if(0 != data->u32_field.u32_0)
+         if(0U != data->u32_field.u32_0)
 #endif
          {
             if(IOCMD_BOOL_IS_TRUE(params->flags_show_0x))
@@ -1832,14 +1832,14 @@ uint_fast16_t IOCMD_Compress_Param(
 #if((!IOCMD_PROMOTION_INT8_TO_INT16) && (!IOCMD_PROMOTION_INT16_TO_INT32))
       if((sizeof(uint8_t) / sizeof(uint8_t)) == params->length)
       {
-         if((buf_size - buf_pos) >= 2)
+         if((buf_size - buf_pos) >= 2U)
          {
             buf[buf_pos++] = IOCMD_LOG_BUF_DATA_TYPE_1BYTE;
             buf[buf_pos++] = data->u8_field.u8_0;
          }
 
          /* zero */
-         if(0 == data->u8_field.u8_0)
+         if(0U == data->u8_field.u8_0)
          {
             is_zero = IOCMD_TRUE;
             cntr = 1;
@@ -1851,7 +1851,7 @@ uint_fast16_t IOCMD_Compress_Param(
          else
          {
             /* positive result */
-            if(IOCMD_BOOL_IS_TRUE(always_positive) || (0 == (data->u8_field.u8_0 & (( ((uint8_t)(-1)) / 2 ) + 1) )))
+            if(IOCMD_BOOL_IS_TRUE(always_positive) || (0U == (data->u8_field.u8_0 & (( ((uint8_t)(-1)) / 2U ) + 1U) )))
             {
                if(IOCMD_BOOL_IS_TRUE(params->flags_show_sign) || IOCMD_BOOL_IS_TRUE(params->flags_space_on_sign))
                {
@@ -1881,7 +1881,7 @@ uint_fast16_t IOCMD_Compress_Param(
          buf_pos = IOCMD_add_u32_to_buf(data, buf, buf_size - buf_pos, buf_pos, IOCMD_LOG_BUF_DATA_TYPE_1BYTE);
 
          /* zero */
-         if(0 == data->u16_field.u16_0)
+         if(0U == data->u16_field.u16_0)
          {
             is_zero = IOCMD_TRUE;
             cntr = 1;
@@ -1893,7 +1893,7 @@ uint_fast16_t IOCMD_Compress_Param(
          else
          {
             /* positive result */
-            if(IOCMD_BOOL_IS_TRUE(always_positive) || (0 == (data->u16_field.u16_0 & (( ((uint16_t)(-1)) / 2 ) + 1) )))
+            if(IOCMD_BOOL_IS_TRUE(always_positive) || (0U == (data->u16_field.u16_0 & (( ((uint16_t)(-1)) / 2U ) + 1U) )))
             {
                if(IOCMD_BOOL_IS_TRUE(params->flags_show_sign) || IOCMD_BOOL_IS_TRUE(params->flags_space_on_sign))
                {
@@ -1923,7 +1923,7 @@ uint_fast16_t IOCMD_Compress_Param(
          buf_pos = IOCMD_add_u32_to_buf(data, buf, buf_size - buf_pos, buf_pos, IOCMD_LOG_BUF_DATA_TYPE_1BYTE);
 
          /* zero */
-         if(0 == data->u32_field.u32_0)
+         if(0U == data->u32_field.u32_0)
          {
             is_zero = IOCMD_TRUE;
             cntr = 1;
@@ -1935,7 +1935,7 @@ uint_fast16_t IOCMD_Compress_Param(
          else
          {
             /* positive result */
-            if(IOCMD_BOOL_IS_TRUE(always_positive) || (0 == (data->u32_field.u32_0 & (( ((uint32_t)(-1)) / 2 ) + 1) )))
+            if(IOCMD_BOOL_IS_TRUE(always_positive) || (0U == (data->u32_field.u32_0 & (( ((uint32_t)(-1)) / 2U ) + 1U) )))
             {
                if(IOCMD_BOOL_IS_TRUE(params->flags_show_sign) || IOCMD_BOOL_IS_TRUE(params->flags_space_on_sign))
                {
@@ -1958,7 +1958,7 @@ uint_fast16_t IOCMD_Compress_Param(
          buf_pos = IOCMD_add_u64_to_buf(data, buf, buf_size - buf_pos, buf_pos, IOCMD_LOG_BUF_DATA_TYPE_1BYTE);
 
          /* zero */
-         if(0 == data->u64_field.u64)
+         if(0U == data->u64_field.u64)
          {
             is_zero = IOCMD_TRUE;
             cntr = 1;
@@ -1970,7 +1970,7 @@ uint_fast16_t IOCMD_Compress_Param(
          else
          {
             /* positive result */
-            if(IOCMD_BOOL_IS_TRUE(always_positive) || (0 == (data->u64_field.u64 & (( ((uint64_t)(-1)) / 2 ) + 1) )))
+            if(IOCMD_BOOL_IS_TRUE(always_positive) || (0U == (data->u64_field.u64 & (( ((uint64_t)(-1)) / 2U ) + 1U) )))
             {
                if(IOCMD_BOOL_IS_TRUE(params->flags_show_sign) || IOCMD_BOOL_IS_TRUE(params->flags_space_on_sign))
                {
@@ -1991,49 +1991,49 @@ uint_fast16_t IOCMD_Compress_Param(
 
       if(IOCMD_BOOL_IS_FALSE(is_zero))
       {
-         if(10 == base)
+         if(10U == base)
          {
             cntr = 0;
 
 #if(IOCMD_OUT_SUPPORT_U64)
-            if(0 != data->u32_field.u32_1)
+            if(0U != data->u32_field.u32_1)
             {
                /**
                 * value is bigger than 4 294 967 296, so divide by 1000000000
                 * we know result will be longer than 9 digits
                 */
-               data->u64_field.u64 /= 1000000000;
+               data->u64_field.u64 /= 1000000000U;
                cntr += 9;
 
-               if(0 != data->u8_field.u8_4)
+               if(0U != data->u8_field.u8_4)
                {
                   /**
                    * value is still bigger than 4 294 967 296, so divide by 1000000000
                    * we know result will be longer than next 9 digits
                    */
-                  data->u64_field.u64 /= 1000000000;
+                  data->u64_field.u64 /= 1000000000U;
                   cntr += 9;
                }
             }
 #endif
 
             /* value is 32-bit long, means in range 65 536 - 4 294 967 296 */
-            if(0 != data->u16_field.u16_1)
+            if(0U != data->u16_field.u16_1)
             {
-               data->u32_field.u32_0 /= 10000;
+               data->u32_field.u32_0 /= 10000U;
                cntr += 4;
 
                /* after divide value is still 32-bit long in range 65 536 - 429 496 */
-               if(0 != data->u16_field.u16_1)
+               if(0U != data->u16_field.u16_1)
                {
-                  if(data->u32_field.u32_0 < 100000)
+                  if(data->u32_field.u32_0 < 100000U)
                   {
-                     data->u32_field.u32_0 = 0;
+                     data->u32_field.u32_0 = 0U;
                   }
                   else
                   {
                      cntr += 1;
-                     data->u32_field.u32_0 = 0;
+                     data->u32_field.u32_0 = 0U;
                   }
                }
             }
@@ -2041,16 +2041,16 @@ uint_fast16_t IOCMD_Compress_Param(
             /* now data stores value with at least one digit */
             cntr += 1;
 
-            if(data->u16_field.u16_0 > 9)
+            if(data->u16_field.u16_0 > 9U)
             {
                cntr++;
-               if(data->u16_field.u16_0 > 99)
+               if(data->u16_field.u16_0 > 99U)
                {
                   cntr++;
-                  if(data->u16_field.u16_0 > 999)
+                  if(data->u16_field.u16_0 > 999U)
                   {
                      cntr++;
-                     if(data->u16_field.u16_0 > 9999)
+                     if(data->u16_field.u16_0 > 9999U)
                      {
                         cntr++;
                      }
@@ -2058,13 +2058,13 @@ uint_fast16_t IOCMD_Compress_Param(
                }
             }
          }
-         else if(16 == base)
+         else if(16U == base)
          {
 #if(IOCMD_OUT_SUPPORT_U64)
-            if(0 == data->u32_field.u32_1)
+            if(0U == data->u32_field.u32_1)
             {
 #endif
-               if(0 == data->u16_field.u16_1)
+               if(0U == data->u16_field.u16_1)
                {
                   cntr = 1;
                }
@@ -2077,7 +2077,7 @@ uint_fast16_t IOCMD_Compress_Param(
             }
             else
             {
-               if(0 == data->u16_field.u16_3)
+               if(0U == data->u16_field.u16_3)
                {
                   data->u16_field.u16_0 = data->u16_field.u16_2;
                   cntr = 9;
@@ -2090,13 +2090,13 @@ uint_fast16_t IOCMD_Compress_Param(
             }
 #endif
 
-            if(0 != (data->u16_field.u16_0 & 0xFFF0))
+            if(0U != (data->u16_field.u16_0 & 0xFFF0U))
             {
                cntr++;
-               if(0 != (data->u16_field.u16_0 & 0xFF00))
+               if(0U != (data->u16_field.u16_0 & 0xFF00U))
                {
                   cntr++;
-                  if(0 != (data->u16_field.u16_0 & 0xF000))
+                  if(0U != (data->u16_field.u16_0 & 0xF000U))
                   {
                      cntr++;
                   }
@@ -2108,12 +2108,12 @@ uint_fast16_t IOCMD_Compress_Param(
             cntr = 0;
 
 #if(IOCMD_OUT_SUPPORT_U64)
-            if(0 != data->u32_field.u32_1)
+            if(0U != data->u32_field.u32_1)
             {
                data->u64_field.u64 = IOCMD_DIV_BY_POWER_OF_2(data->u64_field.u64, 30);
                cntr += 10;
 
-               if(0 != data->u32_field.u32_1)
+               if(0U != data->u32_field.u32_1)
                {
                   data->u64_field.u64 = IOCMD_DIV_BY_POWER_OF_2(data->u64_field.u64, 30);
                   cntr += 10;
@@ -2121,12 +2121,12 @@ uint_fast16_t IOCMD_Compress_Param(
             }
 #endif
 
-            if(0 != data->u16_field.u16_1)
+            if(0U != data->u16_field.u16_1)
             {
                data->u32_field.u32_0 = IOCMD_DIV_BY_POWER_OF_2(data->u32_field.u32_0, 15);
                cntr += 5;
 
-               if(0 != data->u16_field.u16_1)
+               if(0U != data->u16_field.u16_1)
                {
                   data->u32_field.u32_0 = IOCMD_DIV_BY_POWER_OF_2(data->u32_field.u32_0, 15);
                   cntr += 5;
@@ -2135,19 +2135,19 @@ uint_fast16_t IOCMD_Compress_Param(
 
             cntr++;
 
-            if(0 != (data->u16_field.u16_0 & 0xFFF8))
+            if(0U != (data->u16_field.u16_0 & 0xFFF8U))
             {
                cntr++;
-               if(0 != (data->u16_field.u16_0 & 0xFFC0))
+               if(0U != (data->u16_field.u16_0 & 0xFFC0U))
                {
                   cntr++;
-                  if(0 != (data->u16_field.u16_0 & 0xFE00))
+                  if(0U != (data->u16_field.u16_0 & 0xFE00U))
                   {
                      cntr++;
-                     if(0 != (data->u16_field.u16_0 & 0xF000))
+                     if(0U != (data->u16_field.u16_0 & 0xF000U))
                      {
                         cntr++;
-                        if(0 != (data->u16_field.u16_0 & 0x8000))
+                        if(0U != (data->u16_field.u16_0 & 0x8000U))
                         {
                            cntr++;
                         }
@@ -2193,7 +2193,7 @@ uint_fast16_t IOCMD_Compress_Param(
    } /* d,i,u,o,x,X */
    else if('c' == params->specifier)
    {
-      if((buf_size - buf_pos) >= 2)
+      if((buf_size - buf_pos) >= 2U)
       {
          buf[buf_pos++] = IOCMD_LOG_BUF_DATA_TYPE_CHAR;
          buf[buf_pos++] = (uint8_t)(data->char_field.c);
@@ -2228,7 +2228,7 @@ uint_fast16_t IOCMD_Compress_Param(
       {
          pstr_start = pstr;
 
-         if((buf_size - buf_pos) >= 2)
+         if((buf_size - buf_pos) >= 2U)
          {
             buf[buf_pos++] = IOCMD_LOG_BUF_DATA_TYPE_STRING;
             str_pos = buf_pos;
@@ -2284,7 +2284,7 @@ uint_fast16_t IOCMD_Compress_Param(
       }
 
       /* if string was copied to buffer */
-      if((str_pos > 0) && (params->precision >= 0))
+      if((str_pos > 0U) && (params->precision >= 0))
       {
          /* if string is longer than length to be printed taking precision into acount then cut it */
          if(params->precision < (IOCMD_String_Pos_DT)(pstr - pstr_start))
@@ -2332,18 +2332,18 @@ void IOCMD_Log_Get_Buf_Params(IOCMD_Buff_Params_Readout_XT *params)
       params->main_buf_max_used_size      = (size_t)BUFF_RING_GET_MAX_BUSY_SIZE(&(IOCMD_Params.main_ring_buf));
       params->main_buf_current_used_size  = (size_t)BUFF_RING_GET_BUSY_SIZE(&(IOCMD_Params.main_ring_buf));
 #else
-      params->main_buf_size               = 0;
-      params->main_buf_max_used_size      = 0;
-      params->main_buf_current_used_size  = 0;
+      params->main_buf_size               = 0U;
+      params->main_buf_max_used_size      = 0U;
+      params->main_buf_current_used_size  = 0U;
 #endif
 #if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
       params->quiet_buf_size              = sizeof(IOCMD_Params.quiet_buf);
       params->quiet_buf_max_used_size     = (size_t)BUFF_RING_GET_MAX_BUSY_SIZE(&(IOCMD_Params.quiet_ring_buf));
       params->quiet_buf_current_used_size = (size_t)BUFF_RING_GET_BUSY_SIZE(&(IOCMD_Params.quiet_ring_buf));
 #else
-      params->quiet_buf_size              = 0;
-      params->quiet_buf_max_used_size     = 0;
-      params->quiet_buf_current_used_size = 0;
+      params->quiet_buf_size              = 0U;
+      params->quiet_buf_max_used_size     = 0U;
+      params->quiet_buf_current_used_size = 0U;
 #endif
    }
 }
@@ -2365,7 +2365,7 @@ IOCMD_Bool_DT IOCMD_Logs_Init(void)
             if(Buff_Ring_Init(&(IOCMD_Params.quiet_ring_buf),   IOCMD_Params.quiet_buf,   sizeof(IOCMD_Params.quiet_buf)))
 #endif
             {
-               for(i = 0; i < IOCMD_logs_tree.tab_num_elems; i++)
+               for(i = 0U; i < IOCMD_logs_tree.tab_num_elems; i++)
                {
                   IOCMD_Params.levels_tab_data[i].level      = IOCMD_logs_tree.const_tab[i].default_level;
                   IOCMD_Params.levels_tab_data[i].quiet_level = IOCMD_logs_tree.const_tab[i].default_quiet_level_log;
@@ -2388,8 +2388,8 @@ IOCMD_Bool_DT IOCMD_Logs_Init(void)
 
                IOCMD_Params.levels_tab = IOCMD_logs_tree.const_tab;
                IOCMD_Params.levels_tab_size = IOCMD_logs_tree.tab_num_elems;
-               IOCMD_Params.global_cntr.global_cntr = 0;
-               IOCMD_Params.global_cntr.main_cntr = 0;
+               IOCMD_Params.global_cntr.global_cntr = 0U;
+               IOCMD_Params.global_cntr.main_cntr   = 0U;
 
                result = IOCMD_TRUE;
             }
@@ -2400,9 +2400,9 @@ IOCMD_Bool_DT IOCMD_Logs_Init(void)
    if(IOCMD_BOOL_IS_FALSE(result))
    {
       IOCMD_Params.levels_tab                = IOCMD_MAKE_INVALID_PTR(const IOCMD_Log_Level_Const_Params_XT);
-      IOCMD_Params.levels_tab_size           = 0;
-      IOCMD_Params.global_cntr.global_cntr   = 0;
-      IOCMD_Params.global_cntr.main_cntr     = 0;
+      IOCMD_Params.levels_tab_size           = 0U;
+      IOCMD_Params.global_cntr.global_cntr   = 0U;
+      IOCMD_Params.global_cntr.main_cntr     = 0U;
    }
 
    return result;
@@ -2492,27 +2492,27 @@ void IOCMD_Log(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, c
 
             if(IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH >= 128)
             {
-               cntr2 = 2;
+               cntr2 = 2U;
             }
             else
             {
-               cntr2 = 1;
+               cntr2 = 1U;
             }
 
             va_start(arg, format);
 
             IOCMD_PROTECTION_LOCK(IOCMD_Params);
 
-            if(BUFF_UNLIKELY(BUFF_RING_GET_FREE_SIZE(first_ring) < (2 * (IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH))))
+            if(BUFF_UNLIKELY(BUFF_RING_GET_FREE_SIZE(first_ring) < (2U * (IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH))))
             {
-               IOCMD_reduce_buf(first_ring, (Buff_Size_DT)(2 * (IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH)));
+               IOCMD_reduce_buf(first_ring, (Buff_Size_DT)(2U * (IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH)));
             }
 
             buf = Buff_Ring_Data_Check_Out(
-               first_ring, IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH - 2 + cntr2, BUFF_FALSE, BUFF_FALSE);
+               first_ring, IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH - 2U + cntr2, BUFF_FALSE, BUFF_FALSE);
 
             cntr = IOCMD_add_standard_header_and_main_string_to_buf(
-               buf, IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH - 2 + cntr2, cntr2, line, level, file, format);
+               buf, IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH - 2U + cntr2, cntr2, line, level, file, format);
 
             params.log.buf = buf;
             params.log.buf_ppos = &cntr;
@@ -2524,7 +2524,7 @@ void IOCMD_Log(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, c
             {
                /* exception in library - length is big endian!!! */
                buf[1] = (uint8_t)cntr;
-               buf[0] = (uint8_t)(IOCMD_DIV_BY_POWER_OF_2(cntr, 8) | 0x80);
+               buf[0] = (uint8_t)(IOCMD_DIV_BY_POWER_OF_2(cntr, 8) | 0x80U);
             }
             else
             {
@@ -2596,8 +2596,8 @@ void IOCMD_Log_Data_Context(
    va_list arg;
    IOCMD_Out_Main_Loop_Params_XT params;
    Buff_Readable_Vector_XT table[4];
-   uint_fast16_t cntr = 2;
-   uint_fast8_t cntr2 = 2;
+   uint_fast16_t cntr = 2U;
+   uint_fast8_t cntr2 = 2U;
    uint8_t buf[IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH];
    uint8_t data_desc_buf[IOCMD_LOG_DATA_DESC_SIZE];
 
@@ -2615,7 +2615,7 @@ void IOCMD_Log_Data_Context(
             && IOCMD_CHECK_PTR(const void, data)))
          {
             cntr = IOCMD_add_standard_header_and_main_string_to_buf(
-               buf, sizeof(buf), 2, line, level + IOCMD_LOG_DATA_PRINT_CONTEXT_BEGIN, file, format);
+               buf, sizeof(buf), 2U, line, level + IOCMD_LOG_DATA_PRINT_CONTEXT_BEGIN, file, format);
 
             table[0].data = buf;
             table[0].size = cntr;
@@ -2646,7 +2646,7 @@ void IOCMD_Log_Data_Context(
 
             cntr = table[0].size + table[1].size + table[2].size + table[3].size;
 
-            if(cntr <= 128)
+            if(cntr <= 128U)
             {
                cntr--;
                ptr++;
@@ -2661,14 +2661,14 @@ void IOCMD_Log_Data_Context(
                table[2].size = IOCMD_WORKING_BUF_RECOMMENDED_SIZE - cntr;
                cntr += table[2].size;
 
-               data_desc_buf[0] = 1;
+               data_desc_buf[0] = 1U;
 
-               IOCMD_reduce_int_in_buf((int)(table[2].size), &data_desc_buf[1], 5, 0);
+               IOCMD_reduce_int_in_buf((int)(table[2].size), &data_desc_buf[1], 5U, 0U);
             }
 
             /* exception in library - length is big endian!!! */
             buf[1] = (uint8_t)cntr;
-            buf[0] = (uint8_t)(IOCMD_DIV_BY_POWER_OF_2(cntr, 8) | 0x80);
+            buf[0] = (uint8_t)(IOCMD_DIV_BY_POWER_OF_2(cntr, 8) | 0x80U);
 
             IOCMD_PROTECTION_LOCK(IOCMD_Params);
 
@@ -2712,7 +2712,7 @@ void IOCMD_Log_Data_Context(
                   table,
                   Num_Elems(table),
                   (Buff_Size_DT)cntr,
-                  0,
+                  0U,
                   BUFF_FALSE,
                   BUFF_FALSE);
             }
@@ -2731,7 +2731,7 @@ void IOCMD_Log_Data_Context(
                   table,
                   Num_Elems(table),
                   (Buff_Size_DT)cntr,
-                  0,
+                  0U,
                   BUFF_FALSE,
                   BUFF_FALSE);
             }
@@ -2753,9 +2753,9 @@ void IOCMD_Log_Data_Comparision(
    va_list                       arg;
    IOCMD_Out_Main_Loop_Params_XT params;
    Buff_Readable_Vector_XT       table[6];
-   uint_fast16_t                 cntr = 2;
+   uint_fast16_t                 cntr  = 2U;
    uint_fast16_t                 part;
-   uint_fast8_t                  cntr2 = 2;
+   uint_fast8_t                  cntr2 = 2U;
    uint8_t                       buf[IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH];
    uint8_t                       data1_desc_buf[IOCMD_LOG_DATA_DESC_SIZE];
    uint8_t                       data2_desc_buf[IOCMD_LOG_DATA_DESC_SIZE];
@@ -2774,7 +2774,7 @@ void IOCMD_Log_Data_Comparision(
             && IOCMD_CHECK_PTR(const void, data1) && IOCMD_CHECK_PTR(const void, data2)))
          {
             cntr = IOCMD_add_standard_header_and_main_string_to_buf(
-               buf, sizeof(buf), 2, line, level + IOCMD_LOG_DATA_COMPARE_CONTEXT_BEGIN, file, format);
+               buf, sizeof(buf), 2U, line, level + IOCMD_LOG_DATA_COMPARE_CONTEXT_BEGIN, file, format);
 
             table[0].data = buf;
             table[0].size = cntr;
@@ -2808,7 +2808,7 @@ void IOCMD_Log_Data_Comparision(
 
             cntr = table[0].size + table[1].size + table[2].size + table[3].size + table[4].size + table[5].size;
 
-            if(cntr <= 128)
+            if(cntr <= 128U)
             {
                cntr--;
                ptr++;
@@ -2836,13 +2836,13 @@ void IOCMD_Log_Data_Comparision(
                      cntr += table[2].size;
                      cntr += table[4].size;
 
-                     data1_desc_buf[0] = 1;
+                     data1_desc_buf[0] = 1U;
 
-                     (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 5, 0);
+                     (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 5U, 0U);
 
-                     data2_desc_buf[0] = 1;
+                     data2_desc_buf[0] = 1U;
 
-                     (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 5, 0);
+                     (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 5U, 0U);
                   }
                   else if(size1 > part)
                   {
@@ -2850,9 +2850,9 @@ void IOCMD_Log_Data_Comparision(
                      table[2].size = IOCMD_WORKING_BUF_RECOMMENDED_SIZE - cntr;
                      cntr += table[2].size;
 
-                     data1_desc_buf[0] = 1;
+                     data1_desc_buf[0] = 1U;
 
-                     (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 5, 0);
+                     (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 5U, 0U);
                   }
                   else
                   {
@@ -2860,9 +2860,9 @@ void IOCMD_Log_Data_Comparision(
                      table[4].size = IOCMD_WORKING_BUF_RECOMMENDED_SIZE - cntr;
                      cntr += table[4].size;
 
-                     data2_desc_buf[0] = 1;
+                     data2_desc_buf[0] = 1U;
 
-                     (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 5, 0);
+                     (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 5U, 0U);
                   }
 #if(!IOCMD_FORCE_STRINGS_COPYING)
                }
@@ -2873,9 +2873,9 @@ void IOCMD_Log_Data_Comparision(
                   table[2].size = IOCMD_WORKING_BUF_RECOMMENDED_SIZE - cntr;
                   cntr += table[2].size;
 
-                  data1_desc_buf[0] = 1;
+                  data1_desc_buf[0] = 1U;
 
-                  (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 5, 0);
+                  (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 5U, 0U);
                }
                /* only data2 is in RAM */
                else
@@ -2884,16 +2884,16 @@ void IOCMD_Log_Data_Comparision(
                   table[4].size = IOCMD_WORKING_BUF_RECOMMENDED_SIZE - cntr;
                   cntr += table[4].size;
 
-                  data2_desc_buf[0] = 1;
+                  data2_desc_buf[0] = 1U;
 
-                  (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 5, 0);
+                  (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 5U, 0U);
                }
 #endif
             }
 
             /* exception in library - length is big endian!!! */
             buf[1] = (uint8_t)cntr;
-            buf[0] = (uint8_t)(IOCMD_DIV_BY_POWER_OF_2(cntr, 8) | 0x80);
+            buf[0] = (uint8_t)(IOCMD_DIV_BY_POWER_OF_2(cntr, 8) | 0x80U);
 
             IOCMD_PROTECTION_LOCK(IOCMD_Params);
 
@@ -2937,7 +2937,7 @@ void IOCMD_Log_Data_Comparision(
                   table,
                   Num_Elems(table),
                   (Buff_Size_DT)cntr,
-                  0,
+                  0U,
                   BUFF_FALSE,
                   BUFF_FALSE);
             }
@@ -2956,7 +2956,7 @@ void IOCMD_Log_Data_Comparision(
                   table,
                   Num_Elems(table),
                   (Buff_Size_DT)cntr,
-                  0,
+                  0U,
                   BUFF_FALSE,
                   BUFF_FALSE);
             }
@@ -3000,29 +3000,29 @@ void IOCMD_Enter_Exit(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t e
 
             if(IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_ENTRANCE_LENGTH >= 128)
             {
-               cntr2 = 2;
+               cntr2 = 2U;
             }
             else
             {
-               cntr2 = 1;
+               cntr2 = 1U;
             }
 
-            if(BUFF_UNLIKELY(BUFF_RING_GET_FREE_SIZE(ring) < (2 * (IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_ENTRANCE_LENGTH))))
+            if(BUFF_UNLIKELY(BUFF_RING_GET_FREE_SIZE(ring) < (2U * (IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_ENTRANCE_LENGTH))))
             {
-               IOCMD_reduce_buf(ring, (Buff_Size_DT)(2 * (IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_ENTRANCE_LENGTH)));
+               IOCMD_reduce_buf(ring, (Buff_Size_DT)(2U * (IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_ENTRANCE_LENGTH)));
             }
 
             buf = Buff_Ring_Data_Check_Out(
-               ring, IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_ENTRANCE_LENGTH - 2 + cntr2, BUFF_FALSE, BUFF_FALSE);
+               ring, IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_ENTRANCE_LENGTH - 2U + cntr2, BUFF_FALSE, BUFF_FALSE);
 
             cntr = IOCMD_add_standard_header_and_main_string_to_buf(
-               buf, IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_ENTRANCE_LENGTH - 2 + cntr2, cntr2, line, enter_exit, file, func_name);
+               buf, IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_ENTRANCE_LENGTH - 2U + cntr2, cntr2, line, enter_exit, file, func_name);
 
             if(IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_ENTRANCE_LENGTH >= 128)
             {
                /* exception in library - length is big endian!!! */
                buf[1] = (uint8_t)cntr;
-               buf[0] = (uint8_t)(IOCMD_DIV_BY_POWER_OF_2(cntr, 8) | 0x80);
+               buf[0] = (uint8_t)(IOCMD_DIV_BY_POWER_OF_2(cntr, 8) | 0x80U);
             }
             else
             {
@@ -3098,7 +3098,7 @@ void IOCMD_Os_Switch_Context(IOCMD_Context_ID_DT previous_service, IOCMD_Context
 #if (IOCMD_LOG_PRINT_TIME)
    IOCMD_Time_DT time;
 #endif
-   uint_fast8_t  cntr = 1;
+   uint_fast8_t  cntr = 1U;
 #if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
    Buff_Size_DT  first_ring_pos;
 #endif
@@ -3111,9 +3111,9 @@ void IOCMD_Os_Switch_Context(IOCMD_Context_ID_DT previous_service, IOCMD_Context
 
    IOCMD_PROTECTION_LOCK(IOCMD_Params);
 
-   if(BUFF_UNLIKELY(BUFF_RING_GET_FREE_SIZE(ring) < (2 * IOCMD_LOG_OS_SWITCH_CONTEXT_DESC_SIZE)))
+   if(BUFF_UNLIKELY(BUFF_RING_GET_FREE_SIZE(ring) < (2U * IOCMD_LOG_OS_SWITCH_CONTEXT_DESC_SIZE)))
    {
-      IOCMD_reduce_buf(ring, (Buff_Size_DT)(2 * IOCMD_LOG_OS_SWITCH_CONTEXT_DESC_SIZE));
+      IOCMD_reduce_buf(ring, (Buff_Size_DT)(2U * IOCMD_LOG_OS_SWITCH_CONTEXT_DESC_SIZE));
    }
 
    buf = Buff_Ring_Data_Check_Out(ring, IOCMD_LOG_OS_SWITCH_CONTEXT_DESC_SIZE, BUFF_FALSE, BUFF_FALSE);
@@ -3146,14 +3146,14 @@ void IOCMD_Os_Switch_Context(IOCMD_Context_ID_DT previous_service, IOCMD_Context
    /* time - 1 to 8 bytes; depend on time size */
    time = IOCMD_OS_GET_CURRENT_TIME();
    buf[cntr++] = ((uint8_t*)(&time))[0];
-   if(sizeof(IOCMD_Time_DT) > 1)
+   if(sizeof(IOCMD_Time_DT) > 1U)
    {
       buf[cntr++] = ((uint8_t*)(&time))[1];
-      if(sizeof(IOCMD_Time_DT) > 2)
+      if(sizeof(IOCMD_Time_DT) > 2U)
       {
          buf[cntr++] = ((uint8_t*)(&time))[2];
          buf[cntr++] = ((uint8_t*)(&time))[3];
-         if(sizeof(IOCMD_Time_DT) > 4)
+         if(sizeof(IOCMD_Time_DT) > 4U)
          {
             buf[cntr++] = ((uint8_t*)(&time))[4];
             buf[cntr++] = ((uint8_t*)(&time))[5];
@@ -3168,10 +3168,10 @@ void IOCMD_Os_Switch_Context(IOCMD_Context_ID_DT previous_service, IOCMD_Context
    buf[cntr++] = IOCMD_LOG_OS_CONTEXT_SWITCH;
 
    buf[cntr++] = ((uint8_t*)(&previous_service))[0];
-   if(sizeof(IOCMD_Context_ID_DT) > 1)
+   if(sizeof(IOCMD_Context_ID_DT) > 1U)
    {
       buf[cntr++] = ((uint8_t*)(&previous_service))[1];
-      if(sizeof(IOCMD_Context_ID_DT) > 2)
+      if(sizeof(IOCMD_Context_ID_DT) > 2U)
       {
          buf[cntr++] = ((uint8_t*)(&previous_service))[2];
          buf[cntr++] = ((uint8_t*)(&previous_service))[3];
@@ -3179,10 +3179,10 @@ void IOCMD_Os_Switch_Context(IOCMD_Context_ID_DT previous_service, IOCMD_Context
    }
 
    buf[cntr++] = ((uint8_t*)(&next_service))[0];
-   if(sizeof(IOCMD_Context_ID_DT) > 1)
+   if(sizeof(IOCMD_Context_ID_DT) > 1U)
    {
       buf[cntr++] = ((uint8_t*)(&next_service))[1];
-      if(sizeof(IOCMD_Context_ID_DT) > 2)
+      if(sizeof(IOCMD_Context_ID_DT) > 2U)
       {
          buf[cntr++] = ((uint8_t*)(&next_service))[2];
          buf[cntr++] = ((uint8_t*)(&next_service))[3];
@@ -3249,7 +3249,7 @@ void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_quiet_logs, const IOCMD_Print_
    IOCMD_Bool_DT continue_reading = IOCMD_FALSE;
 
    /* check function params */
-   if(IOCMD_CHECK_PTR(const IOCMD_Print_Exe_Params_XT, exe) && (IOCMD_Params.levels_tab_size > 0))
+   if(IOCMD_CHECK_PTR(const IOCMD_Print_Exe_Params_XT, exe) && (IOCMD_Params.levels_tab_size > 0U))
    {
       /* check function params */
       if(IOCMD_CHECK_HANDLER(IOCMD_Print_Text,              exe->print_string)
@@ -3276,13 +3276,13 @@ void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_quiet_logs, const IOCMD_Print_
             do
             {
 #if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
-               offset_main = 1;
-               len_main    = 0;
+               offset_main = 1U;
+               len_main    = 0U;
 
-               if(sizeof(temp) == Buff_Ring_Peak(&(IOCMD_Params.main_ring_buf), temp, sizeof(temp), 0, BUFF_FALSE))
+               if(sizeof(temp) == Buff_Ring_Peak(&(IOCMD_Params.main_ring_buf), temp, sizeof(temp), 0U, BUFF_FALSE))
                {
-                  len_main += temp[0] & 0x7F;
-                  if(0 != (temp[0] & 0x80))
+                  len_main += temp[0] & 0x7FU;
+                  if(0U != (temp[0] & 0x80U))
                   {
                      len_main = IOCMD_MUL_BY_POWER_OF_2(len_main, 8);
                      len_main += temp[1];
@@ -3299,22 +3299,22 @@ void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_quiet_logs, const IOCMD_Print_
                }
                else
                {
-                  main_buf_global_cntr = -1;
+                  main_buf_global_cntr = (IOCMD_global_cntr_DT)(-1);
                }
 #endif
 
 #if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
-               offset_quiet = 1;
-               len_quiet    = 0;
+               offset_quiet = 1U;
+               len_quiet    = 0U;
 
                if(IOCMD_BOOL_IS_FALSE(print_quiet_logs))
                {
-                  quiet_buf_global_cntr = -1;
+                  quiet_buf_global_cntr = (IOCMD_global_cntr_DT)(-1);
                }
                else if(sizeof(temp) == Buff_Ring_Peak(&(IOCMD_Params.quiet_ring_buf), temp, sizeof(temp), 0, BUFF_FALSE))
                {
-                  len_quiet += temp[0] & 0x7F;
-                  if(0 != (temp[0] & 0x80))
+                  len_quiet += temp[0] & 0x7FU;
+                  if(0U != (temp[0] & 0x80U))
                   {
                      len_quiet = IOCMD_MUL_BY_POWER_OF_2(len_quiet, 8);
                      len_quiet += temp[1];
@@ -3331,7 +3331,7 @@ void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_quiet_logs, const IOCMD_Print_
                }
                else
                {
-                  quiet_buf_global_cntr = -1;
+                  quiet_buf_global_cntr = (IOCMD_global_cntr_DT)(-1);
                }
 #endif
 
@@ -3349,8 +3349,8 @@ void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_quiet_logs, const IOCMD_Print_
                   else
                   {
                      (void)Buff_Ring_Remove(&(IOCMD_Params.main_ring_buf), len_main, BUFF_FALSE);
-                     len    = 0;
-                     offset = 0;
+                     len    = 0U;
+                     offset = 0U;
                   }
                }
                else if(quiet_buf_global_cntr > main_buf_global_cntr)
@@ -3365,8 +3365,8 @@ void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_quiet_logs, const IOCMD_Print_
                   else
                   {
                      (void)Buff_Ring_Remove(&(IOCMD_Params.main_ring_buf), len_main, BUFF_FALSE);
-                     len    = 0;
-                     offset = 0;
+                     len    = 0U;
+                     offset = 0U;
                   }
                }
                else
@@ -3381,8 +3381,8 @@ void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_quiet_logs, const IOCMD_Print_
                   else
                   {
                      (void)Buff_Ring_Remove(&(IOCMD_Params.quiet_ring_buf), len_quiet, BUFF_FALSE);
-                     len    = 0;
-                     offset = 0;
+                     len    = 0U;
+                     offset = 0U;
                   }
                }
 #elif(IOCMD_LOG_MAIN_BUF_SIZE > 0)
@@ -3396,8 +3396,8 @@ void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_quiet_logs, const IOCMD_Print_
                else
                {
                   (void)Buff_Ring_Remove(&(IOCMD_Params.main_ring_buf), len_main, BUFF_FALSE);
-                  len    = 0;
-                  offset = 0;
+                  len    = 0U;
+                  offset = 0U;
                }
 #else
                if(len_quiet <= working_buf_size)
@@ -3410,8 +3410,8 @@ void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_quiet_logs, const IOCMD_Print_
                else
                {
                   (void)Buff_Ring_Remove(&(IOCMD_Params.quiet_ring_buf), len_quiet, BUFF_FALSE);
-                  len    = 0;
-                  offset = 0;
+                  len    = 0U;
+                  offset = 0U;
                }
 #endif
 
@@ -3453,7 +3453,7 @@ void IOCMD_Set_All_Logs(uint8_t level, uint8_t quiet_level)
 {
    IOCMD_global_cntr_DT i;
 
-   for(i = 0; i < IOCMD_Params.levels_tab_size; i++)
+   for(i = 0U; i < IOCMD_Params.levels_tab_size; i++)
    {
       IOCMD_Params.levels_tab_data[i].level               = level;
       IOCMD_Params.levels_tab_data[i].quiet_level          = quiet_level;
@@ -3465,7 +3465,7 @@ void IOCMD_Set_All_Entrances(uint8_t entrance_level)
 {
    IOCMD_global_cntr_DT i;
 
-   for(i = 0; i < IOCMD_Params.levels_tab_size; i++)
+   for(i = 0U; i < IOCMD_Params.levels_tab_size; i++)
    {
       IOCMD_Params.levels_tab_data[i].entrance_logging_state  = entrance_level;
    }
