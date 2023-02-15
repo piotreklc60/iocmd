@@ -152,7 +152,7 @@ static size_t iocmd_cmd_get_margin(const IOCMD_Log_Level_Const_Params_XT *tree, 
          {
             current_margin += IOCMD_IN_BRANCH_OFFSET;
          }
-         else if(IOCMD_LOG_RECORD_TYPE_GROUP == tree[cntr].record_type)
+         else if(IOCMD_LOG_RECORD_TYPE_MODULE == tree[cntr].record_type)
          {
             current_margin += IOCMD_IN_BRANCH_OFFSET + IOCMD_IN_BRANCH_OFFSET;
          }
@@ -309,7 +309,7 @@ static void iocmd_cmd_list(IOCMD_Arg_DT *arg)
          step = "|->";
          step_size = IOCMD_IN_BRANCH_OFFSET;
       }
-      else /* if(IOCMD_LOG_RECORD_TYPE_GROUP == config[cntr].record_type) */
+      else /* if(IOCMD_LOG_RECORD_TYPE_ITEM == config[cntr].record_type) */
       {
          step = "*  |->";
          step_size = 0;
@@ -565,4 +565,3 @@ bool_t IOCMD_Parse_Lib_Commands(int argc, const char* argv[], const /*IOCMD_Prin
 {
    return IOCMD_Parse_Command(argc, argv, arg_out, iocmd_cmd_tab, Num_Elems(iocmd_cmd_tab));
 }
-
