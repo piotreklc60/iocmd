@@ -73,6 +73,44 @@
 #define IOCMD_PROC_ONE_BUFFERED_LOG_TEMP_BUF_SIZE  ((IOCMD_LOG_DATA_NUM_COLUMNS_TO_PRINT * 8) + 1)
 #endif
 
+#define IOCMD_STORE_CONTEXT_ID_IN_BUF(_buf, _pos, _context_id) \
+   (_buf)[(_pos)++] = ((uint8_t*)(&_context_id))[0];           \
+   if(sizeof(IOCMD_Context_ID_DT) > 1U)                        \
+   {                                                           \
+      (_buf)[(_pos)++] = ((uint8_t*)(&_context_id))[1];        \
+      if(sizeof(IOCMD_Context_ID_DT) > 2U)                     \
+      {                                                        \
+         (_buf)[(_pos)++] = ((uint8_t*)(&_context_id))[2];     \
+         (_buf)[(_pos)++] = ((uint8_t*)(&_context_id))[3];     \
+         if(sizeof(IOCMD_Context_ID_DT) > 4U)                  \
+         {                                                     \
+            (_buf)[(_pos)++] = ((uint8_t*)(&_context_id))[4];  \
+            (_buf)[(_pos)++] = ((uint8_t*)(&_context_id))[5];  \
+            (_buf)[(_pos)++] = ((uint8_t*)(&_context_id))[6];  \
+            (_buf)[(_pos)++] = ((uint8_t*)(&_context_id))[7];  \
+         }                                                     \
+      }                                                        \
+   }
+
+#define IOCMD_STORE_TIME_IN_BUF(_buf, _pos, _time)       \
+   (_buf)[(_pos)++] = ((uint8_t*)(&_time))[0];           \
+   if(sizeof(IOCMD_Time_DT) > 1U)                        \
+   {                                                     \
+      (_buf)[(_pos)++] = ((uint8_t*)(&_time))[1];        \
+      if(sizeof(IOCMD_Time_DT) > 2U)                     \
+      {                                                  \
+         (_buf)[(_pos)++] = ((uint8_t*)(&_time))[2];     \
+         (_buf)[(_pos)++] = ((uint8_t*)(&_time))[3];     \
+         if(sizeof(IOCMD_Time_DT) > 4U)                  \
+         {                                               \
+            (_buf)[(_pos)++] = ((uint8_t*)(&_time))[4];  \
+            (_buf)[(_pos)++] = ((uint8_t*)(&_time))[5];  \
+            (_buf)[(_pos)++] = ((uint8_t*)(&_time))[6];  \
+            (_buf)[(_pos)++] = ((uint8_t*)(&_time))[7];  \
+         }                                               \
+      }                                                  \
+   }
+
 typedef struct IOCMD_Log_Level_Params_eXtended_Tag
 {
    const IOCMD_Log_Level_Const_Params_XT *const_tab;
@@ -621,23 +659,7 @@ static uint_fast16_t IOCMD_add_standard_header_and_main_string_to_buf(
 #if (IOCMD_LOG_PRINT_TIME)
    /* time - 1 to 8 bytes; depend on time size */
    time = IOCMD_OS_GET_CURRENT_TIME();
-   buf[pos++] = ((uint8_t*)(&time))[0];
-   if(sizeof(IOCMD_Time_DT) > 1U)
-   {
-      buf[pos++] = ((uint8_t*)(&time))[1];
-      if(sizeof(IOCMD_Time_DT) > 2U)
-      {
-         buf[pos++] = ((uint8_t*)(&time))[2];
-         buf[pos++] = ((uint8_t*)(&time))[3];
-         if(sizeof(IOCMD_Time_DT) > 4U)
-         {
-            buf[pos++] = ((uint8_t*)(&time))[4];
-            buf[pos++] = ((uint8_t*)(&time))[5];
-            buf[pos++] = ((uint8_t*)(&time))[6];
-            buf[pos++] = ((uint8_t*)(&time))[7];
-         }
-      }
-   }
+   IOCMD_STORE_TIME_IN_BUF(buf, pos, time);
 #endif
 
    /* level / log type */
@@ -650,16 +672,7 @@ static uint_fast16_t IOCMD_add_standard_header_and_main_string_to_buf(
 #if (IOCMD_LOG_PRINT_OS_CONTEXT)
    /* context ID - 1 to 4 bytes, depend on context ID size */
    context_id = IOCMD_OS_GET_CURRENT_CONTEXT_ID();
-   buf[pos++] = ((uint8_t*)(&context_id))[0];
-   if(sizeof(IOCMD_Context_ID_DT) > 1U)
-   {
-      buf[pos++] = ((uint8_t*)(&context_id))[1];
-      if(sizeof(IOCMD_Context_ID_DT) > 2U)
-      {
-         buf[pos++] = ((uint8_t*)(&context_id))[2];
-         buf[pos++] = ((uint8_t*)(&context_id))[3];
-      }
-   }
+   IOCMD_STORE_CONTEXT_ID_IN_BUF(buf, pos, context_id);
 
    /* context type - 1 byte */
    context_type = IOCMD_OS_GET_CURRENT_CONTEXT_TYPE();
@@ -795,6 +808,34 @@ static uint_fast16_t IOCMD_get_log_header_main_cntr_time_and_level_from_buf(
    return cntr;
 } /* IOCMD_get_log_header_main_cntr_time_and_level_from_buf */
 
+#if (IOCMD_LOG_PRINT_OS_CONTEXT)
+
+static uint_fast16_t IOCMD_read_context_id(const uint8_t *buf, uint_fast16_t pos, IOCMD_Context_ID_DT *context)
+{
+   /* context ID - 1 to 4 bytes, depend on context ID size */
+   ((uint8_t*)context)[0] = buf[pos++];
+   if(sizeof(IOCMD_Context_ID_DT) > 1U)
+   {
+      ((uint8_t*)context)[1] = buf[pos++];
+      if(sizeof(IOCMD_Context_ID_DT) > 2U)
+      {
+         ((uint8_t*)context)[2] = buf[pos++];
+         ((uint8_t*)context)[3] = buf[pos++];
+         if(sizeof(IOCMD_Context_ID_DT) > 4U)
+         {
+            ((uint8_t*)context)[4] = buf[pos++];
+            ((uint8_t*)context)[5] = buf[pos++];
+            ((uint8_t*)context)[6] = buf[pos++];
+            ((uint8_t*)context)[7] = buf[pos++];
+         }
+      }
+   }
+
+   return pos;
+}/* IOCMD_read_context_id */
+
+#endif
+
 static uint_fast16_t IOCMD_get_rest_of_log_header_and_main_string_from_buf(
    IOCMD_Buffer_Convert_UT *convert, IOCMD_standard_header_and_main_string_XT *header, const uint8_t *buf, uint_fast16_t buf_size)
 {
@@ -805,17 +846,8 @@ static uint_fast16_t IOCMD_get_rest_of_log_header_and_main_string_from_buf(
    ((uint8_t*)(&(header->line)))[1] = buf[cntr++];
 
 #if (IOCMD_LOG_PRINT_OS_CONTEXT)
-   /* context ID - 1 to 4 bytes, depend on context ID size */
-   ((uint8_t*)(&(header->context_id)))[0] = buf[cntr++];
-   if(sizeof(IOCMD_Context_ID_DT) > 1U)
-   {
-      ((uint8_t*)(&(header->context_id)))[1] = buf[cntr++];
-      if(sizeof(IOCMD_Context_ID_DT) > 2U)
-      {
-         ((uint8_t*)(&(header->context_id)))[2] = buf[cntr++];
-         ((uint8_t*)(&(header->context_id)))[3] = buf[cntr++];
-      }
-   }
+   /* context ID - 1 to 8 bytes, depend on context ID size */
+   cntr = IOCMD_read_context_id(buf, cntr, &(header->context_id));
 
    /* context type - 1 byte */
    ((uint8_t*)(&(header->context_type)))[0] = buf[cntr++];
@@ -1310,7 +1342,7 @@ static void IOCMD_proc_one_buffered_log(
 #endif
 #if (IOCMD_LOG_PRINT_OS_CONTEXT)
             IOCMD_OS_GET_CONTEXT_TYPE_NAME(header.context_type),
-            header.context_id,
+            IOCMD_OS_GET_CONTEXT_NUMBER(header.context_type, header.context_id),
    #if (IOCMD_LOG_PRINT_OS_CONTEXT_NAME)
             context_name_len,
             context_name,
@@ -1548,27 +1580,8 @@ static void IOCMD_proc_one_buffered_log(
 #if (IOCMD_LOG_PRINT_OS_CONTEXT && IOCMD_LOGS_TREE_OS_LOG_CONTEXT_SWITCH)
    else if(IOCMD_LOG_OS_CONTEXT_SWITCH == header.level)
    {
-      ((uint8_t*)(&previous_context))[0] = buf[cntr++];
-      if(sizeof(IOCMD_Context_ID_DT) > 1U)
-      {
-         ((uint8_t*)(&previous_context))[1] = buf[cntr++];
-         if(sizeof(IOCMD_Context_ID_DT) > 2U)
-         {
-            ((uint8_t*)(&previous_context))[2] = buf[cntr++];
-            ((uint8_t*)(&previous_context))[3] = buf[cntr++];
-         }
-      }
-
-      ((uint8_t*)(&current_context))[0] = buf[cntr++];
-      if(sizeof(IOCMD_Context_ID_DT) > 1U)
-      {
-         ((uint8_t*)(&current_context))[1] = buf[cntr++];
-         if(sizeof(IOCMD_Context_ID_DT) > 2U)
-         {
-            ((uint8_t*)(&current_context))[2] = buf[cntr++];
-            ((uint8_t*)(&current_context))[3] = buf[cntr++];
-         }
-      }
+      cntr = IOCMD_read_context_id(buf, cntr, &previous_context);
+      cntr = IOCMD_read_context_id(buf, cntr, &current_context);
 
       IOCMD_print_main_cntr(exe, &header, is_quiet_log);
 
@@ -3058,7 +3071,7 @@ void IOCMD_Enter_Exit(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t e
 
 #if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
             /**
-             * Function Buff_Ring_To_Ring_Copy gets offset from begining of busy size fo we have to remember here busy size
+             * Function Buff_Ring_To_Ring_Copy gets offset from begining of busy size so we have to remember here busy size
              * instead result of Buff_Ring_Data_Check_In which is offset from begining of buffer memory
              */
             first_ring_pos = BUFF_RING_GET_BUSY_SIZE(ring);
@@ -3096,7 +3109,7 @@ void IOCMD_Os_Switch_Context(IOCMD_Context_ID_DT previous_service, IOCMD_Context
    Buff_Ring_XT *ring;
    uint8_t      *buf;
 #if (IOCMD_LOG_PRINT_TIME)
-   IOCMD_Time_DT time;
+   IOCMD_Time_DT time = IOCMD_OS_GET_CURRENT_TIME();
 #endif
    uint_fast8_t  cntr = 1U;
 #if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
@@ -3144,50 +3157,14 @@ void IOCMD_Os_Switch_Context(IOCMD_Context_ID_DT previous_service, IOCMD_Context
 
 #if (IOCMD_LOG_PRINT_TIME)
    /* time - 1 to 8 bytes; depend on time size */
-   time = IOCMD_OS_GET_CURRENT_TIME();
-   buf[cntr++] = ((uint8_t*)(&time))[0];
-   if(sizeof(IOCMD_Time_DT) > 1U)
-   {
-      buf[cntr++] = ((uint8_t*)(&time))[1];
-      if(sizeof(IOCMD_Time_DT) > 2U)
-      {
-         buf[cntr++] = ((uint8_t*)(&time))[2];
-         buf[cntr++] = ((uint8_t*)(&time))[3];
-         if(sizeof(IOCMD_Time_DT) > 4U)
-         {
-            buf[cntr++] = ((uint8_t*)(&time))[4];
-            buf[cntr++] = ((uint8_t*)(&time))[5];
-            buf[cntr++] = ((uint8_t*)(&time))[6];
-            buf[cntr++] = ((uint8_t*)(&time))[7];
-         }
-      }
-   }
+   IOCMD_STORE_TIME_IN_BUF(buf, cntr, time);
 #endif
 
    /* level / log type */
    buf[cntr++] = IOCMD_LOG_OS_CONTEXT_SWITCH;
 
-   buf[cntr++] = ((uint8_t*)(&previous_service))[0];
-   if(sizeof(IOCMD_Context_ID_DT) > 1U)
-   {
-      buf[cntr++] = ((uint8_t*)(&previous_service))[1];
-      if(sizeof(IOCMD_Context_ID_DT) > 2U)
-      {
-         buf[cntr++] = ((uint8_t*)(&previous_service))[2];
-         buf[cntr++] = ((uint8_t*)(&previous_service))[3];
-      }
-   }
-
-   buf[cntr++] = ((uint8_t*)(&next_service))[0];
-   if(sizeof(IOCMD_Context_ID_DT) > 1U)
-   {
-      buf[cntr++] = ((uint8_t*)(&next_service))[1];
-      if(sizeof(IOCMD_Context_ID_DT) > 2U)
-      {
-         buf[cntr++] = ((uint8_t*)(&next_service))[2];
-         buf[cntr++] = ((uint8_t*)(&next_service))[3];
-      }
-   }
+   IOCMD_STORE_CONTEXT_ID_IN_BUF(buf, cntr, previous_service);
+   IOCMD_STORE_CONTEXT_ID_IN_BUF(buf, cntr, next_service);
 
    buf[0] = (uint8_t)cntr;
 
@@ -3455,8 +3432,8 @@ void IOCMD_Set_All_Logs(uint8_t level, uint8_t quiet_level)
 
    for(i = 0U; i < IOCMD_Params.levels_tab_size; i++)
    {
-      IOCMD_Params.levels_tab_data[i].level               = level;
-      IOCMD_Params.levels_tab_data[i].quiet_level          = quiet_level;
+      IOCMD_Params.levels_tab_data[i].level        = level;
+      IOCMD_Params.levels_tab_data[i].quiet_level  = quiet_level;
    }
 }
 
