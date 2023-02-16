@@ -286,7 +286,7 @@
 #endif
 
 /**
- * If IOCMD_LOG_PRINT_OS_CONTEXT was declared to IOCMD_FEATURE_ENABLED then this macro will be used by library to get number of current context
+ * If IOCMD_LOG_PRINT_OS_CONTEXT was declared to IOCMD_FEATURE_ENABLED then this macro will be used by library to get identifier of current context
  * (thread ID or interruption ID).
  * For this reason this macro shall be re-defined to some mechanism (function or reading global variable) which will return
  * current context ID.
@@ -323,6 +323,15 @@
  */
 #ifndef IOCMD_LOG_PRINT_OS_CONTEXT_NAME
 #define IOCMD_LOG_PRINT_OS_CONTEXT_NAME         IOCMD_FEATURE_ENABLED
+#endif
+
+/**
+ * If IOCMD_LOG_PRINT_OS_CONTEXT was declared to IOCMD_FEATURE_ENABLED then this macro will be used by library to translate context ID
+ * to number understandable (or more user-friendly) which will be printed in log. It is optional, if for example ID was actually
+ * a pointer to structure with parameters instead of real number.
+ */
+#ifndef IOCMD_OS_GET_CONTEXT_NUMBER
+#define IOCMD_OS_GET_CONTEXT_NUMBER(type, id)   id
 #endif
 
 /**
