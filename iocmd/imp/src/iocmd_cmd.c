@@ -184,6 +184,20 @@ static void iocmd_cmd_print_header(const IOCMD_Print_Exe_Params_XT *exe)
    {
       IOCMD_Oprintf_Line(exe, "%2d - %s", cntr, IOCMD_cmd_entrances_state[cntr]);
    }
+
+   IOCMD_Oprintf_Line(exe, "Logs abbreviations description:"
+      IOCMD_ENDLINE " \"CL%smain log"
+      IOCMD_ENDLINE " \"CQ%squiet log"
+      IOCMD_ENDLINE " \"CE%sentrances"
+      IOCMD_ENDLINE " \"L%smain log"
+      IOCMD_ENDLINE " \"Q%squiet log"
+      IOCMD_ENDLINE " \"E%sentrances",
+      "\" - compiled-in default level (set at each startup) for ",
+      "\" - compiled-in default level (set at each startup) for ",
+      "\" - compiled-in default level (set at each startup) for ",
+      "\" - current level for ",
+      "\" - current level for ",
+      "\" - current level for ");
 } /* iocmd_cmd_print_header */
 
 static uint32_t iocmd_get_log_id(IOCMD_Arg_DT *arg)
@@ -278,7 +292,8 @@ static IOCMD_Bool_DT iocmd_cmd_get_log_id_and_entrance_id(IOCMD_Arg_DT *arg, uin
 
 static void iocmd_cmd_list(IOCMD_Arg_DT *arg)
 {
-   const char *step;
+   const char *step1;
+   const char *step2;
    const char *name;
 #if(IOCMD_CMD_LOGS_USE_DESCRIPTIONS)
    const char *desc;
@@ -301,17 +316,20 @@ static void iocmd_cmd_list(IOCMD_Arg_DT *arg)
    {
       if(IOCMD_LOG_RECORD_TYPE_MODULE == config[cntr].record_type)
       {
-         step = "";
+         step1 = "";
+         step2 = "";
          step_size = IOCMD_IN_BRANCH_OFFSET + IOCMD_IN_BRANCH_OFFSET;
       }
       else if(IOCMD_LOG_RECORD_TYPE_GROUP == config[cntr].record_type)
       {
-         step = "|->";
+         step1 = "";
+         step2 = IOCMD_IN_BRANCH_STEP;
          step_size = IOCMD_IN_BRANCH_OFFSET;
       }
       else /* if(IOCMD_LOG_RECORD_TYPE_ITEM == config[cntr].record_type) */
       {
-         step = "*  |->";
+         step1 = IOCMD_IN_BRANCH_STEP;
+         step2 = IOCMD_IN_BRANCH_ITEM;
          step_size = 0;
       }
 
@@ -329,11 +347,11 @@ static void iocmd_cmd_list(IOCMD_Arg_DT *arg)
       }
 #endif
 
-      IOCMD_Oprintf_Line(arg->arg_out, "%4d -> %s%-*s - CL: %-9s / CQ: %-9s / CE: %-5s / L: %-9s / Q: %-9s / E: %-5s"
+      IOCMD_Oprintf_Line(arg->arg_out, "%4d -> %s%S%-*s - CL: %-9s / CQ: %-9s / CE: %-5s / L: %-9s / Q: %-9s / E: %-5s"
 #if(IOCMD_CMD_LOGS_USE_DESCRIPTIONS)
          " - %s",
 #endif
-         cntr, step, names_margin + step_size, name,
+         cntr, step1, step2, names_margin + step_size, name,
          levels[config[cntr].default_level], levels[config[cntr].default_quiet_level_log], IOCMD_cmd_entrances_state[config[cntr].default_entrance_logging_state],
          levels[state[cntr].level], levels[state[cntr].quiet_level], IOCMD_cmd_entrances_state[state[cntr].entrance_logging_state]
 #if(IOCMD_CMD_LOGS_USE_DESCRIPTIONS)
@@ -565,3 +583,4 @@ bool_t IOCMD_Parse_Lib_Commands(int argc, const char* argv[], const /*IOCMD_Prin
 {
    return IOCMD_Parse_Command(argc, argv, arg_out, iocmd_cmd_tab, Num_Elems(iocmd_cmd_tab));
 }
+
