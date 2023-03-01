@@ -323,7 +323,7 @@ static void iocmd_cmd_list(IOCMD_Arg_DT *arg)
       else if(IOCMD_LOG_RECORD_TYPE_GROUP == config[cntr].record_type)
       {
          step1 = "";
-         step2 = IOCMD_IN_BRANCH_STEP;
+         step2 = IOCMD_IN_BRANCH_ITEM;
          step_size = IOCMD_IN_BRANCH_OFFSET;
       }
       else /* if(IOCMD_LOG_RECORD_TYPE_ITEM == config[cntr].record_type) */
@@ -347,7 +347,7 @@ static void iocmd_cmd_list(IOCMD_Arg_DT *arg)
       }
 #endif
 
-      IOCMD_Oprintf_Line(arg->arg_out, "%4d -> %s%S%-*s - CL: %-9s / CQ: %-9s / CE: %-5s / L: %-9s / Q: %-9s / E: %-5s"
+      IOCMD_Oprintf_Line(arg->arg_out, "%4d -> %s%s%-*s - CL: %-9s / CQ: %-9s / CE: %-5s / L: %-9s / Q: %-9s / E: %-5s"
 #if(IOCMD_CMD_LOGS_USE_DESCRIPTIONS)
          " - %s",
 #endif
