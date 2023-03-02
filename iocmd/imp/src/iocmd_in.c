@@ -510,7 +510,7 @@ static void iocmd_print_tree(
                   IOCMD_EXTERN_PRINTF_LINE_0("");
 #endif
 
-                  if(('\0' != desc[pos]) && (sub_elem_cntr >= 0))
+                  if('\0' != desc[pos])
                   {
                      for(sub_elem_marker = 0; sub_elem_marker < (sub_elem_cntr + branch_additional_step); sub_elem_marker++)
                      {
