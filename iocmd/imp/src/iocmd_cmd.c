@@ -579,8 +579,9 @@ static void iocmd_cmd_stat(IOCMD_Arg_DT *arg)
    IOCMD_Oprintf_Line(arg->arg_out, "quiet buf %-19s: %d", "used size peak",        params.quiet_buf_max_used_size);
 } /* iocmd_cmd_stat */
 
-bool_t IOCMD_Parse_Lib_Commands(int argc, const char* argv[], const /*IOCMD_Print_Exe_Params_XT*/ void *arg_out)
+IOCMD_Bool_DT IOCMD_Parse_Lib_Commands(
+   int argc, const char* argv[], const /*IOCMD_Print_Exe_Params_XT*/ void *arg_out, IOCMD_Bool_DT is_last_branch)
 {
-   return IOCMD_Parse_Command(argc, argv, arg_out, iocmd_cmd_tab, Num_Elems(iocmd_cmd_tab));
+   return IOCMD_Parse_Command(argc, argv, arg_out, iocmd_cmd_tab, Num_Elems(iocmd_cmd_tab), is_last_branch);
 }
 

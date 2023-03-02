@@ -35,15 +35,16 @@
 
 #define IOCMD_OUT_MINIMAL_STACK_USAGE           true
 
-/*
+#if 1
+
 #define IOCMD_PRINT_ENDLINE                                 "<endl>"
 
 #define IOCMD_EXTERN_PRINTF_0(_format)                      main_printf(_format)
 #define IOCMD_EXTERN_PRINTF_3(_format, _a1, _a2, _a3)       main_printf(_format, _a1, _a2, _a3)
 #define IOCMD_EXTERN_PRINTF_4(_format, _a1, _a2, _a3, _a4)  main_printf(_format, _a1, _a2, _a3, _a4)
 #define IOCMD_EXTERN_PRINTF_LINE_0(_format)                 main_printf(_format IOCMD_PRINT_ENDLINE)
-//*/
 
+#else
 
 #define IOCMD_PRINT_ENDLINE                                 "\n\r"
 
@@ -51,7 +52,9 @@
 #define IOCMD_EXTERN_PRINTF_3(_format, _a1, _a2, _a3)       printf(_format, _a1, _a2, _a3)
 #define IOCMD_EXTERN_PRINTF_4(_format, _a1, _a2, _a3, _a4)  printf(_format, _a1, _a2, _a3, _a4)
 #define IOCMD_EXTERN_PRINTF_LINE_0(_format)                 printf(_format IOCMD_PRINT_ENDLINE)
-//*/
+
+#endif
+
 int main_printf(const char *format, ...);
 
 #endif

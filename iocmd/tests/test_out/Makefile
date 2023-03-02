@@ -40,7 +40,7 @@ gcov:
 	@echo " "
 	@echo "IOCMD part coverage:"
 	@echo " "
-	gcov -b -l -c $(IOCMD_SRC)
+	gcov -b -l -c $(addprefix test-, $(IOCMD_SRC))
 	
 gcovr:
 	echo " "
@@ -53,11 +53,11 @@ gcov_result:
 	@echo " "
 	@echo "IOCMD part coverage:"
 	@echo " "
-	gcov -b -l -c $(IOCMD_SRC) >> coverage_result_iocmd.txt
+	gcov -b -l -c $(addprefix test-, $(IOCMD_SRC)) >> coverage_result_iocmd.txt
 	@echo " "
 	@echo "Application part coverage:"
 	@echo " "
-	gcov -b -l -c $(APPL_SRC) >> coverage_result_appl.txt
+	gcov -b -l -c $(addprefix test-, $(APPL_SRC)) >> coverage_result_appl.txt
 
 all:
 	@echo " "

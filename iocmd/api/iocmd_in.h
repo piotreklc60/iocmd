@@ -173,26 +173,30 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
    const char                      *argv[],
    const IOCMD_Print_Exe_Params_XT *arg_out,
    const IOCMD_Command_Tree_XT     *cmd_tree,
-   size_t                           cmd_tree_num_elems);
+   size_t                           cmd_tree_num_elems,
+   IOCMD_Bool_DT                    is_last_branch);
 
 #if(IOCMD_IN_SUPPORT_TREE_PRINTING)
 void IOCMD_Print_Tree_List(
    const IOCMD_Print_Exe_Params_XT *arg_out,
    const IOCMD_Command_Tree_XT     *cmd_tree,
    size_t                           cmd_tree_num_elems,
-   IOCMD_Bool_DT                    single_tree_only);
+   IOCMD_Bool_DT                    single_tree_only,
+   IOCMD_Bool_DT                    is_last_branch);
 
 void IOCMD_Print_Tree_Help(
    const IOCMD_Print_Exe_Params_XT *arg_out,
    const IOCMD_Command_Tree_XT     *cmd_tree,
    size_t                           cmd_tree_num_elems,
-   IOCMD_Bool_DT                    single_tree_only);
+   IOCMD_Bool_DT                    single_tree_only,
+   IOCMD_Bool_DT                    is_last_branch);
 
 void IOCMD_Print_Tree_Manual(
    const IOCMD_Print_Exe_Params_XT *arg_out,
    const IOCMD_Command_Tree_XT     *cmd_tree,
    size_t                           cmd_tree_num_elems,
-   IOCMD_Bool_DT                    single_tree_only);
+   IOCMD_Bool_DT                    single_tree_only,
+   IOCMD_Bool_DT                    is_last_branch);
 #endif
 
 IOCMD_Bool_DT IOCMD_Arg_Init(IOCMD_Arg_DT *arg, int argc, const char* argv[]);

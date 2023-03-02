@@ -358,9 +358,10 @@ static IOCMD_Bool_DT iocmd_get_val32(IOCMD_Arg_DT *arg, const char *terminate_ch
 
 #if(IOCMD_IN_SUPPORT_TREE_PRINTING)
 static size_t iocmd_get_tree_margin(
-   const IOCMD_Command_Tree_XT              *cmd_tree,
-   size_t                                    cmd_tree_num_elems,
-   IOCMD_Bool_DT                             child_branch_only)
+   const IOCMD_Command_Tree_XT  *cmd_tree,
+   size_t                        cmd_tree_num_elems,
+   IOCMD_Bool_DT                 child_branch_only,
+   IOCMD_Bool_DT                 single_tree_only)
 {
    size_t result = 0;
    size_t current_margin;
@@ -390,6 +391,10 @@ static size_t iocmd_get_tree_margin(
          {
             sub_elem_cntr--;
          }
+         if(IOCMD_BOOL_IS_TRUE(single_tree_only) && (0 == sub_elem_cntr))
+         {
+            break;
+         }
       }
    }
 
@@ -407,9 +412,10 @@ static void iocmd_print_tree(
    IOCMD_Bool_DT                    single_tree_only)
 {
    const char *desc;
-   size_t margin = iocmd_get_tree_margin(cmd_tree, cmd_tree_num_elems, child_branch_only);
+   size_t margin = iocmd_get_tree_margin(cmd_tree, cmd_tree_num_elems, child_branch_only, single_tree_only);
    size_t cntr;
    size_t sub_elem_cntr = 0;
+   size_t branch_additional_step;
    size_t sub_elem_marker;
    size_t pos;
    size_t len;
@@ -456,6 +462,8 @@ static void iocmd_print_tree(
          {
             desc = cmd_tree[cntr].desc;
             pos  = 0;
+            branch_additional_step =
+               ((IOCMD_RECORD_SUB_GROUP_START == cmd_tree[cntr].record_type) || (0 == sub_elem_cntr)) ? 1 : 0;
 
             do
             {
@@ -471,7 +479,7 @@ static void iocmd_print_tree(
                IOCMD_EXTERN_PRINTF_4("%*s%.*s", dist, "", len, &desc[pos]);
 #endif
 
-               dist = margin + 5;
+               dist = margin + IOCMD_IN_BRANCH_OFFSET;
                pos += len;
                pos += iocmd_ommit_low_special_chars(&desc[pos]);
 
@@ -502,27 +510,17 @@ static void iocmd_print_tree(
                   IOCMD_EXTERN_PRINTF_LINE_0("");
 #endif
 
-                  if(('\0' != desc[pos]) && (sub_elem_cntr > 0))
+                  if(('\0' != desc[pos]) && (sub_elem_cntr >= 0))
                   {
-                     for(sub_elem_marker = 0; sub_elem_marker < sub_elem_cntr; sub_elem_marker++)
+                     for(sub_elem_marker = 0; sub_elem_marker < (sub_elem_cntr + branch_additional_step); sub_elem_marker++)
                      {
 #ifdef IOCMD_USE_OUT
                         IOCMD_Oprintf(arg_out, IOCMD_IN_BRANCH_STEP);
 #else
                         IOCMD_EXTERN_PRINTF_0(IOCMD_IN_BRANCH_STEP);
 #endif
+                        dist-= IOCMD_IN_BRANCH_OFFSET;
                      }
-
-                     if(((cntr + 1) < cmd_tree_num_elems) && (IOCMD_RECORD_SUB_GROUP_START == cmd_tree[cntr + 1].record_type))
-                     {
-#ifdef IOCMD_USE_OUT
-                        IOCMD_Oprintf(arg_out, IOCMD_IN_BRANCH_STEP);
-#else
-                        IOCMD_EXTERN_PRINTF_0(IOCMD_IN_BRANCH_STEP);
-#endif
-                     }
-
-                     dist-= sub_elem_cntr * IOCMD_IN_BRANCH_OFFSET;
                   }
                }
             }while(IOCMD_BOOL_IS_TRUE(full_desc));
@@ -553,7 +551,8 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
    const char                      *argv[],
    const IOCMD_Print_Exe_Params_XT *arg_out,
    const IOCMD_Command_Tree_XT     *cmd_tree,
-   size_t                           cmd_tree_num_elems)
+   size_t                           cmd_tree_num_elems,
+   IOCMD_Bool_DT                    is_last_branch)
 {
 #if(IOCMD_IN_SUPPORT_TREE_PRINTING)
    const IOCMD_Command_Tree_XT *root = IOCMD_MAKE_INVALID_PTR(const IOCMD_Command_Tree_XT);
@@ -740,31 +739,7 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
          }
       }
 
-#if(IOCMD_IN_SUPPORT_TREE_PRINTING)
-      if(IOCMD_BOOL_IS_TRUE(print_list) || IOCMD_BOOL_IS_TRUE(print_help) || IOCMD_BOOL_IS_TRUE(print_man))
-      {
-         if(0 != cntr)
-         {
-            help_size = cmd_tree_num_elems - ((root - cmd_tree) / sizeof(cmd_tree[0]));
-            single_tree_only = true;
-         }
-
-         if(IOCMD_BOOL_IS_TRUE(print_list))
-         {
-            IOCMD_Print_Tree_List(arg_out, root, help_size, single_tree_only);
-         }
-         else if(IOCMD_BOOL_IS_TRUE(print_help))
-         {
-            IOCMD_Print_Tree_Help(arg_out, root, help_size, single_tree_only);
-         }
-         else
-         {
-            IOCMD_Print_Tree_Manual(arg_out, root, help_size, single_tree_only);
-         }
-      }
-#endif
-
-      if(IOCMD_BOOL_IS_FALSE(result))
+      if(IOCMD_BOOL_IS_FALSE(result) && IOCMD_BOOL_IS_TRUE(is_last_branch))
       {
 #if(IOCMD_IN_SUPPORT_TREE_PRINTING)
 #ifdef IOCMD_USE_OUT
@@ -774,18 +749,46 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
 #endif
          if(IOCMD_IN_LIST_PATTERN == IOCMD_IN_COMMAND_NOT_FOUND_PRINTOUT_TYPE)
          {
-            IOCMD_Print_Tree_List(arg_out, cmd_tree, cntr, IOCMD_FALSE);
+            IOCMD_Print_Tree_List(arg_out, cmd_tree, cntr, IOCMD_FALSE, is_last_branch);
          }
          else if(IOCMD_IN_HELP_PATTERN == IOCMD_IN_COMMAND_NOT_FOUND_PRINTOUT_TYPE)
          {
-            IOCMD_Print_Tree_Help(arg_out, cmd_tree, cntr, IOCMD_FALSE);
+            IOCMD_Print_Tree_Help(arg_out, cmd_tree, cntr, IOCMD_FALSE, is_last_branch);
          }
          else if(IOCMD_IN_MANUAL_PATTERN == IOCMD_IN_COMMAND_NOT_FOUND_PRINTOUT_TYPE)
          {
-            IOCMD_Print_Tree_Manual(arg_out, cmd_tree, cntr, IOCMD_FALSE);
+            IOCMD_Print_Tree_Manual(arg_out, cmd_tree, cntr, IOCMD_FALSE, is_last_branch);
          }
 #endif
       }
+
+#if(IOCMD_IN_SUPPORT_TREE_PRINTING)
+      if(IOCMD_BOOL_IS_TRUE(print_list) || IOCMD_BOOL_IS_TRUE(print_help) || IOCMD_BOOL_IS_TRUE(print_man))
+      {
+         if(0 == current_sub_elem_cntr)
+         {
+            result = IOCMD_FALSE;
+         }
+         if(0 != cntr)
+         {
+            help_size = cmd_tree_num_elems - ((root - cmd_tree) / sizeof(cmd_tree[0]));
+            single_tree_only = IOCMD_TRUE;
+         }
+
+         if(IOCMD_BOOL_IS_TRUE(print_list))
+         {
+            IOCMD_Print_Tree_List(arg_out, root, help_size, single_tree_only, is_last_branch);
+         }
+         else if(IOCMD_BOOL_IS_TRUE(print_help))
+         {
+            IOCMD_Print_Tree_Help(arg_out, root, help_size, single_tree_only, is_last_branch);
+         }
+         else
+         {
+            IOCMD_Print_Tree_Manual(arg_out, root, help_size, single_tree_only, is_last_branch);
+         }
+      }
+#endif
 
 #if(IOCMD_IN_SUPPORT_TREE_PRINTING)
 #ifdef IOCMD_USE_OUT
@@ -804,7 +807,8 @@ void IOCMD_Print_Tree_List(
    const IOCMD_Print_Exe_Params_XT *arg_out,
    const IOCMD_Command_Tree_XT     *cmd_tree,
    size_t                           cmd_tree_num_elems,
-   IOCMD_Bool_DT                    single_tree_only)
+   IOCMD_Bool_DT                    single_tree_only,
+   IOCMD_Bool_DT                    is_last_branch)
 {
    if(IOCMD_CHECK_PTR(const IOCMD_Command_Tree_XT, cmd_tree) && (cmd_tree_num_elems > 0)
 #ifdef IOCMD_USE_OUT
@@ -814,12 +818,18 @@ void IOCMD_Print_Tree_List(
    {
 #ifdef IOCMD_USE_OUT
       iocmd_print_tree(arg_out, cmd_tree, cmd_tree_num_elems, IOCMD_TRUE, IOCMD_FALSE, single_tree_only);
-      IOCMD_Oprintf_Line(arg_out, "");
-      iocmd_print_tree(arg_out, iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      if(IOCMD_BOOL_IS_TRUE(is_last_branch))
+      {
+         IOCMD_Oprintf_Line(arg_out, "");
+         iocmd_print_tree(arg_out, iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      }
 #else
       iocmd_print_tree(cmd_tree, cmd_tree_num_elems, IOCMD_TRUE, IOCMD_FALSE, single_tree_only);
-      IOCMD_EXTERN_PRINTF_LINE_0("");
-      iocmd_print_tree(iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      if(IOCMD_BOOL_IS_TRUE(is_last_branch))
+      {
+         IOCMD_EXTERN_PRINTF_LINE_0("");
+         iocmd_print_tree(iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      }
 #endif
    }
 }
@@ -828,7 +838,8 @@ void IOCMD_Print_Tree_Help(
    const IOCMD_Print_Exe_Params_XT *arg_out,
    const IOCMD_Command_Tree_XT     *cmd_tree,
    size_t                           cmd_tree_num_elems,
-   IOCMD_Bool_DT                    single_tree_only)
+   IOCMD_Bool_DT                    single_tree_only,
+   IOCMD_Bool_DT                    is_last_branch)
 {
    if(IOCMD_CHECK_PTR(const IOCMD_Command_Tree_XT, cmd_tree) && (cmd_tree_num_elems > 0)
 #ifdef IOCMD_USE_OUT
@@ -838,12 +849,18 @@ void IOCMD_Print_Tree_Help(
    {
 #ifdef IOCMD_USE_OUT
       iocmd_print_tree(arg_out, cmd_tree, cmd_tree_num_elems, IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
-      IOCMD_Oprintf_Line(arg_out, "");
-      iocmd_print_tree(arg_out, iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      if(IOCMD_BOOL_IS_TRUE(is_last_branch))
+      {
+         IOCMD_Oprintf_Line(arg_out, "");
+         iocmd_print_tree(arg_out, iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      }
 #else
       iocmd_print_tree(cmd_tree, cmd_tree_num_elems, IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
-      IOCMD_EXTERN_PRINTF_LINE_0("");
-      iocmd_print_tree(iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      if(IOCMD_BOOL_IS_TRUE(is_last_branch))
+      {
+         IOCMD_EXTERN_PRINTF_LINE_0("");
+         iocmd_print_tree(iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      }
 #endif
    }
 }
@@ -852,7 +869,8 @@ void IOCMD_Print_Tree_Manual(
    const IOCMD_Print_Exe_Params_XT *arg_out,
    const IOCMD_Command_Tree_XT     *cmd_tree,
    size_t                           cmd_tree_num_elems,
-   IOCMD_Bool_DT                    single_tree_only)
+   IOCMD_Bool_DT                    single_tree_only,
+   IOCMD_Bool_DT                    is_last_branch)
 {
    if(IOCMD_CHECK_PTR(const IOCMD_Command_Tree_XT, cmd_tree) && (cmd_tree_num_elems > 0)
 #ifdef IOCMD_USE_OUT
@@ -862,12 +880,18 @@ void IOCMD_Print_Tree_Manual(
    {
 #ifdef IOCMD_USE_OUT
       iocmd_print_tree(arg_out, cmd_tree, cmd_tree_num_elems, IOCMD_FALSE, IOCMD_TRUE, single_tree_only);
-      IOCMD_Oprintf_Line(arg_out, "");
-      iocmd_print_tree(arg_out, iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      if(IOCMD_BOOL_IS_TRUE(is_last_branch))
+      {
+         IOCMD_Oprintf_Line(arg_out, "");
+         iocmd_print_tree(arg_out, iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      }
 #else
       iocmd_print_tree(cmd_tree, cmd_tree_num_elems, IOCMD_FALSE, IOCMD_TRUE, single_tree_only);
-      IOCMD_EXTERN_PRINTF_LINE_0("");
-      iocmd_print_tree(iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      if(IOCMD_BOOL_IS_TRUE(is_last_branch))
+      {
+         IOCMD_EXTERN_PRINTF_LINE_0("");
+         iocmd_print_tree(iocmd_in_help_tab, Num_Elems(iocmd_in_help_tab), IOCMD_FALSE, IOCMD_FALSE, single_tree_only);
+      }
 #endif
    }
 }

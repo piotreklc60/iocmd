@@ -1716,7 +1716,7 @@ int main(int argc, const char* argv[])
 
    printf("\n\n\ra teraz test modulu IN\n\n\r");
 
-   (void)IOCMD_Parse_Command(argc - 1, &argv[1], &main_out, cmd_tab, Num_Elems(cmd_tab));
+   (void)IOCMD_Parse_Command(argc - 1, &argv[1], &main_out, cmd_tab, Num_Elems(cmd_tab), IOCMD_TRUE);
 #if 1
    const char *test_string1 = "out 12";
    const char *test_string2 = "out level 12";
@@ -1730,39 +1730,39 @@ int main(int argc, const char* argv[])
 
    printf("\n\n\r\"%s\"\n\n\r", test_string1);
 
-   (void)IOCMD_Parse_Command(1, &test_string1, &main_out, cmd_tab, Num_Elems(cmd_tab));
+   (void)IOCMD_Parse_Command(1, &test_string1, &main_out, cmd_tab, Num_Elems(cmd_tab), IOCMD_TRUE);
 
    printf("\n\n\r\"%s\"\n\n\r", test_string2);
 
-   (void)IOCMD_Parse_Command(1, &test_string2, &main_out, cmd_tab, Num_Elems(cmd_tab));
+   (void)IOCMD_Parse_Command(1, &test_string2, &main_out, cmd_tab, Num_Elems(cmd_tab), IOCMD_TRUE);
 
    printf("\n\n\r\"%s\"\n\n\r", test_string3);
 
-   (void)IOCMD_Parse_Command(1, &test_string3, &main_out, cmd_tab, Num_Elems(cmd_tab));
+   (void)IOCMD_Parse_Command(1, &test_string3, &main_out, cmd_tab, Num_Elems(cmd_tab), IOCMD_TRUE);
 
    printf("\n\n\r\"%s\"\n\n\r", test_string4);
 
-   (void)IOCMD_Parse_Command(1, &test_string4, &main_out, cmd_tab, Num_Elems(cmd_tab));
+   (void)IOCMD_Parse_Command(1, &test_string4, &main_out, cmd_tab, Num_Elems(cmd_tab), IOCMD_TRUE);
 
    printf("\n\n\r\"%s\"\n\n\r", test_string5);
 
-   (void)IOCMD_Parse_Command(1, &test_string5, &main_out, cmd_tab, Num_Elems(cmd_tab));
+   (void)IOCMD_Parse_Command(1, &test_string5, &main_out, cmd_tab, Num_Elems(cmd_tab), IOCMD_TRUE);
 
    printf("\n\n\r\"%s\"\n\n\r", test_string6);
 
-   (void)IOCMD_Parse_Command(1, &test_string6, &main_out, cmd_tab, Num_Elems(cmd_tab));
+   (void)IOCMD_Parse_Command(1, &test_string6, &main_out, cmd_tab, Num_Elems(cmd_tab), IOCMD_TRUE);
 
    printf("\n\n\r\"%s\"\n\n\r", test_string7);
 
-   (void)IOCMD_Parse_Command(1, &test_string7, &main_out, cmd_tab, Num_Elems(cmd_tab));
+   (void)IOCMD_Parse_Command(1, &test_string7, &main_out, cmd_tab, Num_Elems(cmd_tab), IOCMD_TRUE);
 
    printf("\n\n\r\"%s\"\n\n\r", test_string8);
 
-   (void)IOCMD_Parse_Command(1, &test_string8, &main_out, cmd_tab, Num_Elems(cmd_tab));
+   (void)IOCMD_Parse_Command(1, &test_string8, &main_out, cmd_tab, Num_Elems(cmd_tab), IOCMD_TRUE);
 
    printf("\n\n\r\"%s\"\n\n\r", test_string9);
 
-   (void)IOCMD_Parse_Command(1, &test_string9, &main_out, cmd_tab, Num_Elems(cmd_tab));
+   (void)IOCMD_Parse_Command(1, &test_string9, &main_out, cmd_tab, Num_Elems(cmd_tab), IOCMD_TRUE);
 #endif
 
 #endif

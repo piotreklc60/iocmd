@@ -14,6 +14,7 @@ static void read_cmd_u32(IOCMD_Arg_DT *arg);
 
 static IOCMD_Command_Tree_XT cmd_tree[] =
 {
+   IOCMD_ELEM(       "root",       test_cmd_group,    "test elem on root\nnextline"),
    IOCMD_GROUP_START("test",                          "test command root\n\r"
                                                       "this command has multi-line descrpition\n"
                                                       "only to show that it is posible."),
@@ -36,6 +37,35 @@ static IOCMD_Command_Tree_XT cmd_tree[] =
    IOCMD_ELEM(          "u322",    read_cmd_u32,      "read elem to get uint32_t"),
    IOCMD_GROUP_END(),
    IOCMD_GROUP_START("write",                         "writing group of commands"),
+   IOCMD_GROUP_END()
+};
+
+static IOCMD_Command_Tree_XT cmd_second_tree[] =
+{
+   IOCMD_GROUP_START("alt",                           "test command root\nnextline"),
+   IOCMD_GROUP_START(   "test",                       "test command\n\r"
+                                                      "this command has multi-line descrpition\n"
+                                                      "only to show that it is posible."),
+   IOCMD_GROUP_START(      "group",                   "test group of commands.\r"
+                                                      "Here we also put one more line."),
+   IOCMD_ELEM(                "",     test_cmd_group, "test elem"),
+   IOCMD_GROUP_END(),
+   {"wtype", "wrong type", NULL, 22},
+   IOCMD_ELEM(             "string",  test_cmd_string,"test elem to get string"),
+   IOCMD_GROUP_END(),
+   IOCMD_GROUP_START(   "read",                       "reading group of commands\n"
+                                                      "second line."),
+   IOCMD_ELEM(             "string",  read_cmd_string,"read elem to get string\n"
+                                                      "Here we also put one more line."),
+   IOCMD_ELEM(             "u32",     read_cmd_u32,   "read elem to get uint32_t\n"
+                                                      "and here as well."),
+   IOCMD_GROUP_END(),
+   IOCMD_GROUP_START(   "read2",                      "reading group of commands"),
+   IOCMD_ELEM(             "string2", read_cmd_string,"read elem to get string"),
+   IOCMD_ELEM(             "u322",    read_cmd_u32,   "read elem to get uint32_t"),
+   IOCMD_GROUP_END(),
+   IOCMD_GROUP_START(   "write",                      "writing group of commands"),
+   IOCMD_GROUP_END(),
    IOCMD_GROUP_END()
 };
 
@@ -108,7 +138,7 @@ static void test_test_string(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(1 == test_id)
    {
@@ -131,7 +161,7 @@ static void test_test_unknown(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, "Command not found!" IOCMD_PRINT_ENDLINE IOCMD_PRINT_ENDLINE)))
    {
@@ -154,7 +184,7 @@ static void test_test_wtype(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, "Command not found!" IOCMD_PRINT_ENDLINE IOCMD_PRINT_ENDLINE)))
    {
@@ -177,7 +207,7 @@ static void test_group(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(2 == test_id)
    {
@@ -200,7 +230,7 @@ static void test_read(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, "Command not found!" IOCMD_PRINT_ENDLINE IOCMD_PRINT_ENDLINE)))
    {
@@ -226,7 +256,7 @@ static void test_read_string(void)
 
    sprintf(string, "read string %s", TEST_STRING);
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(3 == test_id)
    {
@@ -247,8 +277,9 @@ static void test_group_man(void)
    };
    const char printout[] =
    {
-      "\"group\"      - test group of commands"                                                    IOCMD_PRINT_ENDLINE
-      "|->\"\"        - test elem"                                                                 IOCMD_PRINT_ENDLINE
+      "\"group\" - test group of commands."                                                        IOCMD_PRINT_ENDLINE
+      "  *       Here we also put one more line."                                                  IOCMD_PRINT_ENDLINE
+      "  |->\"\" - test elem"                                                                      IOCMD_PRINT_ENDLINE
                                                                                                    IOCMD_PRINT_ENDLINE
       "\"list\" - lists all commands in current catalogue only"                                    IOCMD_PRINT_ENDLINE
       "\"help\" - lists all commands in current catalogue and all sub-catalogues"                  IOCMD_PRINT_ENDLINE
@@ -259,7 +290,7 @@ static void test_group_man(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
@@ -280,11 +311,13 @@ static void test_man(void)
    };
    const char printout[] =
    {
-      "\"test\"       - test command root"                                                         IOCMD_PRINT_ENDLINE
-      "|->\"group\"   - test group of commands"                                                    IOCMD_PRINT_ENDLINE
-      "*  |->\"\"     - test elem"                                                                 IOCMD_PRINT_ENDLINE
-      "|->\"wtype\"   - wrong type"                                                                IOCMD_PRINT_ENDLINE
-      "|->\"string\"  - test elem to get string"                                                   IOCMD_PRINT_ENDLINE
+      "\"test\"        - test command root"                                                        IOCMD_PRINT_ENDLINE
+      "  *             this command has multi-line descrpition"                                    IOCMD_PRINT_ENDLINE
+      "  *             only to show that it is posible."                                           IOCMD_PRINT_ENDLINE
+      "  |->\"group\"  - test group of commands."                                                  IOCMD_PRINT_ENDLINE
+      "  *    *        Here we also put one more line."                                            IOCMD_PRINT_ENDLINE
+      "  *    |->\"\"  - test elem"                                                                IOCMD_PRINT_ENDLINE
+      "  |->\"string\" - test elem to get string"                                                  IOCMD_PRINT_ENDLINE
                                                                                                    IOCMD_PRINT_ENDLINE
       "\"list\" - lists all commands in current catalogue only"                                    IOCMD_PRINT_ENDLINE
       "\"help\" - lists all commands in current catalogue and all sub-catalogues"                  IOCMD_PRINT_ENDLINE
@@ -295,7 +328,7 @@ static void test_man(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
@@ -316,9 +349,12 @@ static void read_man(void)
    };
    const char printout[] =
    {
-      "\"read\"       - reading group of commands"                                                 IOCMD_PRINT_ENDLINE
-      "|->\"string\"  - read elem to get string"                                                   IOCMD_PRINT_ENDLINE
-      "|->\"u32\"     - read elem to get uint32_t"                                                 IOCMD_PRINT_ENDLINE
+      "\"read\"        - reading group of commands"                                                IOCMD_PRINT_ENDLINE
+      "  *             second line."                                                               IOCMD_PRINT_ENDLINE
+      "  |->\"string\" - read elem to get string"                                                  IOCMD_PRINT_ENDLINE
+      "  *             Here we also put one more line."                                            IOCMD_PRINT_ENDLINE
+      "  |->\"u32\"    - read elem to get uint32_t"                                                IOCMD_PRINT_ENDLINE
+      "  *             and here as well."                                                          IOCMD_PRINT_ENDLINE
                                                                                                    IOCMD_PRINT_ENDLINE
       "\"list\" - lists all commands in current catalogue only"                                    IOCMD_PRINT_ENDLINE
       "\"help\" - lists all commands in current catalogue and all sub-catalogues"                  IOCMD_PRINT_ENDLINE
@@ -329,7 +365,7 @@ static void read_man(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
@@ -361,7 +397,7 @@ static void write_man(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
@@ -401,20 +437,25 @@ static void man(void)
    };
    const char printout[] =
    {
-      "\"test\"       - test command root"                                                         IOCMD_PRINT_ENDLINE
-      "                 this command has multi-line descrpition"                                   IOCMD_PRINT_ENDLINE
-      "                 only to show that it is posible."                                          IOCMD_PRINT_ENDLINE
-      "|->\"group\"   - test group of commands"                                                    IOCMD_PRINT_ENDLINE
-      "*  |->\"\"     - test elem"                                                                 IOCMD_PRINT_ENDLINE
-      "|->\"wtype\"   - wrong type"                                                                IOCMD_PRINT_ENDLINE
-      "|->\"string\"  - test elem to get string"                                                   IOCMD_PRINT_ENDLINE
-      "\"read\"       - reading group of commands"                                                 IOCMD_PRINT_ENDLINE
-      "|->\"string\"  - read elem to get string"                                                   IOCMD_PRINT_ENDLINE
-      "|->\"u32\"     - read elem to get uint32_t"                                                 IOCMD_PRINT_ENDLINE
-      "\"read2\"      - reading group of commands"                                                 IOCMD_PRINT_ENDLINE
-      "|->\"string2\" - read elem to get string"                                                   IOCMD_PRINT_ENDLINE
-      "|->\"u322\"    - read elem to get uint32_t"                                                 IOCMD_PRINT_ENDLINE
-      "\"write\"      - writing group of commands"                                                 IOCMD_PRINT_ENDLINE
+      "\"root\"         - test elem on root"                                                       IOCMD_PRINT_ENDLINE
+      "  *              nextline"                                                                  IOCMD_PRINT_ENDLINE
+      "\"test\"         - test command root"                                                       IOCMD_PRINT_ENDLINE
+      "  *              this command has multi-line descrpition"                                   IOCMD_PRINT_ENDLINE
+      "  *              only to show that it is posible."                                          IOCMD_PRINT_ENDLINE
+      "  |->\"group\"   - test group of commands."                                                 IOCMD_PRINT_ENDLINE
+      "  *    *         Here we also put one more line."                                           IOCMD_PRINT_ENDLINE
+      "  *    |->\"\"   - test elem"                                                               IOCMD_PRINT_ENDLINE
+      "  |->\"string\"  - test elem to get string"                                                 IOCMD_PRINT_ENDLINE
+      "\"read\"         - reading group of commands"                                               IOCMD_PRINT_ENDLINE
+      "  *              second line."                                                              IOCMD_PRINT_ENDLINE
+      "  |->\"string\"  - read elem to get string"                                                 IOCMD_PRINT_ENDLINE
+      "  *              Here we also put one more line."                                           IOCMD_PRINT_ENDLINE
+      "  |->\"u32\"     - read elem to get uint32_t"                                               IOCMD_PRINT_ENDLINE
+      "  *              and here as well."                                                         IOCMD_PRINT_ENDLINE
+      "\"read2\"        - reading group of commands"                                               IOCMD_PRINT_ENDLINE
+      "  |->\"string2\" - read elem to get string"                                                 IOCMD_PRINT_ENDLINE
+      "  |->\"u322\"    - read elem to get uint32_t"                                               IOCMD_PRINT_ENDLINE
+      "\"write\"        - writing group of commands"                                               IOCMD_PRINT_ENDLINE
 
                                                                                                    IOCMD_PRINT_ENDLINE
       "\"list\" - lists all commands in current catalogue only"                                    IOCMD_PRINT_ENDLINE
@@ -426,11 +467,84 @@ static void man(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
       printf("%-32s... OK\n\r", argv[0]);
+      /* OK */
+   }
+   else
+   {
+      printf("error at %s; test_id: %d\n\r", __FUNCTION__, test_id);
+   }
+}
+
+static void man_two_trees(void)
+{
+   const char *argv[] =
+   {
+      IOCMD_IN_MANUAL_PATTERN
+   };
+   const char printout[] =
+   {
+      "\"root\"         - test elem on root"                                                       IOCMD_PRINT_ENDLINE
+      "  *              nextline"                                                                  IOCMD_PRINT_ENDLINE
+      "\"test\"         - test command root"                                                       IOCMD_PRINT_ENDLINE
+      "  *              this command has multi-line descrpition"                                   IOCMD_PRINT_ENDLINE
+      "  *              only to show that it is posible."                                          IOCMD_PRINT_ENDLINE
+      "  |->\"group\"   - test group of commands."                                                 IOCMD_PRINT_ENDLINE
+      "  *    *         Here we also put one more line."                                           IOCMD_PRINT_ENDLINE
+      "  *    |->\"\"   - test elem"                                                               IOCMD_PRINT_ENDLINE
+      "  |->\"string\"  - test elem to get string"                                                 IOCMD_PRINT_ENDLINE
+      "\"read\"         - reading group of commands"                                               IOCMD_PRINT_ENDLINE
+      "  *              second line."                                                              IOCMD_PRINT_ENDLINE
+      "  |->\"string\"  - read elem to get string"                                                 IOCMD_PRINT_ENDLINE
+      "  *              Here we also put one more line."                                           IOCMD_PRINT_ENDLINE
+      "  |->\"u32\"     - read elem to get uint32_t"                                               IOCMD_PRINT_ENDLINE
+      "  *              and here as well."                                                         IOCMD_PRINT_ENDLINE
+      "\"read2\"        - reading group of commands"                                               IOCMD_PRINT_ENDLINE
+      "  |->\"string2\" - read elem to get string"                                                 IOCMD_PRINT_ENDLINE
+      "  |->\"u322\"    - read elem to get uint32_t"                                               IOCMD_PRINT_ENDLINE
+      "\"write\"        - writing group of commands"                                               IOCMD_PRINT_ENDLINE
+                                                                                                   IOCMD_PRINT_ENDLINE
+      "\"alt\"               - test command root"                                                  IOCMD_PRINT_ENDLINE
+      "  *                   nextline"                                                             IOCMD_PRINT_ENDLINE
+      "  |->\"test\"         - test command"                                                       IOCMD_PRINT_ENDLINE
+      "  *    *              this command has multi-line descrpition"                              IOCMD_PRINT_ENDLINE
+      "  *    *              only to show that it is posible."                                     IOCMD_PRINT_ENDLINE
+      "  *    |->\"group\"   - test group of commands."                                            IOCMD_PRINT_ENDLINE
+      "  *    *    *         Here we also put one more line."                                      IOCMD_PRINT_ENDLINE
+      "  *    *    |->\"\"   - test elem"                                                          IOCMD_PRINT_ENDLINE
+      "  *    |->\"string\"  - test elem to get string"                                            IOCMD_PRINT_ENDLINE
+      "  |->\"read\"         - reading group of commands"                                          IOCMD_PRINT_ENDLINE
+      "  *    *              second line."                                                         IOCMD_PRINT_ENDLINE
+      "  *    |->\"string\"  - read elem to get string"                                            IOCMD_PRINT_ENDLINE
+      "  *    *              Here we also put one more line."                                      IOCMD_PRINT_ENDLINE
+      "  *    |->\"u32\"     - read elem to get uint32_t"                                          IOCMD_PRINT_ENDLINE
+      "  *    *              and here as well."                                                    IOCMD_PRINT_ENDLINE
+      "  |->\"read2\"        - reading group of commands"                                          IOCMD_PRINT_ENDLINE
+      "  *    |->\"string2\" - read elem to get string"                                            IOCMD_PRINT_ENDLINE
+      "  *    |->\"u322\"    - read elem to get uint32_t"                                          IOCMD_PRINT_ENDLINE
+      "  |->\"write\"        - writing group of commands"                                          IOCMD_PRINT_ENDLINE
+                                                                                                   IOCMD_PRINT_ENDLINE
+      "\"list\" - lists all commands in current catalogue only"                                    IOCMD_PRINT_ENDLINE
+      "\"help\" - lists all commands in current catalogue and all sub-catalogues"                  IOCMD_PRINT_ENDLINE
+      "\"man\"  - prints detailed manual for commands in current catalogue and all sub-catalogues" IOCMD_PRINT_ENDLINE
+                                                                                                   IOCMD_PRINT_ENDLINE
+   };
+
+   test_id = 0;
+   main_printf_buf_pos = 0;
+
+   if(IOCMD_BOOL_IS_FALSE(IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_FALSE)))
+   {
+      (void)IOCMD_Parse_Command(1, argv, NULL, cmd_second_tree, Num_Elems(cmd_second_tree), IOCMD_TRUE);
+   }
+
+   if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
+   {
+      printf("%-32s... OK\n\r", "man two trees");
       /* OK */
    }
    else
@@ -447,8 +561,8 @@ static void test_group_help(void)
    };
    const char printout[] =
    {
-      "\"group\"      - test group of commands"                                                    IOCMD_PRINT_ENDLINE
-      "|->\"\"        - test elem"                                                                 IOCMD_PRINT_ENDLINE
+      "\"group\" - test group of commands...."                                                     IOCMD_PRINT_ENDLINE
+      "  |->\"\" - test elem"                                                                      IOCMD_PRINT_ENDLINE
                                                                                                    IOCMD_PRINT_ENDLINE
       "\"list\" - lists all commands in current catalogue only"                                    IOCMD_PRINT_ENDLINE
       "\"help\" - lists all commands in current catalogue and all sub-catalogues"                  IOCMD_PRINT_ENDLINE
@@ -459,7 +573,7 @@ static void test_group_help(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
@@ -482,7 +596,7 @@ static void test_help(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
@@ -505,7 +619,7 @@ static void read_help(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
@@ -528,7 +642,7 @@ static void write_help(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
@@ -551,7 +665,7 @@ static void help(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
@@ -574,7 +688,7 @@ static void test_group_list(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
@@ -597,7 +711,7 @@ static void test_list(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
@@ -620,7 +734,7 @@ static void read_list(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
@@ -643,7 +757,7 @@ static void write_list(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
@@ -666,7 +780,7 @@ static void list(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree));
+   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
@@ -681,19 +795,20 @@ static void list(void)
 
 int main(void)
 {
-//   test_test_string();
-//   test_test_unknown();
-//   test_test_wtype();
-//   test_group();
-//   test_read();
-//   test_read_string();
-//   test_group_man();
-//   test_man();
-//   read_man();
-//   write_man();
+   test_test_string();
+   test_test_unknown();
+   test_test_wtype();
+   test_group();
+   test_read();
+   test_read_string();
+   test_group_man();
+   test_man();
+   read_man();
+   write_man();
    man();
-//   test_group_help();
-/*   test_help();
+   man_two_trees();
+   test_group_help();
+   test_help();
    read_help();
    write_help();
    help();
@@ -701,7 +816,7 @@ int main(void)
    test_list();
    read_list();
    write_list();
-   list();//*/
+   list();
 
    return 0;
 }

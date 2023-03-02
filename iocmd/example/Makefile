@@ -48,57 +48,57 @@ gcov:
 	@echo " "
 	@echo "BUFF part coverage:"
 	@echo " "
-	gcov $(BUFF_SRC)
+	gcov $(addprefix test-, $(BUFF_SRC))
 	@echo " "
 	@echo "IOCMD part coverage:"
 	@echo " "
-	gcov $(IOCMD_SRC)
+	gcov $(addprefix test-, $(IOCMD_SRC))
 	@echo " "
 	@echo "Application part coverage:"
 	@echo " "
-	gcov $(APPL_SRC)
+	gcov $(addprefix test-, $(APPL_SRC))
 
 gcov_detailed:
 	@echo " "
 	@echo "BUFF part coverage:"
 	@echo " "
-	gcov -fb $(BUFF_SRC)
+	gcov -fb $(addprefix test-, $(BUFF_SRC))
 	@echo " "
 	@echo "IOCMD part coverage:"
 	@echo " "
-	gcov -fb $(IOCMD_SRC)
+	gcov -fb $(addprefix test-, $(IOCMD_SRC))
 	@echo " "
 	@echo "Application part coverage:"
 	@echo " "
-	gcov -b $(APPL_SRC)
+	gcov -b $(addprefix test-, $(APPL_SRC))
 
 gcov_result:
 	@echo " "
 	@echo "BUFF part coverage:"
 	@echo " "
-	gcov $(BUFF_SRC) >> coverage_result_buff.txt
+	gcov $(addprefix test-, $(BUFF_SRC)) >> coverage_result_buff.txt
 	@echo " "
 	@echo "IOCMD part coverage:"
 	@echo " "
-	gcov $(IOCMD_SRC) >> coverage_result_iocmd.txt
+	gcov $(addprefix test-, $(IOCMD_SRC)) >> coverage_result_iocmd.txt
 	@echo " "
 	@echo "Application part coverage:"
 	@echo " "
-	gcov $(APPL_SRC) >> coverage_result_appl.txt
+	gcov $(addprefix test-, $(APPL_SRC)) >> coverage_result_appl.txt
 
 gcov_result_detailed:
 	@echo " "
 	@echo "BUFF part coverage:"
 	@echo " "
-	gcov -fb $(BUFF_SRC) >> coverage_result_buff.txt
+	gcov -fb $(addprefix test-, $(BUFF_SRC)) >> coverage_result_buff.txt
 	@echo " "
 	@echo "IOCMD part coverage:"
 	@echo " "
-	gcov -fb $(IOCMD_SRC) >> coverage_result_iocmd.txt
+	gcov -fb $(addprefix test-, $(IOCMD_SRC)) >> coverage_result_iocmd.txt
 	@echo " "
 	@echo "Application part coverage:"
 	@echo " "
-	gcov -b $(APPL_SRC) >> coverage_result_appl.txt
+	gcov -b $(addprefix test-, $(APPL_SRC)) >> coverage_result_appl.txt
 
 all:
 	@echo " "

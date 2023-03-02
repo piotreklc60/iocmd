@@ -65,7 +65,8 @@
  */
 
 
-bool_t IOCMD_Parse_Lib_Commands(int argc, const char* argv[], const /*IOCMD_Print_Exe_Params_XT*/ void *arg_out);
+IOCMD_Bool_DT IOCMD_Parse_Lib_Commands(
+   int argc, const char* argv[], const /*IOCMD_Print_Exe_Params_XT*/ void *arg_out, IOCMD_Bool_DT is_last_branch);
 
 
 /**
