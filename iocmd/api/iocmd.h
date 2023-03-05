@@ -124,6 +124,29 @@
 #define IOCMD_BOOL_IS_FALSE(_condition)                           (!(_condition))
 #endif
 
+#ifndef IOCMD_BOOL_NEGATE
+/**
+ * @brief Macro used to change IOCMD_Bool_DT variable to oppositive value,
+ * means if it is IOCMD_TRUE then returned value shall be IOCMD_FALSE;
+ * if it is IOCMD_FALSE then returned value shall be IOCMD_TRUE,
+ * Example:
+ *
+ * IOCMD_Bool_DT state = IOCMD_FALSE;
+ *
+ * state = IOCMD_BOOL_NEGATE(state);
+ *
+ * if(IOCMD_BOOL_IS_TRUE(state))
+ * {
+ *    printf("condition result is false");
+ * }
+ *
+ * @result true if condition has boolean value false; false otherwise
+ *
+ * @param _condition condition to be checked
+ */
+#define IOCMD_BOOL_NEGATE(_condition)                             (!(_condition))
+#endif
+
 #ifndef IOCMD_LIKELY
 /**
  * @brief Macro used to suggest compiler that condition usually happens. Result might have influence

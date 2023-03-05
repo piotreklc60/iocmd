@@ -10,6 +10,7 @@ static void test_cmd_test(IOCMD_Arg_DT *arg);
 static void test_cmd_string(IOCMD_Arg_DT *arg);
 static void test_cmd_group(IOCMD_Arg_DT *arg);
 static void read_cmd_string(IOCMD_Arg_DT *arg);
+static void read_cmd_data(IOCMD_Arg_DT *arg);
 static void read_cmd_u32(IOCMD_Arg_DT *arg);
 
 static IOCMD_Command_Tree_XT cmd_tree[] =
@@ -29,6 +30,7 @@ static IOCMD_Command_Tree_XT cmd_tree[] =
                                                       "second line."),
    IOCMD_ELEM(          "string",  read_cmd_string,   "read elem to get string\n"
                                                       "Here we also put one more line."),
+   IOCMD_ELEM(          "data",    read_cmd_data,     "read elem to get data"),
    IOCMD_ELEM(          "u32",     read_cmd_u32,      "read elem to get uint32_t\n"
                                                       "and here as well."),
    IOCMD_GROUP_END(),
@@ -68,6 +70,12 @@ static IOCMD_Command_Tree_XT cmd_second_tree[] =
    IOCMD_GROUP_END(),
    IOCMD_GROUP_END()
 };
+
+static const uint8_t main_test_data[] =
+{
+   0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 't', 'e', 's', 't', ' ', 's', 'e', 'c', 'o', 'n', 'd', 0xFF, 0x00, 0x55
+};
+static char main_test_data_separators[128];
 
 static char main_printf_buf[65536];
 static int  main_printf_buf_pos = 0;
@@ -123,6 +131,41 @@ static void read_cmd_string(IOCMD_Arg_DT *arg)
    }
 }
 
+static void read_cmd_data(IOCMD_Arg_DT *arg)
+{
+   uint8_t buffer[256];
+   size_t cntr;
+
+   if((sizeof(main_test_data)) == IOCMD_Arg_Get_Bytes_Tab_Length(arg, main_test_data_separators, NULL))
+   {
+      if((sizeof(main_test_data)) == IOCMD_Arg_Get_Bytes_Tab(arg, buffer, sizeof(buffer), main_test_data_separators, NULL))
+      {
+         if(0 == memcmp(buffer, main_test_data, sizeof(main_test_data)))
+         {
+            test_id = 3;
+         }
+         else
+         {
+            printf("\n\r");
+            for(cntr = 0; cntr < sizeof(main_test_data); ++cntr)
+            {
+               printf("%02X,", buffer[cntr]);
+            }
+            printf("\n\r");
+            test_id = 4;
+         }
+      }
+      else
+      {
+         test_id = 2;
+      }
+   }
+   else
+   {
+      test_id = 1;
+   }
+}
+
 static void read_cmd_u32(IOCMD_Arg_DT *arg)
 {
    test_id = 4;
@@ -138,11 +181,11 @@ static void test_test_string(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(1 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -161,11 +204,11 @@ static void test_test_unknown(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, "Command not found!" IOCMD_PRINT_ENDLINE IOCMD_PRINT_ENDLINE)))
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -184,11 +227,11 @@ static void test_test_wtype(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, "Command not found!" IOCMD_PRINT_ENDLINE IOCMD_PRINT_ENDLINE)))
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -207,11 +250,11 @@ static void test_group(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(2 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -230,11 +273,11 @@ static void test_read(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, "Command not found!" IOCMD_PRINT_ENDLINE IOCMD_PRINT_ENDLINE)))
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -256,11 +299,236 @@ static void test_read_string(void)
 
    sprintf(string, "read string %s", TEST_STRING);
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(3 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
+      /* OK */
+   }
+   else
+   {
+      printf("error at %s; test_id: %d\n\r", __FUNCTION__, test_id);
+   }
+}
+
+static void test_read_string_by_tab(void)
+{
+   const char *argv[] =
+   {
+      "read",
+      "string",
+      TEST_STRING
+   };
+
+   test_id = 0;
+   main_printf_buf_pos = 0;
+
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+
+   if(3 == test_id)
+   {
+      printf("%-40s... OK\n\r", "read string " TEST_STRING "__tab");
+      /* OK */
+   }
+   else
+   {
+      printf("error at %s; test_id: %d\n\r", __FUNCTION__, test_id);
+   }
+}
+
+static void test_read_data_no_separators_success(void)
+{
+   const char *argv[] =
+   {
+      "read data 0x12 0x34 0x56 0x78 0x9A 0xBC 0xDE 0xF0 0x74 0x65 0x73 0x74 20 73 0x65 0x63 0x6F0x6E 0x64FF00 0x55"
+   };
+
+   test_id = 0;
+   main_printf_buf_pos = 0;
+   snprintf(main_test_data_separators, sizeof(main_test_data_separators), "");
+
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+
+   if(3 == test_id)
+   {
+      printf("%-40s... OK\n\r", __FUNCTION__);
+      /* OK */
+   }
+   else
+   {
+      printf("error at %s; test_id: %d\n\r", __FUNCTION__, test_id);
+   }
+}
+
+static void test_read_data_no_separators_fail(void)
+{
+   const char *argv[] =
+   {
+      "read data 0x12 0x34 0x56 0x78 0x9A 0xBC 0xDE 0xF0 0x74 0x65, 0x73 0x74 0x20 0x73 0x65 0x63 0x6F 0x6E 0x64 0xFF 0x00 0x55"
+   };
+
+   test_id = 0;
+   main_printf_buf_pos = 0;
+   snprintf(main_test_data_separators, sizeof(main_test_data_separators), "");
+
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+
+   if(1 == test_id)
+   {
+      printf("%-40s... OK\n\r", __FUNCTION__);
+      /* OK */
+   }
+   else
+   {
+      printf("error at %s; test_id: %d\n\r", __FUNCTION__, test_id);
+   }
+}
+
+static void test_read_data_separators_success(void)
+{
+   const char *argv[] =
+   {
+      "read data 0x12 0x34 0x56 0x78, 0x9A 0xBC 0xDE; 0xF0 0x74 0x65. 0x73 0x74 20 73 0x65 0x63 0x6F0x6E 0x64FF00 0x55"
+   };
+
+   test_id = 0;
+   main_printf_buf_pos = 0;
+   snprintf(main_test_data_separators, sizeof(main_test_data_separators), ",.;");
+
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+
+   if(3 == test_id)
+   {
+      printf("%-40s... OK\n\r", __FUNCTION__);
+      /* OK */
+   }
+   else
+   {
+      printf("error at %s; test_id: %d\n\r", __FUNCTION__, test_id);
+   }
+}
+
+static void test_read_data_separators_success_tab(void)
+{
+   const char *argv[] =
+   {
+      "read",
+      "data",
+      "0x12 0x34 0x56",
+      "0x78, 0x9A 0xBC 0xDE;",
+      "0xF0",
+      ",0x74 0x65. 0x73",
+      " 0x74 20",
+      ",",
+      "73 0x65 0x63 0x6F0x6E 0x64FF00 0x55"
+   };
+
+   test_id = 0;
+   main_printf_buf_pos = 0;
+   snprintf(main_test_data_separators, sizeof(main_test_data_separators), ",.;");
+
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+
+   if(3 == test_id)
+   {
+      printf("%-40s... OK\n\r", __FUNCTION__);
+      /* OK */
+   }
+   else
+   {
+      printf("error at %s; test_id: %d\n\r", __FUNCTION__, test_id);
+   }
+}
+
+static void test_read_data_separators_no_text_fail(void)
+{
+   const char *argv[] =
+   {
+      "read data 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, \'t\', \'e\', \'s\', \'t\', \' \', \'s\', \'e\', \'c\', \'o\', \'n\', \'d\', 0xFF, 0x00, 0x55"
+   };
+
+   test_id = 0;
+   main_printf_buf_pos = 0;
+   snprintf(main_test_data_separators, sizeof(main_test_data_separators), ",.;");
+
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+
+   if(1 == test_id)
+   {
+      printf("%-40s... OK\n\r", __FUNCTION__);
+      /* OK */
+   }
+   else
+   {
+      printf("error at %s; test_id: %d\n\r", __FUNCTION__, test_id);
+   }
+}
+
+static void test_read_data_separators_chars_success(void)
+{
+   const char *argv[] =
+   {
+      "read data 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, \'t\', \'e\', \'s\', \'t\', \' \', \'s\', \'e\', \'c\', \'o\', \'n\', \'d\', 0xFF, 0x00, 0x55"
+   };
+
+   test_id = 0;
+   main_printf_buf_pos = 0;
+   snprintf(main_test_data_separators, sizeof(main_test_data_separators), ",.;\'");
+
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+
+   if(3 == test_id)
+   {
+      printf("%-40s... OK\n\r", __FUNCTION__);
+      /* OK */
+   }
+   else
+   {
+      printf("error at %s; test_id: %d\n\r", __FUNCTION__, test_id);
+   }
+}
+
+static void test_read_data_separators_chars_fail(void)
+{
+   const char *argv[] =
+   {
+      "read data 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, \'t\', \'e\', \'s\', \'t\', \' \', \"secon\", \'d\', 0xFF, 0x00, 0x55"
+   };
+
+   test_id = 0;
+   main_printf_buf_pos = 0;
+   snprintf(main_test_data_separators, sizeof(main_test_data_separators), ",.;\'");
+
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+
+   if(1 == test_id)
+   {
+      printf("%-40s... OK\n\r", __FUNCTION__);
+      /* OK */
+   }
+   else
+   {
+      printf("error at %s; test_id: %d\n\r", __FUNCTION__, test_id);
+   }
+}
+
+static void test_read_data_separators_text_success(void)
+{
+   const char *argv[] =
+   {
+      "read data 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, \'t\', \'e\', \'s\', \'t\', \' \', \"secon\", \'d\', 0xFF, 0x00, 0x55"
+   };
+
+   test_id = 0;
+   main_printf_buf_pos = 0;
+   snprintf(main_test_data_separators, sizeof(main_test_data_separators), ",.;\'\"");
+
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+
+   if(3 == test_id)
+   {
+      printf("%-40s... OK\n\r", __FUNCTION__);
       /* OK */
    }
    else
@@ -290,11 +558,11 @@ static void test_group_man(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -328,11 +596,11 @@ static void test_man(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -353,6 +621,7 @@ static void read_man(void)
       "  *             second line."                                                               IOCMD_PRINT_ENDLINE
       "  |->\"string\" - read elem to get string"                                                  IOCMD_PRINT_ENDLINE
       "  *             Here we also put one more line."                                            IOCMD_PRINT_ENDLINE
+      "  |->\"data\"   - read elem to get data"                                                    IOCMD_PRINT_ENDLINE
       "  |->\"u32\"    - read elem to get uint32_t"                                                IOCMD_PRINT_ENDLINE
       "  *             and here as well."                                                          IOCMD_PRINT_ENDLINE
                                                                                                    IOCMD_PRINT_ENDLINE
@@ -365,11 +634,11 @@ static void read_man(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -397,11 +666,11 @@ static void write_man(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -450,6 +719,7 @@ static void man(void)
       "  *              second line."                                                              IOCMD_PRINT_ENDLINE
       "  |->\"string\"  - read elem to get string"                                                 IOCMD_PRINT_ENDLINE
       "  *              Here we also put one more line."                                           IOCMD_PRINT_ENDLINE
+      "  |->\"data\"    - read elem to get data"                                                   IOCMD_PRINT_ENDLINE
       "  |->\"u32\"     - read elem to get uint32_t"                                               IOCMD_PRINT_ENDLINE
       "  *              and here as well."                                                         IOCMD_PRINT_ENDLINE
       "\"read2\"        - reading group of commands"                                               IOCMD_PRINT_ENDLINE
@@ -467,11 +737,11 @@ static void man(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -501,6 +771,7 @@ static void man_two_trees(void)
       "  *              second line."                                                              IOCMD_PRINT_ENDLINE
       "  |->\"string\"  - read elem to get string"                                                 IOCMD_PRINT_ENDLINE
       "  *              Here we also put one more line."                                           IOCMD_PRINT_ENDLINE
+      "  |->\"data\"    - read elem to get data"                                                   IOCMD_PRINT_ENDLINE
       "  |->\"u32\"     - read elem to get uint32_t"                                               IOCMD_PRINT_ENDLINE
       "  *              and here as well."                                                         IOCMD_PRINT_ENDLINE
       "\"read2\"        - reading group of commands"                                               IOCMD_PRINT_ENDLINE
@@ -539,12 +810,12 @@ static void man_two_trees(void)
 
    if(IOCMD_BOOL_IS_FALSE(IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_FALSE)))
    {
-      (void)IOCMD_Parse_Command(1, argv, NULL, cmd_second_tree, Num_Elems(cmd_second_tree), IOCMD_TRUE);
+      (void)IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_second_tree, Num_Elems(cmd_second_tree), IOCMD_TRUE);
    }
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
-      printf("%-32s... OK\n\r", "man two trees");
+      printf("%-40s... OK\n\r", "man two trees");
       /* OK */
    }
    else
@@ -573,11 +844,11 @@ static void test_group_help(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if((0 == test_id) && (0 == strcmp(main_printf_buf, printout)))
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -596,11 +867,11 @@ static void test_help(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -619,11 +890,11 @@ static void read_help(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -642,11 +913,11 @@ static void write_help(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -665,11 +936,11 @@ static void help(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -688,11 +959,11 @@ static void test_group_list(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -711,11 +982,11 @@ static void test_list(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -734,11 +1005,11 @@ static void read_list(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -757,11 +1028,11 @@ static void write_list(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -780,11 +1051,11 @@ static void list(void)
    test_id = 0;
    main_printf_buf_pos = 0;
 
-   IOCMD_Parse_Command(1, argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
+   IOCMD_Parse_Command(Num_Elems(argv), argv, NULL, cmd_tree, Num_Elems(cmd_tree), IOCMD_TRUE);
 
    if(0 == test_id)
    {
-      printf("%-32s... OK\n\r", argv[0]);
+      printf("%-40s... OK\n\r", argv[0]);
       /* OK */
    }
    else
@@ -801,6 +1072,15 @@ int main(void)
    test_group();
    test_read();
    test_read_string();
+   test_read_string_by_tab();
+   test_read_data_no_separators_success();
+   test_read_data_no_separators_fail();
+   test_read_data_separators_success();
+   test_read_data_separators_success_tab();
+   test_read_data_separators_no_text_fail();
+   test_read_data_separators_chars_success();
+   test_read_data_separators_chars_fail();
+   test_read_data_separators_text_success();
    test_group_man();
    test_man();
    read_man();

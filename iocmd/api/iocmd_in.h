@@ -203,7 +203,7 @@ IOCMD_Bool_DT IOCMD_Arg_Init(IOCMD_Arg_DT *arg, int argc, const char* argv[]);
 
 IOCMD_Bool_DT IOCMD_Arg_Rewind(IOCMD_Arg_DT *arg);
 
-char   IOCMD_Peak_Char(IOCMD_Arg_DT *arg);
+char   IOCMD_Peak_Char(IOCMD_Arg_DT *arg, size_t offset/* 0 - next char; 1 - next+1 char, ... */);
 
 char   IOCMD_Get_Char(IOCMD_Arg_DT *arg);
 

@@ -131,7 +131,7 @@ static size_t iocmd_strcmp(const char *pattern, const char *current_string, cons
          (' ' != current_string[offset])
          && ('\0' != current_string[offset])
          && ('\n' != current_string[offset])
-         && (!iocmd_is_special_char(separators, current_string[offset]))))
+         && IOCMD_BOOL_IS_FALSE(iocmd_is_special_char(separators, current_string[offset]))))
    {
       /* NOK */
       offset = 0;
@@ -164,7 +164,7 @@ size_t iocmd_ommit_low_special_chars(const char *string)
    return result;
 } /* iocmd_ommit_low_special_chars */
 
-static void iocmd_ommit_separators(IOCMD_Arg_DT *arg, const char *separators)
+static void iocmd_ommit_separators(IOCMD_Arg_DT *arg, const char *separators, const char *separators_excluded)
 {
    const char *string;
 
@@ -184,7 +184,8 @@ static void iocmd_ommit_separators(IOCMD_Arg_DT *arg, const char *separators)
          else
          {
             while((' ' == string[arg->current_pos]) || ('\n' == string[arg->current_pos])
-               || iocmd_is_special_char(separators, string[arg->current_pos]))
+               || (IOCMD_BOOL_IS_TRUE(iocmd_is_special_char(separators, string[arg->current_pos]))
+                  && IOCMD_BOOL_IS_FALSE(iocmd_is_special_char(separators_excluded, string[arg->current_pos]))))
             {
                (arg->current_pos)++;
             }
@@ -208,14 +209,14 @@ static void iocmd_ommit_separators(IOCMD_Arg_DT *arg, const char *separators)
    }
 } /* iocmd_ommit_spaces */
 
-static const char *iocmd_check_arg(IOCMD_Arg_DT *arg, const char *separators)
+static const char *iocmd_check_arg(IOCMD_Arg_DT *arg, const char *separators, const char *separators_excluded)
 {
    const char *string;
    const char *result = IOCMD_MAKE_INVALID_PTR(const char);
 
    if(IOCMD_CHECK_PTR(IOCMD_Arg_DT, arg) && IOCMD_CHECK_PTR(const char*, arg->argv))
    {
-      iocmd_ommit_separators(arg, separators);
+      iocmd_ommit_separators(arg, separators, separators_excluded);
 
       if((arg->current_arg < arg->argc) && IOCMD_CHECK_PTR(const char, arg->argv[arg->current_arg]))
       {
@@ -242,7 +243,7 @@ static IOCMD_Bool_DT iocmd_get_val32(IOCMD_Arg_DT *arg, const char *terminate_ch
    IOCMD_Bool_DT   is_hex = IOCMD_FALSE;
    IOCMD_Bool_DT   result = IOCMD_FALSE;
 
-   if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, terminate_chars)))
+   if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, terminate_chars, IOCMD_MAKE_INVALID_PTR(const char))))
    {
       current_pos = arg->current_pos;
       current_arg = arg->current_arg;
@@ -251,7 +252,8 @@ static IOCMD_Bool_DT iocmd_get_val32(IOCMD_Arg_DT *arg, const char *terminate_ch
       {
          current_char = IOCMD_Get_Char(arg);
 
-         if(('\0' == current_char) || (' ' == current_char) || iocmd_is_special_char(terminate_chars, current_char))
+         if(('\0' == current_char) || (' ' == current_char)
+            || IOCMD_BOOL_IS_TRUE(iocmd_is_special_char(terminate_chars, current_char)))
          {
             if(IOCMD_BOOL_IS_TRUE(result))
             {
@@ -267,7 +269,7 @@ static IOCMD_Bool_DT iocmd_get_val32(IOCMD_Arg_DT *arg, const char *terminate_ch
          {
             if(IOCMD_BOOL_IS_FALSE(is_hex) && IOCMD_BOOL_IS_FALSE(result) && IOCMD_CHECK_PTR(IOCMD_Bool_DT, is_negative))
             {
-               if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, terminate_chars)))
+               if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, terminate_chars, IOCMD_MAKE_INVALID_PTR(const char))))
                {
                   *is_negative = IOCMD_TRUE;
                   max_val = max_negative;
@@ -287,7 +289,7 @@ static IOCMD_Bool_DT iocmd_get_val32(IOCMD_Arg_DT *arg, const char *terminate_ch
 
          if('0' == current_char)
          {
-            next_char = IOCMD_Peak_Char(arg);
+            next_char = IOCMD_Peak_Char(arg, 0);
 
             if(('x' == next_char) || ('X' == next_char))
             {
@@ -596,7 +598,7 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
          arg.arg_out = arg_out;
 #endif
 
-         current_string = iocmd_check_arg(&arg, IOCMD_MAKE_INVALID_PTR(const char));
+         current_string = iocmd_check_arg(&arg, IOCMD_MAKE_INVALID_PTR(const char), IOCMD_MAKE_INVALID_PTR(const char));
 
          if(IOCMD_CHECK_PTR(const char, current_string))
          {
@@ -623,7 +625,8 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
                      if((0 != offset) || ((0 != search_mode) && ('\0' == cmd_tree[cntr].cmd[0])))
                      {
                         arg.current_pos += offset;
-                        current_string   = iocmd_check_arg(&arg, IOCMD_MAKE_INVALID_PTR(const char));
+                        current_string   = iocmd_check_arg(
+                           &arg, IOCMD_MAKE_INVALID_PTR(const char), IOCMD_MAKE_INVALID_PTR(const char));
 
                         if(IOCMD_RECORD_CMD == cmd_tree[cntr].record_type)
                         {
@@ -910,7 +913,7 @@ IOCMD_Bool_DT IOCMD_Arg_Init(IOCMD_Arg_DT *arg, int argc, const char* argv[])
       arg->current_pos = 0;
       arg->current_arg = 0;
 
-      iocmd_ommit_separators(arg, IOCMD_MAKE_INVALID_PTR(const char));
+      iocmd_ommit_separators(arg, IOCMD_MAKE_INVALID_PTR(const char), "");
 
       result = IOCMD_TRUE;
    }
@@ -927,7 +930,7 @@ IOCMD_Bool_DT IOCMD_Arg_Rewind(IOCMD_Arg_DT *arg)
       arg->current_pos = arg->init_pos;
       arg->current_arg = arg->init_arg;
 
-      iocmd_ommit_separators(arg, IOCMD_MAKE_INVALID_PTR(const char));
+      iocmd_ommit_separators(arg, IOCMD_MAKE_INVALID_PTR(const char), "");
 
       result = IOCMD_TRUE;
    }
@@ -935,22 +938,52 @@ IOCMD_Bool_DT IOCMD_Arg_Rewind(IOCMD_Arg_DT *arg)
    return result;
 } /* IOCMD_Arg_Rewind */
 
-char IOCMD_Peak_Char(IOCMD_Arg_DT *arg)
+char IOCMD_Peak_Char(IOCMD_Arg_DT *arg, size_t offset/* 0 - next char; 1 - next+1 char, ... */)
 {
-   const char *string = iocmd_check_arg(arg, IOCMD_MAKE_INVALID_PTR(const char));
-   char result = '\0';
+   const char *string;
+   size_t      current_pos;
+   int         current_arg;
+   char        result = '\0';
 
    if(IOCMD_CHECK_PTR(IOCMD_Arg_DT, arg) && IOCMD_CHECK_PTR(const char*, arg->argv))
    {
-      while((arg->current_arg < arg->argc) && IOCMD_CHECK_PTR(const char, arg->argv[arg->current_arg]))
+      current_pos = arg->current_pos;
+      current_arg = arg->current_arg;
+      while(arg->current_arg < arg->argc)
       {
-         string = arg->argv[arg->current_arg];
-
-         if('\0' != string[arg->current_pos])
+         if(IOCMD_CHECK_PTR(const char, arg->argv[arg->current_arg]))
          {
-            result = string[arg->current_pos];
+            string = arg->argv[arg->current_arg];
 
-            break;
+            if('\0' != string[arg->current_pos])
+            {
+               result = string[arg->current_pos];
+
+               arg->current_pos += 1;
+            }
+            else
+            {
+               arg->current_pos  = 0;
+               arg->current_arg += 1;
+
+               if(arg->current_arg < arg->argc)
+               {
+                  result = ' ';
+               }
+               else
+               {
+                  result = '\0';
+               }
+            }
+
+            if(0 == offset)
+            {
+               break;
+            }
+            else
+            {
+               --offset;
+            }
          }
          else
          {
@@ -958,6 +991,8 @@ char IOCMD_Peak_Char(IOCMD_Arg_DT *arg)
             arg->current_arg += 1;
          }
       }
+      arg->current_pos = current_pos;
+      arg->current_arg = current_arg;
    }
 
    return result;
@@ -970,20 +1005,31 @@ char IOCMD_Get_Char(IOCMD_Arg_DT *arg)
 
    if(IOCMD_CHECK_PTR(IOCMD_Arg_DT, arg) && IOCMD_CHECK_PTR(const char*, arg->argv))
    {
-      while((arg->current_arg < arg->argc) && IOCMD_CHECK_PTR(const char, arg->argv[arg->current_arg]))
+      while(arg->current_arg < arg->argc)
       {
-         string = arg->argv[arg->current_arg];
-
-         if('\0' != string[arg->current_pos])
+         if(IOCMD_CHECK_PTR(const char, arg->argv[arg->current_arg]))
          {
-            result = string[arg->current_pos];
+            string = arg->argv[arg->current_arg];
 
-            arg->current_pos += 1;
+            if('\0' != string[arg->current_pos])
+            {
+               result = string[arg->current_pos];
 
-            if('\0' == string[arg->current_pos])
+               arg->current_pos += 1;
+            }
+            else
             {
                arg->current_pos  = 0;
                arg->current_arg += 1;
+
+               if(arg->current_arg < arg->argc)
+               {
+                  result = ' ';
+               }
+               else
+               {
+                  result = '\0';
+               }
             }
 
             break;
@@ -1006,7 +1052,7 @@ IOCMD_Bool_DT IOCMD_Arg_Get_Bool(IOCMD_Arg_DT *arg, IOCMD_Bool_DT *retptr, const
    uint_fast8_t cntr;
    IOCMD_Bool_DT result = IOCMD_FALSE;
 
-   string = iocmd_check_arg(arg, terminate_chars);
+   string = iocmd_check_arg(arg, terminate_chars, IOCMD_MAKE_INVALID_PTR(const char));
 
    if(IOCMD_CHECK_PTR(const char, string))
    {
@@ -1029,7 +1075,7 @@ IOCMD_Bool_DT IOCMD_Arg_Get_Bool(IOCMD_Arg_DT *arg, IOCMD_Bool_DT *retptr, const
                result  = IOCMD_TRUE;
             }
 
-            iocmd_ommit_separators(arg, terminate_chars);
+            iocmd_ommit_separators(arg, terminate_chars, "");
             break;
          }
       }
@@ -1048,7 +1094,7 @@ IOCMD_Bool_DT IOCMD_Arg_Get_Bool(IOCMD_Arg_DT *arg, IOCMD_Bool_DT *retptr, const
                   result  = IOCMD_TRUE;
                }
 
-               iocmd_ommit_separators(arg, terminate_chars);
+               iocmd_ommit_separators(arg, terminate_chars, "");
                break;
             }
          }
@@ -1063,12 +1109,13 @@ size_t IOCMD_Arg_Get_Bytes_Tab(IOCMD_Arg_DT *arg, uint8_t *ret_buf, size_t ret_b
    size_t   byte_cntr = 0;
    size_t   current_pos;
    int      current_arg;
+   uint8_t  current_byte = 0;
+   uint8_t  nibble_cntr  = 0;
    char     current_char;
    char     next_char;
-   uint8_t  current_byte = 0;
-   uint8_t  nibble_cntr = 0;
+   IOCMD_Bool_DT text_mode = IOCMD_FALSE;
 
-   if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, separators)))
+   if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, separators, IOCMD_MAKE_INVALID_PTR(const char))))
    {
       current_pos = arg->current_pos;
       current_arg = arg->current_arg;
@@ -1077,7 +1124,7 @@ size_t IOCMD_Arg_Get_Bytes_Tab(IOCMD_Arg_DT *arg, uint8_t *ret_buf, size_t ret_b
       {
          current_char = IOCMD_Get_Char(arg);
 
-         if(('\0' == current_char) || iocmd_is_special_char(terminate_chars, current_char))
+         if(('\0' == current_char) || IOCMD_BOOL_IS_TRUE(iocmd_is_special_char(terminate_chars, current_char)))
          {
             if(nibble_cntr > 0)
             {
@@ -1101,11 +1148,25 @@ size_t IOCMD_Arg_Get_Bytes_Tab(IOCMD_Arg_DT *arg, uint8_t *ret_buf, size_t ret_b
                byte_cntr++;
             }
 
-            if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, separators)))
+            if('\"' == current_char)
+            {
+               text_mode = IOCMD_BOOL_NEGATE(text_mode);
+            }
+            else if(('\'' == current_char) && ('\'' == IOCMD_Peak_Char(arg, 1)))
+            {
+               next_char = IOCMD_Get_Char(arg);
+               (void)IOCMD_Get_Char(arg);
+               if(IOCMD_CHECK_PTR(uint8_t, ret_buf))
+               {
+                  ret_buf[byte_cntr] = (uint8_t)next_char;
+               }
+               byte_cntr++;
+            }
+
+            if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, separators, "\'\"")))
             {
                current_byte = 0;
                nibble_cntr  = 0;
-
                continue;
             }
             else
@@ -1114,50 +1175,61 @@ size_t IOCMD_Arg_Get_Bytes_Tab(IOCMD_Arg_DT *arg, uint8_t *ret_buf, size_t ret_b
             }
          }
 
-         if('0' == current_char)
+         if(IOCMD_BOOL_IS_FALSE(text_mode))
          {
-            next_char = IOCMD_Peak_Char(arg);
-
-            if(('x' == next_char) || ('X' == next_char))
+            if('0' == current_char)
             {
-               (void)IOCMD_Get_Char(arg);
-               continue;
-            }
-         }
+               next_char = IOCMD_Peak_Char(arg, 0);
 
-         if((current_char >= '0') && (current_char <= '9'))
-         {
-            current_char -= '0';
-         }
-         else if((current_char >= 'a') && (current_char <= 'f'))
-         {
-            current_char -= 'a';
-            current_char += 10;
-         }
-         else if((current_char >= 'A') && (current_char <= 'F'))
-         {
-            current_char -= 'A';
-            current_char += 10;
+               if(('x' == next_char) || ('X' == next_char))
+               {
+                  (void)IOCMD_Get_Char(arg);
+                  continue;
+               }
+            }
+
+            if((current_char >= '0') && (current_char <= '9'))
+            {
+               current_char -= '0';
+            }
+            else if((current_char >= 'a') && (current_char <= 'f'))
+            {
+               current_char -= 'a';
+               current_char += 10;
+            }
+            else if((current_char >= 'A') && (current_char <= 'F'))
+            {
+               current_char -= 'A';
+               current_char += 10;
+            }
+            else
+            {
+               byte_cntr = 0;
+               break;
+            }
+
+            current_byte  = IOCMD_MUL_BY_POWER_OF_2(current_byte, 4);
+            current_byte += current_char;
+            nibble_cntr++;
+
+            if(nibble_cntr >= 2)
+            {
+               if(IOCMD_CHECK_PTR(uint8_t, ret_buf))
+               {
+                  ret_buf[byte_cntr] = current_byte;
+               }
+               byte_cntr++;
+               current_byte = 0;
+               nibble_cntr  = 0;
+            }
          }
          else
          {
-            byte_cntr = 0;
-            break;
-         }
-
-         current_byte  = IOCMD_MUL_BY_POWER_OF_2(current_byte, 4);
-         current_byte += current_char;
-         nibble_cntr++;
-
-         if(nibble_cntr >= 2)
-         {
             if(IOCMD_CHECK_PTR(uint8_t, ret_buf))
             {
-               ret_buf[byte_cntr] = current_byte;
+               ret_buf[byte_cntr] = (uint8_t)current_char;
             }
             byte_cntr++;
-            current_byte = 0;
-            nibble_cntr  = 0;
          }
       }
 
@@ -1177,7 +1249,7 @@ size_t IOCMD_Arg_Get_Bytes_Tab_Length(IOCMD_Arg_DT *arg, const char *separators,
    size_t current_pos;
    int    current_arg;
 
-   if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, separators)))
+   if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, separators, IOCMD_MAKE_INVALID_PTR(const char))))
    {
       current_pos = arg->current_pos;
       current_arg = arg->current_arg;
@@ -1292,7 +1364,7 @@ size_t IOCMD_Arg_Get_String(IOCMD_Arg_DT *arg, char *ret_buf, size_t ret_buf_siz
    int    current_arg;
    char   current_char;
 
-   if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, terminate_chars)) && (ret_buf_size > 0))
+   if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, terminate_chars, IOCMD_MAKE_INVALID_PTR(const char))) && (ret_buf_size > 0))
    {
       ret_buf_size--;
 
@@ -1303,7 +1375,8 @@ size_t IOCMD_Arg_Get_String(IOCMD_Arg_DT *arg, char *ret_buf, size_t ret_buf_siz
       {
          current_char = IOCMD_Get_Char(arg);
 
-         if(('\0' == current_char) || (' ' == current_char) || iocmd_is_special_char(terminate_chars, current_char))
+         if(('\0' == current_char) || (' ' == current_char)
+            || IOCMD_BOOL_IS_TRUE(iocmd_is_special_char(terminate_chars, current_char)))
          {
             break;
          }
@@ -1325,7 +1398,7 @@ size_t IOCMD_Arg_Get_String(IOCMD_Arg_DT *arg, char *ret_buf, size_t ret_buf_siz
          else if(((current_char >= 'a') && (current_char <= 'z'))
             || ((current_char >= 'A') && (current_char <= 'Z'))
             || ((current_char >= '0') && (current_char <= '9'))
-            || iocmd_is_special_char(allowed_chars, current_char))
+            || IOCMD_BOOL_IS_TRUE(iocmd_is_special_char(allowed_chars, current_char)))
          {
             if(IOCMD_CHECK_PTR(char, ret_buf))
             {
@@ -1350,7 +1423,7 @@ size_t IOCMD_Arg_Get_String(IOCMD_Arg_DT *arg, char *ret_buf, size_t ret_buf_siz
          {
             ret_buf[byte_cntr] = '\0';
          }
-         iocmd_ommit_separators(arg, terminate_chars);
+         iocmd_ommit_separators(arg, terminate_chars, "");
       }
    }
 
@@ -1363,7 +1436,7 @@ size_t IOCMD_Arg_Get_String_Length(IOCMD_Arg_DT *arg, const char *allowed_chars,
    size_t current_pos;
    int    current_arg;
 
-   if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, terminate_chars)))
+   if(IOCMD_CHECK_PTR(const char, iocmd_check_arg(arg, terminate_chars, IOCMD_MAKE_INVALID_PTR(const char))))
    {
       current_pos = arg->current_pos;
       current_arg = arg->current_arg;
@@ -1379,7 +1452,7 @@ size_t IOCMD_Arg_Get_String_Length(IOCMD_Arg_DT *arg, const char *allowed_chars,
 
 IOCMD_Bool_DT IOCMD_Arg_Is_String(IOCMD_Arg_DT *arg, const char *string, const char *terminate_chars)
 {
-   const char *current_string = iocmd_check_arg(arg, IOCMD_MAKE_INVALID_PTR(const char));
+   const char *current_string = iocmd_check_arg(arg, IOCMD_MAKE_INVALID_PTR(const char), IOCMD_MAKE_INVALID_PTR(const char));
    size_t offset;
    IOCMD_Bool_DT result = IOCMD_FALSE;
 
@@ -1393,7 +1466,7 @@ IOCMD_Bool_DT IOCMD_Arg_Is_String(IOCMD_Arg_DT *arg, const char *string, const c
 
          arg->current_pos += offset;
 
-         iocmd_ommit_separators(arg, terminate_chars);
+         iocmd_ommit_separators(arg, terminate_chars, "");
       }
    }
 
