@@ -680,7 +680,7 @@ static uint_fast16_t IOCMD_add_standard_header_and_main_string_to_buf(
 #endif
 
    /* file name - 2-9 bytes, depend on program memory size */
-   convert.ptr_field.ptr.ptr = (const void*)(((const void*)file) - ((const void*)IOCMD_PROGRAM_MEMORY_BEGIN));
+   convert.ptr_field.ptr.ptr = (const void*)(&file[0 - IOCMD_PROGRAM_MEMORY_BEGIN]);
 
 #if ((IOCMD_PROGRAM_MEMORY_END - IOCMD_PROGRAM_MEMORY_BEGIN) <= 0xFFFFFFFF)
    pos = IOCMD_add_u32_to_buf(&convert, buf, buf_size - pos, pos, IOCMD_LOG_BUF_DATA_TYPE_PSTRING1B);
@@ -694,7 +694,7 @@ static uint_fast16_t IOCMD_add_standard_header_and_main_string_to_buf(
        * format string pointer if located inside of program memory (read only)
        * 2-9 bytes, depend on program memory size
        */
-      convert.ptr_field.ptr.ptr = (const void*)(((const void*)main_string) - ((const void*)IOCMD_PROGRAM_MEMORY_BEGIN));
+      convert.ptr_field.ptr.ptr = (const void*)(&main_string[0 - IOCMD_PROGRAM_MEMORY_BEGIN]);
 
 #if ((IOCMD_PROGRAM_MEMORY_END - IOCMD_PROGRAM_MEMORY_BEGIN) <= 0xFFFFFFFF)
       pos = IOCMD_add_u32_to_buf(&convert, buf, buf_size - pos, pos, IOCMD_LOG_BUF_DATA_TYPE_PSTRING1B);
@@ -743,7 +743,7 @@ static void IOCMD_add_data_tab_to_buf(
        * format string pointer if located inside of program memory (read only)
        * 2-9 bytes, depend on program memory size
        */
-      convert.ptr_field.ptr.ptr = (const void*)(data - ((const void*)IOCMD_PROGRAM_MEMORY_BEGIN));
+      convert.ptr_field.ptr.ptr = (const void*)(&((const uint8_t*)data)[0 - IOCMD_PROGRAM_MEMORY_BEGIN]);
 
 #if ((IOCMD_PROGRAM_MEMORY_END - IOCMD_PROGRAM_MEMORY_BEGIN) <= 0xFFFFFFFF)
       cntr = IOCMD_add_u32_to_buf(&convert, buf, buf_size - cntr, cntr, IOCMD_LOG_BUF_DATA_TYPE_PTAB_1B);
@@ -1704,7 +1704,7 @@ uint_fast16_t IOCMD_Compress_Param(
 
       if((!IOCMD_FORCE_STRINGS_COPYING) && IOCMD_IS_PTR_IN_PROGRAM_MEMORY(pstr))
       {
-         data->ptr_field.ptr.ptr = (const void*)(((const void*)(data->ptr_field.ptr.string)) - ((const void*)IOCMD_PROGRAM_MEMORY_BEGIN));
+         data->ptr_field.ptr.ptr = (const void*)(&(data->ptr_field.ptr.string)[0 - IOCMD_PROGRAM_MEMORY_BEGIN]);
 
 #if ((IOCMD_PROGRAM_MEMORY_END - IOCMD_PROGRAM_MEMORY_BEGIN) <= 0xFFFFFFFF)
          buf_pos = IOCMD_add_u32_to_buf(data, buf, buf_size - buf_pos, buf_pos, IOCMD_LOG_BUF_DATA_TYPE_PSTRING1B);
@@ -2220,7 +2220,7 @@ uint_fast16_t IOCMD_Compress_Param(
 
       if((!IOCMD_FORCE_STRINGS_COPYING) && IOCMD_IS_PTR_IN_PROGRAM_MEMORY(pstr))
       {
-         data->ptr_field.ptr.ptr = (const void*)(((const void*)(data->ptr_field.ptr.string)) - ((const void*)IOCMD_PROGRAM_MEMORY_BEGIN));
+         data->ptr_field.ptr.ptr = (const void*)(&(data->ptr_field.ptr.string)[0 - IOCMD_PROGRAM_MEMORY_BEGIN]);
 
 #if ((IOCMD_PROGRAM_MEMORY_END - IOCMD_PROGRAM_MEMORY_BEGIN) <= 0xFFFFFFFF)
          buf_pos = IOCMD_add_u32_to_buf(data, buf, buf_size - buf_pos, buf_pos, IOCMD_LOG_BUF_DATA_TYPE_PSTRING1B);
