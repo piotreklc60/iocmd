@@ -134,6 +134,13 @@
 #endif
 
 /**
+ * If defined to IOCMD_FEATURE_ENABLED then functions which are printing / storing logs to buffer are optimized to use as less program memory as possible
+ */
+#ifndef IOCMD_OUT_MINIMAL_PROGRAM_MEMORY_USAGE
+#define IOCMD_OUT_MINIMAL_PROGRAM_MEMORY_USAGE  IOCMD_FEATURE_DISABLED
+#endif
+
+/**
  * Defines max length of main string parsed by "printf" functions and maximum size of strings provided as parameters to be printed.
  */
 #ifndef IOCMD_MAX_STRING_LENGTH
