@@ -317,7 +317,9 @@ typedef int (*IOCMD_Print_Text_Repeat)(void *dev, const char *string, int num_re
  * in which this function is also connected.
  * @param string pointer to ASCII string (might be NULL terminated) to by copied to output device. Function writes string
  * from that pointer until reaches NULL terminator or maximum number of characters limited by next parameter
- * @param str_len maximum number of characters to be copied from "string". If 0 then string is copied until NULL terminator
+ * @param str_len maximum number of characters to be copied from "string". If 0 then string is copied until NULL terminator.
+ * If bigger than strlen(string) then string is copied until NULL terminator.
+ * If smaller than strlen(string) then only str_len bytes are copied.
  */
 typedef int (*IOCMD_Print_Text_Len)(void *dev, const char *string, int str_len/* if 0 then print until '\0' */);
 
