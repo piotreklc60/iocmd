@@ -1174,62 +1174,110 @@ typedef uint32_t IOCMD_Time_DT;
 
 #else
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_EMERG(      id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_EMERG(      id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_EMERG_1(    id, data, size, description, a1)
 #define IOCMD_LOG_DATA_EMERG_2(    id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_EMERG_3(    id, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_ALERT(      id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_ALERT(      id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_ALERT_1(    id, data, size, description, a1)
 #define IOCMD_LOG_DATA_ALERT_2(    id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_ALERT_3(    id, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_CRIT(       id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_CRIT(       id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_CRIT_1(     id, data, size, description, a1)
 #define IOCMD_LOG_DATA_CRIT_2(     id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_CRIT_3(     id, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_ERROR(      id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_ERROR(      id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_ERROR_1(    id, data, size, description, a1)
 #define IOCMD_LOG_DATA_ERROR_2(    id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_ERROR_3(    id, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_WARN(       id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_WARN(       id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_WARN_1(     id, data, size, description, a1)
 #define IOCMD_LOG_DATA_WARN_2(     id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_WARN_3(     id, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_NOTICE(     id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_NOTICE(     id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_NOTICE_1(   id, data, size, description, a1)
 #define IOCMD_LOG_DATA_NOTICE_2(   id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_NOTICE_3(   id, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_INFO_HI(    id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_INFO_HI(    id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_INFO_HI_1(  id, data, size, description, a1)
 #define IOCMD_LOG_DATA_INFO_HI_2(  id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_INFO_HI_3(  id, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_INFO_MID(   id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_INFO_MID(   id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_INFO_MID_1( id, data, size, description, a1)
 #define IOCMD_LOG_DATA_INFO_MID_2( id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_INFO_MID_3( id, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_INFO_LO(    id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_INFO_LO(    id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_INFO_LO_1(  id, data, size, description, a1)
 #define IOCMD_LOG_DATA_INFO_LO_2(  id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_INFO_LO_3(  id, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_DEBUG_HI(   id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_DEBUG_HI(   id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_DEBUG_HI_1( id, data, size, description, a1)
 #define IOCMD_LOG_DATA_DEBUG_HI_2( id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_DEBUG_HI_3( id, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_DEBUG_MID(  id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_DEBUG_MID(  id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_DEBUG_MID_1(id, data, size, description, a1)
 #define IOCMD_LOG_DATA_DEBUG_MID_2(id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_DEBUG_MID_3(id, data, size, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_LOG_DATA_DEBUG_LO(   id, data, size, ...)
+#else
 #define IOCMD_LOG_DATA_DEBUG_LO(   id, data, size, description)
+#endif
 #define IOCMD_LOG_DATA_DEBUG_LO_1( id, data, size, description, a1)
 #define IOCMD_LOG_DATA_DEBUG_LO_2( id, data, size, description, a1, a2)
 #define IOCMD_LOG_DATA_DEBUG_LO_3( id, data, size, description, a1, a2, a3)
@@ -1353,62 +1401,110 @@ typedef uint32_t IOCMD_Time_DT;
 
 #else
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_EMERG(      id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_EMERG(      id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_EMERG_1(    id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_EMERG_2(    id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_EMERG_3(    id, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_ALERT(      id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_ALERT(      id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_ALERT_1(    id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_ALERT_2(    id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_ALERT_3(    id, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_CRIT(       id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_CRIT(       id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_CRIT_1(     id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_CRIT_2(     id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_CRIT_3(     id, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_ERROR(      id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_ERROR(      id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_ERROR_1(    id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_ERROR_2(    id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_ERROR_3(    id, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_WARN(       id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_WARN(       id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_WARN_1(     id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_WARN_2(     id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_WARN_3(     id, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_NOTICE(     id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_NOTICE(     id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_NOTICE_1(   id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_NOTICE_2(   id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_NOTICE_3(   id, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_INFO_HI(    id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_INFO_HI(    id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_INFO_HI_1(  id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_INFO_HI_2(  id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_INFO_HI_3(  id, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_INFO_MID(   id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_INFO_MID(   id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_INFO_MID_1( id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_INFO_MID_2( id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_INFO_MID_3( id, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_INFO_LO(    id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_INFO_LO(    id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_INFO_LO_1(  id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_INFO_LO_2(  id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_INFO_LO_3(  id, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_DEBUG_HI(   id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_DEBUG_HI(   id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_DEBUG_HI_1( id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_DEBUG_HI_2( id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_DEBUG_HI_3( id, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_DEBUG_MID(  id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_DEBUG_MID(  id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_DEBUG_MID_1(id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_DEBUG_MID_2(id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_DEBUG_MID_3(id, data1, size1, data2, size2, description, a1, a2, a3)
 
+#if(IOCMD_SUPPORT_VARIADIC_MACROS)
+#define IOCMD_COMPARE_DATA_DEBUG_LO(   id, data1, size1, data2, size2, ...)
+#else
 #define IOCMD_COMPARE_DATA_DEBUG_LO(   id, data1, size1, data2, size2, description)
+#endif
 #define IOCMD_COMPARE_DATA_DEBUG_LO_1( id, data1, size1, data2, size2, description, a1)
 #define IOCMD_COMPARE_DATA_DEBUG_LO_2( id, data1, size1, data2, size2, description, a1, a2)
 #define IOCMD_COMPARE_DATA_DEBUG_LO_3( id, data1, size1, data2, size2, description, a1, a2, a3)
