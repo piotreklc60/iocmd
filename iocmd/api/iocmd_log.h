@@ -49,6 +49,15 @@
 #endif
 
 /**
+ * If set to IOCMD_FEATURE_ENABLED then library supports temporarily posponing all types of logs(entrances,
+ * logs, data logging, data comparison, OS switch context logging). When logs are postponed, all calls of logging functions
+ * will effect dropping requested logs.
+ */
+#ifndef IOCMD_SUPPORT_LOGS_POSPONING
+#define IOCMD_SUPPORT_LOGS_POSPONING            IOCMD_FEATURE_ENABLED
+#endif
+
+/**
  * If set to IOCMD_FEATURE_ENABLED then library supports logging functions enter / exit.
  */
 #ifndef IOCMD_SUPPORT_ENTRANCE_LOGGING
@@ -1532,6 +1541,14 @@ void IOCMD_Logs_Deinit(void);
 void IOCMD_Clear_All_Logs(IOCMD_Bool_DT clear_quiet_buf);
 
 
+#if(IOCMD_SUPPORT_LOGS_POSPONING)
+void IOCMD_Logs_Postpone(void);
+
+
+void IOCMD_Logs_Resume(void);
+#endif
+
+
 void IOCMD_Log(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, const char *file, const char *format, ...);
 
 
@@ -1555,6 +1572,21 @@ void IOCMD_Enter_Exit(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t e
 
 
 #if (IOCMD_LOG_PRINT_OS_CONTEXT && IOCMD_LOGS_TREE_OS_LOG_CONTEXT_SWITCH)
+/**
+ * Function used for logging operating system tasks switch.
+ *
+ * Usage of this function in the scheduler should be like:
+ *
+ * #if (IOCMD_LOG_PRINT_OS_CONTEXT)
+ *       if((*IOCMD_Os_Critical_Switch > IOCMD_ENTRANCE_DISABLED) && (previous_task != next_task))
+ *       {
+ *          if(IOCMD_COMPILATION_SWITCH_ENT(IOCMD_LOGS_TREE_OS_CRITICAL_ID))
+ *          {
+ *             IOCMD_Os_Switch_Context((IOCMD_Context_ID_DT)previous_task, (IOCMD_Context_ID_DT)next_task);
+ *          }
+ *       }
+ * #endif
+ */
 void IOCMD_Os_Switch_Context(IOCMD_Context_ID_DT previous_service, IOCMD_Context_ID_DT next_service);
 #endif
 

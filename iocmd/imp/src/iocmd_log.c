@@ -153,6 +153,9 @@ typedef struct IOCMD_Params_eXtendedTag
    uint8_t                                quiet_buf[IOCMD_LOG_QUIET_BUF_SIZE];
 #endif
    IOCMD_Log_Level_Data_Params_XT         levels_tab_data[IOCMD_LOG_ID_LAST];
+#if(IOCMD_SUPPORT_LOGS_POSPONING)
+   uint_fast8_t                           logging_not_posponed;
+#endif
 }IOCMD_Params_XT;
 
 typedef struct IOCMD_standard_header_and_main_string_eXtended_Tag
@@ -2403,6 +2406,9 @@ IOCMD_Bool_DT IOCMD_Logs_Init(void)
                IOCMD_Params.levels_tab_size = IOCMD_logs_tree.tab_num_elems;
                IOCMD_Params.global_cntr.global_cntr = 0U;
                IOCMD_Params.global_cntr.main_cntr   = 0U;
+#if(IOCMD_SUPPORT_LOGS_POSPONING)
+               IOCMD_Params.logging_not_posponed    = 1U;
+#endif
 
                result = IOCMD_TRUE;
             }
@@ -2455,6 +2461,29 @@ void IOCMD_Clear_All_Logs(IOCMD_Bool_DT clear_quiet_buf)
    IOCMD_PROTECTION_UNLOCK(IOCMD_Params);
 } /* IOCMD_Clear_All_Logs */
 
+#if(IOCMD_SUPPORT_LOGS_POSPONING)
+void IOCMD_Logs_Postpone(void)
+{
+   IOCMD_Params.logging_not_posponed = false;
+
+#if (IOCMD_LOG_PRINT_OS_CONTEXT && IOCMD_LOGS_TREE_OS_LOG_CONTEXT_SWITCH)
+   IOCMD_Os_Critical_Switch = &iocmd_os_critical_switch_const;
+#endif
+} /* IOCMD_Logs_Postpone */
+
+void IOCMD_Logs_Resume(void)
+{
+   IOCMD_Params.logging_not_posponed = true;
+
+#if (IOCMD_LOG_PRINT_OS_CONTEXT && IOCMD_LOGS_TREE_OS_LOG_CONTEXT_SWITCH)
+   if((IOCMD_logs_tree.os_critical_id < IOCMD_logs_tree.tab_num_elems) && (IOCMD_logs_tree.os_critical_id < IOCMD_LOG_ID_LAST))
+   {
+      IOCMD_Os_Critical_Switch = &(IOCMD_Params.levels_tab_data[IOCMD_logs_tree.os_critical_id].entrance_logging_state);
+   }
+#endif
+} /* IOCMD_Logs_Resume */
+#endif
+
 void IOCMD_Log(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, const char *file, const char *format, ...)
 {
    Buff_Ring_XT *first_ring;
@@ -2471,7 +2500,12 @@ void IOCMD_Log(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, c
    uint_fast16_t cntr;
    uint_fast16_t cntr2;
 
-   if(tab_id < IOCMD_Params.levels_tab_size)
+   if(
+#if(IOCMD_SUPPORT_LOGS_POSPONING)
+      IOCMD_Params.logging_not_posponed &&
+#endif
+      (tab_id < IOCMD_Params.levels_tab_size)
+   )
    {
 #if((IOCMD_LOG_MAIN_BUF_SIZE > 0) && (IOCMD_LOG_QUIET_BUF_SIZE > 0))
       if((level <= IOCMD_Params.levels_tab_data[tab_id].level) || (level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level))
@@ -2614,7 +2648,12 @@ void IOCMD_Log_Data_Context(
    uint8_t buf[IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH];
    uint8_t data_desc_buf[IOCMD_LOG_DATA_DESC_SIZE];
 
-   if( (tab_id < IOCMD_Params.levels_tab_size) && (level <= IOCMD_LOG_LEVEL_DEBUG_LO) )
+   if(
+#if(IOCMD_SUPPORT_LOGS_POSPONING)
+      IOCMD_Params.logging_not_posponed &&
+#endif
+      (tab_id < IOCMD_Params.levels_tab_size) && (level <= IOCMD_LOG_LEVEL_DEBUG_LO)
+   )
    {
 #if((IOCMD_LOG_MAIN_BUF_SIZE > 0) && (IOCMD_LOG_QUIET_BUF_SIZE > 0))
       if((level <= IOCMD_Params.levels_tab_data[tab_id].level) || (level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level))
@@ -2773,7 +2812,12 @@ void IOCMD_Log_Data_Comparision(
    uint8_t                       data1_desc_buf[IOCMD_LOG_DATA_DESC_SIZE];
    uint8_t                       data2_desc_buf[IOCMD_LOG_DATA_DESC_SIZE];
 
-   if( (tab_id < IOCMD_Params.levels_tab_size) && (level <= IOCMD_LOG_LEVEL_DEBUG_LO) )
+   if(
+#if(IOCMD_SUPPORT_LOGS_POSPONING)
+      IOCMD_Params.logging_not_posponed &&
+#endif
+      (tab_id < IOCMD_Params.levels_tab_size) && (level <= IOCMD_LOG_LEVEL_DEBUG_LO)
+   )
    {
 #if((IOCMD_LOG_MAIN_BUF_SIZE > 0) && (IOCMD_LOG_QUIET_BUF_SIZE > 0))
       if((level <= IOCMD_Params.levels_tab_data[tab_id].level) || (level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level))
@@ -2993,7 +3037,12 @@ void IOCMD_Enter_Exit(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t e
    Buff_Size_DT  first_ring_pos;
 #endif
 
-   if(tab_id < IOCMD_Params.levels_tab_size)
+   if(
+#if(IOCMD_SUPPORT_LOGS_POSPONING)
+      IOCMD_Params.logging_not_posponed &&
+#endif
+      (tab_id < IOCMD_Params.levels_tab_size)
+   )
    {
 #if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
       if(IOCMD_Params.levels_tab_data[tab_id].entrance_logging_state > IOCMD_ENTRANCE_DISABLED)
