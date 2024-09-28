@@ -155,6 +155,10 @@
 #define IOCMD_ENDLINE                           "\n\r"
 #endif
 
+#ifndef IOCMD_CARIAGE_RETURN
+#define IOCMD_CARIAGE_RETURN                    "\r"
+#endif
+
 
 /**
  * -----------------------------------------------------------------------------------------------------------------------------

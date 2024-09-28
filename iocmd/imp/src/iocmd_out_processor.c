@@ -732,7 +732,12 @@ int IOCMD_Proc_Main_Loop(
          }
          else if('\r' == format[format_pos])
          {
-            /* do nothing */
+            if(IOCMD_BOOL_IS_TRUE(is_print))
+            {
+               exe = params->print.exe;
+
+               exe->print_cariage_return(exe->dev);
+            }
          }
          else
          {

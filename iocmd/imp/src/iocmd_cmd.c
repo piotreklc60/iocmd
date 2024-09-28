@@ -39,6 +39,12 @@ static void iocmd_cmd_set_ent(IOCMD_Arg_DT *arg);
 static void iocmd_cmd_set_ent_grp(IOCMD_Arg_DT *arg);
 static void iocmd_cmd_set_ent_mod(IOCMD_Arg_DT *arg);
 static void iocmd_cmd_disable(IOCMD_Arg_DT *arg);
+static void iocmd_cmd_tmp_actv(IOCMD_Arg_DT *arg);
+static void iocmd_cmd_tmp_actv_off(IOCMD_Arg_DT *arg);
+static void iocmd_cmd_tmp_quiet(IOCMD_Arg_DT *arg);
+static void iocmd_cmd_tmp_quiet_off(IOCMD_Arg_DT *arg);
+static void iocmd_cmd_tmp_ent(IOCMD_Arg_DT *arg);
+static void iocmd_cmd_tmp_ent_off(IOCMD_Arg_DT *arg);
 static void iocmd_cmd_stat(IOCMD_Arg_DT *arg);
 
 static const IOCMD_Command_Tree_XT iocmd_cmd_tab[] =
@@ -82,6 +88,20 @@ static const IOCMD_Command_Tree_XT iocmd_cmd_tab[] =
    IOCMD_GROUP_END(),
    IOCMD_GROUP_END(),
    IOCMD_ELEM(             "disable"         , iocmd_cmd_disable     , "disables active and quiet logging and entrances for all logs"),
+   IOCMD_GROUP_START(      "temp"                                    , "group of commands for setting globally temporary logs level"),
+   IOCMD_GROUP_START(         "active"                               , "sets temporary active state (logging directly to output) for all logs"),
+   IOCMD_ELEM(                   ""          , iocmd_cmd_tmp_actv    , "sets temporary state for all logs"),
+   IOCMD_ELEM(                   "off"       , iocmd_cmd_tmp_actv_off, "turns OFF temporary level for all logs"),
+   IOCMD_GROUP_END(),
+   IOCMD_GROUP_START(         "quiet"                                , "sets temporary quiet state (logging only ot quiet buffer) for all logs"),
+   IOCMD_ELEM(                   ""          , iocmd_cmd_tmp_quiet   , "sets temporary state for all logs"),
+   IOCMD_ELEM(                   "off"       ,iocmd_cmd_tmp_quiet_off, "turns OFF temporary level for all logs"),
+   IOCMD_GROUP_END(),
+   IOCMD_GROUP_START(         "ent"                                  , "sets temporary entrances state for all entrances"),
+   IOCMD_ELEM(                   ""          , iocmd_cmd_tmp_ent     , "sets temporary state for all entrances"),
+   IOCMD_ELEM(                   "disable"   , iocmd_cmd_tmp_ent_off , "turns OFF temporary level for all entrances"),
+   IOCMD_GROUP_END(),
+   IOCMD_GROUP_END(),
    IOCMD_GROUP_END(),
    IOCMD_ELEM(          "stat"               , iocmd_cmd_stat        , "prints log module statistics"),
    IOCMD_GROUP_END()
@@ -564,6 +584,60 @@ static void iocmd_cmd_disable(IOCMD_Arg_DT *arg)
    IOCMD_Set_All_Logs(IOCMD_LOG_LEVEL_EMERG, IOCMD_LOG_LEVEL_EMERG);
    IOCMD_Set_All_Entrances(IOCMD_ENTRANCE_DISABLED);
 } /* iocmd_cmd_disable */
+
+static void iocmd_cmd_tmp_actv(IOCMD_Arg_DT *arg)
+{
+   const char * const *levels_names = IOCMD_Log_Get_Levels_Names();
+   uint8_t level = iocmd_get_new_state_id(arg, levels_names, 12);
+
+   if(level < 12)
+   {
+      IOCMD_Oprintf_Line(arg->arg_out, "Temporary state for %s logging: %d(%s)", "main", level, levels_names[level]);
+      IOCMD_Set_Temporary_Main_Level(level);
+   }
+} /* iocmd_cmd_set_actv */
+
+static void iocmd_cmd_tmp_actv_off(IOCMD_Arg_DT *arg)
+{
+   IOCMD_Oprintf_Line(arg->arg_out, "Temporary state for %s logging: %d(%s)", "main", -1, "OFF");
+   IOCMD_Clear_Temporary_Main_Level();
+} /* iocmd_cmd_set_actv */
+
+static void iocmd_cmd_tmp_quiet(IOCMD_Arg_DT *arg)
+{
+   const char * const *levels_names = IOCMD_Log_Get_Levels_Names();
+   uint8_t level = iocmd_get_new_state_id(arg, levels_names, 12);
+
+   if(level < 12)
+   {
+      IOCMD_Oprintf_Line(arg->arg_out, "Temporary state for %s logging: %d(%s)", "quiet", level, levels_names[level]);
+      IOCMD_Set_Temporary_Quiet_Level(level);
+   }
+} /* iocmd_cmd_set_actv */
+
+static void iocmd_cmd_tmp_quiet_off(IOCMD_Arg_DT *arg)
+{
+   IOCMD_Oprintf_Line(arg->arg_out, "Temporary state for %s logging: %d(%s)", "quiet", -1, "OFF");
+   IOCMD_Clear_Temporary_Quiet_Level();
+} /* iocmd_cmd_set_actv */
+
+static void iocmd_cmd_tmp_ent(IOCMD_Arg_DT *arg)
+{
+   const char * const *levels_names = IOCMD_cmd_entrances_state;
+   uint8_t level = iocmd_get_new_state_id(arg, levels_names, 12);
+
+   if(level < 12)
+   {
+      IOCMD_Oprintf_Line(arg->arg_out, "Temporary state for %s logging: %d(%s)", "entrances", level, levels_names[level]);
+      IOCMD_Set_Temporary_Entrances_Level(level);
+   }
+} /* iocmd_cmd_set_actv */
+
+static void iocmd_cmd_tmp_ent_off(IOCMD_Arg_DT *arg)
+{
+   IOCMD_Oprintf_Line(arg->arg_out, "Temporary state for %s logging: %d(%s)", "entrances", -1, "OFF");
+   IOCMD_Clear_Temporary_Entrances_Level();
+} /* iocmd_cmd_set_actv */
 
 static void iocmd_cmd_stat(IOCMD_Arg_DT *arg)
 {

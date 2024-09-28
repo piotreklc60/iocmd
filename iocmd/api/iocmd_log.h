@@ -98,6 +98,14 @@
 #define IOCMD_DATA_COMPARE_PRINT_BOTH_CONTEXTS  IOCMD_FEATURE_DISABLED
 #endif
 
+/**
+ * If set to IOCMD_FEATURE_ENABLED then library supports printing logs to the output immediately after putting to the buffer.
+ * If set to IOCMD_FEATURE_DISABLED then functions for immediate printouts don't exist.
+ */
+#ifndef IOCMD_SUPPORT_IMMEDIATE_LOGS_PRINTING
+#define IOCMD_SUPPORT_IMMEDIATE_LOGS_PRINTING   IOCMD_FEATURE_ENABLED
+#endif
+
 
 /* ----------------------------------------- MEMORY CONFIGURATION -------------------------------------------------------------- */
 
@@ -1601,6 +1609,27 @@ void IOCMD_Os_Switch_Context(IOCMD_Context_ID_DT previous_service, IOCMD_Context
  * @param working_buf_size size of working_buf. This buffer size shall be at least IOCMD_WORKING_BUF_RECOMMENDED_SIZE
  */
 void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_silent_logs, const IOCMD_Print_Exe_Params_XT *exe, uint8_t *working_buf, uint_fast16_t working_buf_size);
+
+
+void IOCMD_Install_Immediate_Logs_Processor(const IOCMD_Print_Exe_Params_XT *exe, uint8_t *working_buf, uint_fast16_t working_buf_size);
+
+
+void IOCMD_Set_Temporary_Main_Level(uint8_t level);
+
+
+void IOCMD_Set_Temporary_Quiet_Level(uint8_t level);
+
+
+void IOCMD_Set_Temporary_Entrances_Level(uint8_t level);
+
+
+void IOCMD_Clear_Temporary_Main_Level(void);
+
+
+void IOCMD_Clear_Temporary_Quiet_Level(void);
+
+
+void IOCMD_Clear_Temporary_Entrances_Level(void);
 
 
 void IOCMD_Set_All_Logs(uint8_t level, uint8_t quiet_level);

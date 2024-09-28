@@ -119,6 +119,13 @@ void IOCMD_sprintf_print_endline_repeat(void *dev, int num_repeats)
       num_repeats--;
    }
 } /* IOCMD_sprintf_print_endline_repeat */
+
+void IOCMD_sprintf_print_cariage_return(void *dev)
+{
+   IOCMD_sprintf_dev_T *sdev = (IOCMD_sprintf_dev_T*)dev;
+
+   sdev->result_pos = 0;
+} /* IOCMD_sprintf_print_endline_repeat */
 #endif
 
 
@@ -160,6 +167,7 @@ int IOCMD_Vsnprintf(char *buf, size_t buf_size, const char *format, va_list arg)
       exe.print_string_repeat = IOCMD_sprintf_print_text_repeat;
       exe.print_string_len    = IOCMD_sprintf_print_text_len;
       exe.print_endl_repeat   = IOCMD_sprintf_print_endline_repeat;
+      exe.print_cariage_return= IOCMD_sprintf_print_cariage_return;
 
       params.print.exe = &exe;
 
@@ -191,7 +199,8 @@ int IOCMD_Printf(const char *format, ...)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text,           iocmd_standard_out_exe->print_string)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Repeat,    iocmd_standard_out_exe->print_string_repeat)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Len,       iocmd_standard_out_exe->print_string_len)
-      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, iocmd_standard_out_exe->print_endl_repeat))
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, iocmd_standard_out_exe->print_endl_repeat)
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Cariage_Return, iocmd_standard_out_exe->print_cariage_return))
    {
       va_start(arguments, format);
 
@@ -216,7 +225,8 @@ int IOCMD_Vprintf(const char *format, va_list arg)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text,           iocmd_standard_out_exe->print_string)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Repeat,    iocmd_standard_out_exe->print_string_repeat)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Len,       iocmd_standard_out_exe->print_string_len)
-      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, iocmd_standard_out_exe->print_endl_repeat))
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, iocmd_standard_out_exe->print_endl_repeat)
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Cariage_Return, iocmd_standard_out_exe->print_cariage_return))
    {
       params.print.exe = iocmd_standard_out_exe;
 
@@ -238,7 +248,8 @@ int IOCMD_Printf_Line(const char *format, ...)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text,           iocmd_standard_out_exe->print_string)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Repeat,    iocmd_standard_out_exe->print_string_repeat)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Len,       iocmd_standard_out_exe->print_string_len)
-      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, iocmd_standard_out_exe->print_endl_repeat))
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, iocmd_standard_out_exe->print_endl_repeat)
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Cariage_Return, iocmd_standard_out_exe->print_cariage_return))
    {
       va_start(arguments, format);
 
@@ -265,7 +276,8 @@ int IOCMD_Vprintf_Line(const char *format, va_list arg)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text,           iocmd_standard_out_exe->print_string)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Repeat,    iocmd_standard_out_exe->print_string_repeat)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Len,       iocmd_standard_out_exe->print_string_len)
-      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, iocmd_standard_out_exe->print_endl_repeat))
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, iocmd_standard_out_exe->print_endl_repeat)
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Cariage_Return, iocmd_standard_out_exe->print_cariage_return))
    {
       params.print.exe = iocmd_standard_out_exe;
 
@@ -291,7 +303,8 @@ int IOCMD_Oprintf(const IOCMD_Print_Exe_Params_XT *exe, const char *format, ...)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text,           exe->print_string)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Repeat,    exe->print_string_repeat)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Len,       exe->print_string_len)
-      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, exe->print_endl_repeat))
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, exe->print_endl_repeat)
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Cariage_Return, exe->print_cariage_return))
    {
       va_start(arguments, format);
 
@@ -318,7 +331,8 @@ int IOCMD_Voprintf(const IOCMD_Print_Exe_Params_XT *exe, const char *format, va_
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text,           exe->print_string)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Repeat,    exe->print_string_repeat)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Len,       exe->print_string_len)
-      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, exe->print_endl_repeat))
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, exe->print_endl_repeat)
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Cariage_Return, exe->print_cariage_return))
    {
       params.print.exe = exe;
 
@@ -342,7 +356,8 @@ int IOCMD_Oprintf_Line(const IOCMD_Print_Exe_Params_XT *exe, const char *format,
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text,           exe->print_string)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Repeat,    exe->print_string_repeat)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Len,       exe->print_string_len)
-      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, exe->print_endl_repeat))
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, exe->print_endl_repeat)
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Cariage_Return, exe->print_cariage_return))
    {
       va_start(arguments, format);
 
@@ -371,7 +386,8 @@ int IOCMD_Voprintf_Line(const IOCMD_Print_Exe_Params_XT *exe, const char *format
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text,           exe->print_string)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Repeat,    exe->print_string_repeat)
       && IOCMD_CHECK_HANDLER(IOCMD_Print_Text_Len,       exe->print_string_len)
-      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, exe->print_endl_repeat))
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Endline_Repeat, exe->print_endl_repeat)
+      && IOCMD_CHECK_HANDLER(IOCMD_Print_Cariage_Return, exe->print_cariage_return))
    {
       params.print.exe = exe;
 

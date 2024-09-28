@@ -130,6 +130,14 @@ typedef uint32_t IOCMD_global_cntr_DT;
 #endif
 
 
+typedef struct IOCMD_Immediate_Logs_Processor_Params_eXtendedTag
+{
+  const IOCMD_Print_Exe_Params_XT *exe;
+  uint8_t *working_buf;
+  uint_fast16_t working_buf_size;
+}IOCMD_Immediate_Logs_Processor_Params_XT;
+
+
 typedef struct IOCMD_Params_eXtendedTag
 {
    const IOCMD_Log_Level_Const_Params_XT *levels_tab;
@@ -156,6 +164,13 @@ typedef struct IOCMD_Params_eXtendedTag
 #if(IOCMD_SUPPORT_LOGS_POSPONING)
    uint_fast8_t                           logging_not_posponed;
 #endif
+#if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
+   uint_fast8_t                           temporary_main_level;
+#endif
+#if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
+   uint_fast8_t                           temporary_quiet_level;
+#endif
+   uint_fast8_t                           temporary_entrance_level;
 }IOCMD_Params_XT;
 
 typedef struct IOCMD_standard_header_and_main_string_eXtended_Tag
@@ -178,7 +193,9 @@ typedef struct IOCMD_standard_header_and_main_string_eXtended_Tag
 }IOCMD_standard_header_and_main_string_XT;
 
 static IOCMD_Params_XT IOCMD_Params;
-
+#if(IOCMD_SUPPORT_IMMEDIATE_LOGS_PRINTING)
+static IOCMD_Immediate_Logs_Processor_Params_XT IOCMD_ILP;
+#endif
 
 static const char * const IOCMD_level_strings[] =
 {
@@ -1175,7 +1192,7 @@ static void IOCMD_proc_one_buffered_log(
    IOCMD_Param_Parsing_Result_XT parse;
    IOCMD_Buffer_Convert_UT convert;
    const char    *level = "";
-#if (IOCMD_LOG_PRINT_OS_CONTEXT_NAME)
+#if (IOCMD_LOG_PRINT_OS_CONTEXT && IOCMD_LOG_PRINT_OS_CONTEXT_NAME)
    const char    *context_name;
 #endif
 #if(IOCMD_SUPPORT_DATA_COMPARISON || IOCMD_SUPPORT_DATA_LOGGING)
@@ -1190,10 +1207,10 @@ static void IOCMD_proc_one_buffered_log(
 #if(IOCMD_SUPPORT_DATA_COMPARISON)
    uint_fast16_t size2 = 0U;
 #endif
+#if (IOCMD_LOG_PRINT_OS_CONTEXT)
 #if (IOCMD_LOG_PRINT_OS_CONTEXT_NAME)
    uint_fast16_t context_name_len;
 #endif
-#if (IOCMD_LOG_PRINT_OS_CONTEXT)
    IOCMD_Context_ID_DT previous_context;
    IOCMD_Context_ID_DT current_context;
 #endif
@@ -1224,6 +1241,8 @@ static void IOCMD_proc_one_buffered_log(
    memset(&header, 0, sizeof(header));
 
    cntr += IOCMD_get_log_header_main_cntr_time_and_level_from_buf(&header, &buf[cntr]);
+
+   IOCMD_Oprintf(exe, IOCMD_CARIAGE_RETURN);
 
    if( ( (header.level <= IOCMD_LOG_LEVEL_EXT_EXIT)
          || ((header.level >= IOCMD_LOG_DATA_PRINT_CONTEXT_BEGIN) && (header.level <= IOCMD_LOG_DATA_COMPARE_CONTEXT_END)) )
@@ -1318,7 +1337,7 @@ static void IOCMD_proc_one_buffered_log(
 
          IOCMD_print_main_cntr(exe, &header, is_quiet_log);
 
-#if (IOCMD_LOG_PRINT_OS_CONTEXT_NAME)
+#if (IOCMD_LOG_PRINT_OS_CONTEXT && IOCMD_LOG_PRINT_OS_CONTEXT_NAME)
          context_name     = IOCMD_OS_GET_CONTEXT_NAME(header.context_type, header.context_id);
          context_name_len = strlen(context_name);
          if(context_name_len > 16U)
@@ -1547,7 +1566,7 @@ static void IOCMD_proc_one_buffered_log(
             if(0U != data_too_big1)
             {
                IOCMD_print_main_cntr(exe, &header, IOCMD_FALSE);
-               IOCMD_Oprintf(exe, "  rest of %s was cut during logging\n", "data");
+               IOCMD_Oprintf_Line(exe, "  rest of %s was cut during logging\n", "data");
             }
          }
 #endif
@@ -1574,7 +1593,7 @@ static void IOCMD_proc_one_buffered_log(
                {
                   level = "data2";
                }
-               IOCMD_Oprintf(exe, "  rest of %s was cut during logging\n", level);
+               IOCMD_Oprintf_Line(exe, "  rest of %s was cut during logging\n", level);
             }
          }
 #endif
@@ -1618,9 +1637,14 @@ static void IOCMD_proc_one_buffered_log(
          16,
          IOCMD_OS_GET_CONTEXT_NAME(IOCMD_OS_CONTEXT_TYPE_THREAD, current_context)
 #endif
-         );
+      );
    } /* if(IOCMD_LOG_OS_CONTEXT_SWITCH == level) */
 #endif
+
+   if(IOCMD_CHECK_HANDLER(IOCMD_Refresh_Line_After_Log, exe->refresh_line))
+   {
+      exe->refresh_line(exe->dev);
+   }
 } /* IOCMD_proc_one_buffered_log */
 
 
@@ -2409,6 +2433,9 @@ IOCMD_Bool_DT IOCMD_Logs_Init(void)
 #if(IOCMD_SUPPORT_LOGS_POSPONING)
                IOCMD_Params.logging_not_posponed    = 1U;
 #endif
+               IOCMD_Params.temporary_main_level    = 0U;
+               IOCMD_Params.temporary_quiet_level   = 0U;
+               IOCMD_Params.temporary_entrance_level= 0U;
 
                result = IOCMD_TRUE;
             }
@@ -2423,6 +2450,12 @@ IOCMD_Bool_DT IOCMD_Logs_Init(void)
       IOCMD_Params.global_cntr.global_cntr   = 0U;
       IOCMD_Params.global_cntr.main_cntr     = 0U;
    }
+
+#if(IOCMD_SUPPORT_IMMEDIATE_LOGS_PRINTING)
+   IOCMD_ILP.exe              = IOCMD_MAKE_INVALID_PTR(const IOCMD_Print_Exe_Params_XT);
+   IOCMD_ILP.working_buf      = IOCMD_MAKE_INVALID_PTR(uint8_t);
+   IOCMD_ILP.working_buf_size = 0;
+#endif
 
    return result;
 } /* IOCMD_Logs_Init */
@@ -2499,6 +2532,12 @@ void IOCMD_Log(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, c
    /* first 2 bytes are reserved for length */
    uint_fast16_t cntr;
    uint_fast16_t cntr2;
+#if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
+   uint_fast8_t main_level;
+#endif
+#if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
+   uint_fast8_t quiet_level;
+#endif
 
    if(
 #if(IOCMD_SUPPORT_LOGS_POSPONING)
@@ -2507,22 +2546,31 @@ void IOCMD_Log(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, c
       (tab_id < IOCMD_Params.levels_tab_size)
    )
    {
+#if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
+      main_level  = IOCMD_DIV_BY_POWER_OF_2(IOCMD_Params.levels_tab_data[tab_id].level, IOCMD_Params.temporary_main_level)
+         | (IOCMD_Params.temporary_main_level & 0xFU);
+#endif
+#if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
+      quiet_level = IOCMD_DIV_BY_POWER_OF_2(IOCMD_Params.levels_tab_data[tab_id].quiet_level, IOCMD_Params.temporary_quiet_level)
+         | (IOCMD_Params.temporary_quiet_level & 0xFU);
+#endif
+
 #if((IOCMD_LOG_MAIN_BUF_SIZE > 0) && (IOCMD_LOG_QUIET_BUF_SIZE > 0))
-      if((level <= IOCMD_Params.levels_tab_data[tab_id].level) || (level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level))
+      if((level <= main_level) || (level <= quiet_level))
 #elif(IOCMD_LOG_MAIN_BUF_SIZE > 0)
-      if(level <= IOCMD_Params.levels_tab_data[tab_id].level)
+      if(level <= main_level)
 #else
-      if(level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level)
+      if(level <= quiet_level)
 #endif
       {
          if(IOCMD_LIKELY(IOCMD_CHECK_PTR(const char, file) && IOCMD_CHECK_PTR(const char, format)))
          {
 #if((IOCMD_LOG_MAIN_BUF_SIZE > 0) && (IOCMD_LOG_QUIET_BUF_SIZE > 0))
-            if(level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level)
+            if(level <= quiet_level)
             {
                first_ring = &(IOCMD_Params.quiet_ring_buf);
 
-               if(level <= IOCMD_Params.levels_tab_data[tab_id].level)
+               if(level <= main_level)
                {
                   second_ring = &(IOCMD_Params.main_ring_buf);
                }
@@ -2599,7 +2647,7 @@ void IOCMD_Log(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, c
             buf[cntr2++] = ( (uint8_t*)(&(IOCMD_Params.global_cntr.main_cntr)) )[3];
 #endif
 #if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
-            if(level <= IOCMD_Params.levels_tab_data[tab_id].level)
+            if(level <= main_level)
 #endif
             {
                IOCMD_Params.global_cntr.main_cntr++;
@@ -2629,6 +2677,16 @@ void IOCMD_Log(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t level, c
             IOCMD_PROTECTION_UNLOCK(IOCMD_Params);
 
             va_end(arg);
+
+#if(IOCMD_SUPPORT_IMMEDIATE_LOGS_PRINTING)
+            if(IOCMD_CHECK_PTR(const IOCMD_Print_Exe_Params_XT, IOCMD_ILP.exe))
+            {
+               if(IOCMD_CHECK_PTR(uint8_t, IOCMD_ILP.working_buf) && (IOCMD_ILP.working_buf_size > 0))
+               {
+                  IOCMD_Proc_Buffered_Logs(IOCMD_TRUE, IOCMD_ILP.exe, IOCMD_ILP.working_buf, IOCMD_ILP.working_buf_size);
+               }
+            }
+#endif
          }
       }
    }
@@ -2647,6 +2705,12 @@ void IOCMD_Log_Data_Context(
    uint_fast8_t cntr2 = 2U;
    uint8_t buf[IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH];
    uint8_t data_desc_buf[IOCMD_LOG_DATA_DESC_SIZE];
+#if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
+   uint_fast8_t main_level;
+#endif
+#if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
+   uint_fast8_t quiet_level;
+#endif
 
    if(
 #if(IOCMD_SUPPORT_LOGS_POSPONING)
@@ -2655,12 +2719,21 @@ void IOCMD_Log_Data_Context(
       (tab_id < IOCMD_Params.levels_tab_size) && (level <= IOCMD_LOG_LEVEL_DEBUG_LO)
    )
    {
+#if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
+      main_level  = IOCMD_DIV_BY_POWER_OF_2(IOCMD_Params.levels_tab_data[tab_id].level, IOCMD_Params.temporary_main_level)
+         | (IOCMD_Params.temporary_main_level & 0xFU);
+#endif
+#if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
+      quiet_level = IOCMD_DIV_BY_POWER_OF_2(IOCMD_Params.levels_tab_data[tab_id].quiet_level, IOCMD_Params.temporary_quiet_level)
+         | (IOCMD_Params.temporary_quiet_level & 0xFU);
+#endif
+
 #if((IOCMD_LOG_MAIN_BUF_SIZE > 0) && (IOCMD_LOG_QUIET_BUF_SIZE > 0))
-      if((level <= IOCMD_Params.levels_tab_data[tab_id].level) || (level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level))
+      if((level <= main_level) || (level <= quiet_level))
 #elif(IOCMD_LOG_MAIN_BUF_SIZE > 0)
-      if(level <= IOCMD_Params.levels_tab_data[tab_id].level)
+      if(level <= main_level)
 #else
-      if(level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level)
+      if(level <= quiet_level)
 #endif
       {
          if(IOCMD_LIKELY(IOCMD_CHECK_PTR(const char, file) && IOCMD_CHECK_PTR(const char, format)
@@ -2745,14 +2818,14 @@ void IOCMD_Log_Data_Context(
             buf[cntr2++] = ( (uint8_t*)(&(IOCMD_Params.global_cntr.main_cntr)) )[3];
 #endif
 #if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
-            if(level <= IOCMD_Params.levels_tab_data[tab_id].level)
+            if(level <= main_level)
 #endif
             {
                IOCMD_Params.global_cntr.main_cntr++;
             }
 
 #if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
-            if(level <= IOCMD_Params.levels_tab_data[tab_id].level)
+            if(level <= main_level)
             {
                if(BUFF_UNLIKELY(BUFF_RING_GET_FREE_SIZE(&(IOCMD_Params.main_ring_buf)) < (Buff_Size_DT)cntr))
                {
@@ -2771,7 +2844,7 @@ void IOCMD_Log_Data_Context(
 #endif
 
 #if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
-            if(level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level)
+            if(level <= quiet_level)
             {
                if(BUFF_UNLIKELY(BUFF_RING_GET_FREE_SIZE(&(IOCMD_Params.quiet_ring_buf)) < (Buff_Size_DT)cntr))
                {
@@ -2790,6 +2863,16 @@ void IOCMD_Log_Data_Context(
 #endif
 
             IOCMD_PROTECTION_UNLOCK(IOCMD_Params);
+
+#if(IOCMD_SUPPORT_IMMEDIATE_LOGS_PRINTING)
+            if(IOCMD_CHECK_PTR(const IOCMD_Print_Exe_Params_XT, IOCMD_ILP.exe))
+            {
+               if(IOCMD_CHECK_PTR(uint8_t, IOCMD_ILP.working_buf) && (IOCMD_ILP.working_buf_size > 0))
+               {
+                  IOCMD_Proc_Buffered_Logs(IOCMD_TRUE, IOCMD_ILP.exe, IOCMD_ILP.working_buf, IOCMD_ILP.working_buf_size);
+               }
+            }
+#endif
          }
       }
    }
@@ -2811,6 +2894,12 @@ void IOCMD_Log_Data_Comparision(
    uint8_t                       buf[IOCMD_LOG_HEADER_SIZE + IOCMD_MAX_LOG_LENGTH];
    uint8_t                       data1_desc_buf[IOCMD_LOG_DATA_DESC_SIZE];
    uint8_t                       data2_desc_buf[IOCMD_LOG_DATA_DESC_SIZE];
+#if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
+   uint_fast8_t main_level;
+#endif
+#if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
+   uint_fast8_t quiet_level;
+#endif
 
    if(
 #if(IOCMD_SUPPORT_LOGS_POSPONING)
@@ -2819,12 +2908,21 @@ void IOCMD_Log_Data_Comparision(
       (tab_id < IOCMD_Params.levels_tab_size) && (level <= IOCMD_LOG_LEVEL_DEBUG_LO)
    )
    {
+#if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
+      main_level  = IOCMD_DIV_BY_POWER_OF_2(IOCMD_Params.levels_tab_data[tab_id].level, IOCMD_Params.temporary_main_level)
+         | (IOCMD_Params.temporary_main_level & 0xFU);
+#endif
+#if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
+      quiet_level = IOCMD_DIV_BY_POWER_OF_2(IOCMD_Params.levels_tab_data[tab_id].quiet_level, IOCMD_Params.temporary_quiet_level)
+         | (IOCMD_Params.temporary_quiet_level & 0xFU);
+#endif
+
 #if((IOCMD_LOG_MAIN_BUF_SIZE > 0) && (IOCMD_LOG_QUIET_BUF_SIZE > 0))
-      if((level <= IOCMD_Params.levels_tab_data[tab_id].level) || (level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level))
+      if((level <= main_level) || (level <= quiet_level))
 #elif(IOCMD_LOG_MAIN_BUF_SIZE > 0)
-      if(level <= IOCMD_Params.levels_tab_data[tab_id].level)
+      if(level <= main_level)
 #else
-      if(level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level)
+      if(level <= quiet_level)
 #endif
       {
          if(IOCMD_LIKELY(IOCMD_CHECK_PTR(const char, file) && IOCMD_CHECK_PTR(const char, format)
@@ -2975,14 +3073,14 @@ void IOCMD_Log_Data_Comparision(
             buf[cntr2++] = ( (uint8_t*)(&(IOCMD_Params.global_cntr.main_cntr)) )[3];
 #endif
 #if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
-            if(level <= IOCMD_Params.levels_tab_data[tab_id].level)
+            if(level <= main_level)
 #endif
             {
                IOCMD_Params.global_cntr.main_cntr++;
             }
 
 #if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
-            if(level <= IOCMD_Params.levels_tab_data[tab_id].level)
+            if(level <= main_level)
             {
                if(BUFF_UNLIKELY(BUFF_RING_GET_FREE_SIZE(&(IOCMD_Params.main_ring_buf)) < (Buff_Size_DT)cntr))
                {
@@ -3001,7 +3099,7 @@ void IOCMD_Log_Data_Comparision(
 #endif
 
 #if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
-            if(level <= IOCMD_Params.levels_tab_data[tab_id].quiet_level)
+            if(level <= quiet_level)
             {
                if(BUFF_UNLIKELY(BUFF_RING_GET_FREE_SIZE(&(IOCMD_Params.quiet_ring_buf)) < (Buff_Size_DT)cntr))
                {
@@ -3020,6 +3118,16 @@ void IOCMD_Log_Data_Comparision(
 #endif
 
             IOCMD_PROTECTION_UNLOCK(IOCMD_Params);
+
+#if(IOCMD_SUPPORT_IMMEDIATE_LOGS_PRINTING)
+            if(IOCMD_CHECK_PTR(const IOCMD_Print_Exe_Params_XT, IOCMD_ILP.exe))
+            {
+               if(IOCMD_CHECK_PTR(uint8_t, IOCMD_ILP.working_buf) && (IOCMD_ILP.working_buf_size > 0))
+               {
+                  IOCMD_Proc_Buffered_Logs(IOCMD_TRUE, IOCMD_ILP.exe, IOCMD_ILP.working_buf, IOCMD_ILP.working_buf_size);
+               }
+            }
+#endif
          }
       }
    }
@@ -3036,6 +3144,7 @@ void IOCMD_Enter_Exit(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t e
 #if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
    Buff_Size_DT  first_ring_pos;
 #endif
+   uint_fast8_t  entrance_logging_state;
 
    if(
 #if(IOCMD_SUPPORT_LOGS_POSPONING)
@@ -3044,10 +3153,13 @@ void IOCMD_Enter_Exit(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t e
       (tab_id < IOCMD_Params.levels_tab_size)
    )
    {
+      entrance_logging_state =
+         IOCMD_DIV_BY_POWER_OF_2(IOCMD_Params.levels_tab_data[tab_id].entrance_logging_state, IOCMD_Params.temporary_entrance_level)
+         | (IOCMD_Params.temporary_entrance_level & 0xFU);
 #if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
-      if(IOCMD_Params.levels_tab_data[tab_id].entrance_logging_state > IOCMD_ENTRANCE_DISABLED)
+      if(entrance_logging_state > IOCMD_ENTRANCE_DISABLED)
 #else
-      if(IOCMD_Params.levels_tab_data[tab_id].entrance_logging_state > IOCMD_ENTRANCE_QUIET)
+      if(entrance_logging_state > IOCMD_ENTRANCE_QUIET)
 #endif
       {
          if(IOCMD_LIKELY(IOCMD_CHECK_PTR(const char, file) && IOCMD_CHECK_PTR(const char, func_name)))
@@ -3112,7 +3224,7 @@ void IOCMD_Enter_Exit(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t e
             buf[cntr2++] = ( (uint8_t*)(&(IOCMD_Params.global_cntr.main_cntr)) )[3];
 #endif
 #if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
-            if(IOCMD_ENTRANCE_ENABLED == IOCMD_Params.levels_tab_data[tab_id].entrance_logging_state)
+            if(IOCMD_ENTRANCE_ENABLED == entrance_logging_state)
 #endif
             {
                IOCMD_Params.global_cntr.main_cntr++;
@@ -3127,7 +3239,7 @@ void IOCMD_Enter_Exit(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t e
 
             (void)Buff_Ring_Data_Check_In(ring, (Buff_Size_DT)cntr, BUFF_FALSE);
 
-            if(IOCMD_Params.levels_tab_data[tab_id].entrance_logging_state > IOCMD_ENTRANCE_QUIET)
+            if(entrance_logging_state > IOCMD_ENTRANCE_QUIET)
             {
                if(BUFF_UNLIKELY(BUFF_RING_GET_FREE_SIZE(&(IOCMD_Params.main_ring_buf)) < cntr))
                {
@@ -3146,6 +3258,16 @@ void IOCMD_Enter_Exit(IOCMD_Log_ID_DT tab_id, uint_fast16_t line, uint_fast8_t e
 #endif
 
             IOCMD_PROTECTION_UNLOCK(IOCMD_Params);
+
+#if(IOCMD_SUPPORT_IMMEDIATE_LOGS_PRINTING)
+            if(IOCMD_CHECK_PTR(const IOCMD_Print_Exe_Params_XT, IOCMD_ILP.exe))
+            {
+               if(IOCMD_CHECK_PTR(uint8_t, IOCMD_ILP.working_buf) && (IOCMD_ILP.working_buf_size > 0))
+               {
+                  IOCMD_Proc_Buffered_Logs(IOCMD_TRUE, IOCMD_ILP.exe, IOCMD_ILP.working_buf, IOCMD_ILP.working_buf_size);
+               }
+            }
+#endif
          }
       }
    }
@@ -3245,6 +3367,16 @@ void IOCMD_Os_Switch_Context(IOCMD_Context_ID_DT previous_service, IOCMD_Context
 #endif
 
    IOCMD_PROTECTION_UNLOCK(IOCMD_Params);
+
+#if(IOCMD_SUPPORT_IMMEDIATE_LOGS_PRINTING)
+   if(IOCMD_CHECK_PTR(const IOCMD_Print_Exe_Params_XT, IOCMD_ILP.exe))
+   {
+      if(IOCMD_CHECK_PTR(uint8_t, IOCMD_ILP.working_buf) && (IOCMD_ILP.working_buf_size > 0))
+      {
+         IOCMD_Proc_Buffered_Logs(IOCMD_TRUE, IOCMD_ILP.exe, IOCMD_ILP.working_buf, IOCMD_ILP.working_buf_size);
+      }
+   }
+#endif
 } /* IOCMD_Os_Switch_Context */
 #endif
 
@@ -3472,6 +3604,52 @@ void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_quiet_logs, const IOCMD_Print_
          IOCMD_PROTECTION_UNLOCK(IOCMD_Params);
       }
    }
+}
+
+
+void IOCMD_Install_Immediate_Logs_Processor(const IOCMD_Print_Exe_Params_XT *exe, uint8_t *working_buf, uint_fast16_t working_buf_size)
+{
+#if(IOCMD_SUPPORT_IMMEDIATE_LOGS_PRINTING)
+   IOCMD_ILP.exe              = exe;
+   IOCMD_ILP.working_buf      = working_buf;
+   IOCMD_ILP.working_buf_size = working_buf_size;
+#endif
+}
+
+
+void IOCMD_Set_Temporary_Main_Level(uint8_t level)
+{
+   IOCMD_Params.temporary_main_level    = level | 0x10U;
+}
+
+
+void IOCMD_Set_Temporary_Quiet_Level(uint8_t level)
+{
+   IOCMD_Params.temporary_quiet_level   = level | 0x10U;
+}
+
+
+void IOCMD_Set_Temporary_Entrances_Level(uint8_t level)
+{
+   IOCMD_Params.temporary_entrance_level= level | 0x10U;
+}
+
+
+void IOCMD_Clear_Temporary_Main_Level(void)
+{
+   IOCMD_Params.temporary_main_level    = 0U;
+}
+
+
+void IOCMD_Clear_Temporary_Quiet_Level(void)
+{
+   IOCMD_Params.temporary_quiet_level   = 0U;
+}
+
+
+void IOCMD_Clear_Temporary_Entrances_Level(void)
+{
+   IOCMD_Params.temporary_entrance_level= 0U;
 }
 
 

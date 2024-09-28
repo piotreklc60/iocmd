@@ -155,6 +155,19 @@ void main_print_endline_repeat(void *dev, int num_repeats)
 #endif
 }
 
+void main_print_cariage_return(void *dev)
+{
+#if(MAIN_EXE_LOG_TO_FILE)
+   log_file = fopen("./log.txt", "a");
+#endif
+
+   fprintf(MAIN_LOG_OUT, "\r");
+
+#if(MAIN_EXE_LOG_TO_FILE)
+   fclose(log_file);
+#endif
+}
+
 
 uint8_t working_buf[IOCMD_WORKING_BUF_RECOMMENDED_SIZE];
 
@@ -250,7 +263,7 @@ const uint8_t table_to_compare[] =
 };
 
 IOCMD_Print_Exe_Params_XT main_out = {
-   NULL, main_print_text, main_print_text_repeat, main_print_text_len, main_print_endline_repeat};
+   NULL, main_print_text, main_print_text_repeat, main_print_text_len, main_print_endline_repeat, main_print_cariage_return};
 
 IOCMD_Print_Exe_Params_XT *main_get_exe(void)
 {

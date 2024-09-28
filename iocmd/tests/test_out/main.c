@@ -98,8 +98,13 @@ void main_print_endline_repeat(void *dev, int num_repeats)
    iocmd_printf_result_pos = 0;
 }
 
+void main_print_cariage_return(void *dev)
+{
+   iocmd_printf_result_pos = 0;
+}
+
 IOCMD_Print_Exe_Params_XT main_out = {
-   NULL, main_print_text, main_print_text_repeat, main_print_text_len, main_print_endline_repeat};
+   NULL, main_print_text, main_print_text_repeat, main_print_text_len, main_print_endline_repeat, main_print_cariage_return};
 
 IOCMD_Print_Exe_Params_XT *main_get_exe(void)
 {
@@ -1712,7 +1717,7 @@ static void printf_methods_params_test(void)
    memset(iocmd_printf_result, 0, sizeof(iocmd_printf_result));
    iocmd_printf_result_pos = 0;
 
-   for(cntr = 0; cntr < 64; cntr++)
+   for(cntr = 0; cntr < 128; cntr++)
    {
       if(0 != (cntr & 1))
       {
@@ -1768,7 +1773,16 @@ static void printf_methods_params_test(void)
          exe.print_endl_repeat = NULL;
       }
 
-      if(63 == cntr)
+      if(0 != (cntr & 64))
+      {
+         exe.print_cariage_return = main_print_cariage_return;
+      }
+      else
+      {
+         exe.print_cariage_return = NULL;
+      }
+
+      if(127 == cntr)
       {
          expected_char = 'c';
       }

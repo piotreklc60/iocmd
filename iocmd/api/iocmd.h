@@ -283,7 +283,7 @@ typedef bool_t IOCMD_Bool_DT;
 #endif
 
 /**
- * @brief One of four functions used as direct method to write simple context to output device.
+ * @brief One of five functions used as direct method to write simple context to output device.
  * This function is responsible to write ASCII string NULL-terminated to output pointed by "dev" parameter.
  *
  * @result number of characters which function wrote to output device (without NULL terminator).
@@ -295,7 +295,7 @@ typedef bool_t IOCMD_Bool_DT;
 typedef int (*IOCMD_Print_Text)(void *dev, const char *string);
 
 /**
- * @brief One of four functions used as direct method to write simple context to output device.
+ * @brief One of five functions used as direct method to write simple context to output device.
  * This function is responsible to write multiple times ASCII string NULL-terminated to output pointed by "dev" parameter.
  *
  * @result number of characters which function wrote to output device (without NULL terminator).
@@ -308,7 +308,7 @@ typedef int (*IOCMD_Print_Text)(void *dev, const char *string);
 typedef int (*IOCMD_Print_Text_Repeat)(void *dev, const char *string, int num_repeats);
 
 /**
- * @brief One of four functions used as direct method to write simple context to output device.
+ * @brief One of five functions used as direct method to write simple context to output device.
  * This function is responsible to write ASCII string (possibly NULL-terminated) to output pointed by "dev" parameter.
  *
  * @result number of characters which function wrote to output device (without NULL terminator).
@@ -324,7 +324,7 @@ typedef int (*IOCMD_Print_Text_Repeat)(void *dev, const char *string, int num_re
 typedef int (*IOCMD_Print_Text_Len)(void *dev, const char *string, int str_len/* if 0 then print until '\0' */);
 
 /**
- * @brief One of four functions used as direct method to write simple context to output device.
+ * @brief One of five functions used as direct method to write simple context to output device.
  * This function is responsible to write multiple times END OF LINE character and return to begining of new line
  *
  * @param dev pointer with device params. It is always pointer located in IOCMD_Print_Exe_Params_XT
@@ -332,6 +332,25 @@ typedef int (*IOCMD_Print_Text_Len)(void *dev, const char *string, int str_len/*
  * @param string pointer to ASCII string (always NULL terminated) to by copied to output device
  */
 typedef void (*IOCMD_Print_Endline_Repeat)(void *dev, int num_repeats);
+
+/**
+ * @brief One of five functions used as direct method to write simple context to output device.
+ * This function is responsible to return cariage to the begining of the current line so library will overwrite current text.
+ *
+ * @param dev pointer with device params. It is always pointer located in IOCMD_Print_Exe_Params_XT
+ * in which this function is also connected.
+ */
+typedef void (*IOCMD_Print_Cariage_Return)(void *dev);
+
+/**
+ * @brief This is special function which is NOT mandatory.
+ * This function is responsible to refresh line after log has been printed. I might be needed
+ * if command line code echo each character provided by the user to show current state of edited command.
+ *
+ * @param dev pointer with device params. It is always pointer located in IOCMD_Print_Exe_Params_XT
+ * in which this function is also connected.
+ */
+typedef void (*IOCMD_Refresh_Line_After_Log)(void *dev);
 
 /**
  * @brief structure which provides simple interfaces to print simple pieces of text to output device.
@@ -343,6 +362,8 @@ typedef struct IOCMD_Print_Exe_Params_eXtended_Tag
    IOCMD_Print_Text_Repeat                print_string_repeat;
    IOCMD_Print_Text_Len                   print_string_len;
    IOCMD_Print_Endline_Repeat             print_endl_repeat;
+   IOCMD_Print_Cariage_Return             print_cariage_return;
+   IOCMD_Refresh_Line_After_Log           refresh_line;
 }IOCMD_Print_Exe_Params_XT;
 
 
