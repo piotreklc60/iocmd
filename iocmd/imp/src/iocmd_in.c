@@ -49,6 +49,8 @@ static const char * const iocmd_bool_patterns_false[] =
    "fail"        ,
    "failed"      ,
    "inactive"    ,
+   "disable"     ,
+   "disabled"    ,
    "bad"
 } /* iocmd_bool_patterns_false */;
 
@@ -71,6 +73,8 @@ static const char * const iocmd_bool_patterns_true[] =
    "pass"            ,
    "passed"          ,
    &"inactive"[2]    ,
+   "enable"          ,
+   "enabled"         ,
    "good"
 } /* iocmd_bool_patterns_true */;
 
@@ -561,7 +565,7 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
 #endif
    const char *current_string;
    IOCMD_Arg_DT arg;
-   size_t cntr;
+   size_t cntr = 0;
    size_t offset;
    size_t sub_elem_cntr = 0;
    size_t current_sub_elem_cntr = 0;
@@ -602,7 +606,7 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
 
          if(IOCMD_CHECK_PTR(const char, current_string))
          {
-            for(cntr = 0; cntr < cmd_tree_num_elems; cntr++)
+            for(; cntr < cmd_tree_num_elems; cntr++)
             {
                if(current_sub_elem_cntr == sub_elem_cntr)
                {
