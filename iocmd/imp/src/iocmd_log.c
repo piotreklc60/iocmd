@@ -2435,8 +2435,12 @@ IOCMD_Bool_DT IOCMD_Logs_Init(void)
 #if(IOCMD_SUPPORT_LOGS_POSPONING)
                IOCMD_Params.logging_not_posponed    = 1U;
 #endif
+#if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
                IOCMD_Params.temporary_main_level    = 0U;
+#endif
+#if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
                IOCMD_Params.temporary_quiet_level   = 0U;
+#endif
                IOCMD_Params.temporary_entrance_level= 0U;
 
                result = IOCMD_TRUE;
@@ -3621,13 +3625,17 @@ void IOCMD_Install_Immediate_Logs_Processor(const IOCMD_Print_Exe_Params_XT *exe
 
 void IOCMD_Set_Temporary_Main_Level(uint8_t level)
 {
+#if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
    IOCMD_Params.temporary_main_level    = level | 0x10U;
+#endif
 }
 
 
 void IOCMD_Set_Temporary_Quiet_Level(uint8_t level)
 {
+#if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
    IOCMD_Params.temporary_quiet_level   = level | 0x10U;
+#endif
 }
 
 
@@ -3639,13 +3647,17 @@ void IOCMD_Set_Temporary_Entrances_Level(uint8_t level)
 
 void IOCMD_Clear_Temporary_Main_Level(void)
 {
+#if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
    IOCMD_Params.temporary_main_level    = 0U;
+#endif
 }
 
 
 void IOCMD_Clear_Temporary_Quiet_Level(void)
 {
+#if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
    IOCMD_Params.temporary_quiet_level   = 0U;
+#endif
 }
 
 
