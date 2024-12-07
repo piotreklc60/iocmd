@@ -262,6 +262,15 @@
 #define Num_Elems(tab)                          (sizeof(tab) / sizeof(tab[0]))
 #endif
 
+#ifndef IOCMD_UNUSED_PARAM
+/**
+ * @brief Macro used to avoid compilator warning when a parameter is not used.
+ *
+ * @param param parameter which shall be indicated it is not used
+ */
+#define IOCMD_UNUSED_PARAM(param)                                 (void)(param)
+#endif
+
 
 /**
  * -----------------------------------------------------------------------------------------------------------------------------

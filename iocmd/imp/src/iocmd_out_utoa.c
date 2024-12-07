@@ -277,9 +277,11 @@ int IOCMD_Utoa32(char* buf, uint32_t value, uint_fast8_t base, uint_fast8_t num_
    const char  *format;
    int          result = 0;
    uint_fast8_t cntr = 0;
+#if(IOCMD_HEX_TO_BCD_DONT_USE_DIV && (!IOCMD_OUT_MINIMAL_PROGRAM_MEMORY_USAGE))
    uint8_t      hex[8];
-   char         temp[11];
    uint8_t      decade;
+#endif
+   char         temp[11];
 
    if(IOCMD_CHECK_PTR(char, buf))
    {
@@ -422,9 +424,11 @@ int IOCMD_Utoa16(char* buf, uint16_t value, uint_fast8_t base, uint_fast8_t num_
    const char  *format;
    int          result = 0;
    uint_fast8_t cntr   = 0;
+#if(IOCMD_HEX_TO_BCD_DONT_USE_DIV)
    uint8_t      hex[4];
-   char         temp[6];
    uint8_t      decade;
+#endif
+   char         temp[6];
 
    if(IOCMD_CHECK_PTR(char, buf))
    {
@@ -525,9 +529,11 @@ int IOCMD_Utoa8(char* buf, uint8_t value, uint_fast8_t base, uint_fast8_t num_pa
    const char  *format;
    int          result = 0;
    uint_fast8_t cntr   = 0;
+#if(IOCMD_HEX_TO_BCD_DONT_USE_DIV)
    uint8_t      hex[2];
-   char         temp[6];
    uint8_t      decade;
+#endif
+   char         temp[6];
 
    if(IOCMD_CHECK_PTR(char, buf))
    {
