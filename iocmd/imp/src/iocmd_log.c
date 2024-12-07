@@ -1211,8 +1211,10 @@ static void IOCMD_proc_one_buffered_log(
 #if (IOCMD_LOG_PRINT_OS_CONTEXT_NAME)
    uint_fast16_t context_name_len;
 #endif
+#if(IOCMD_LOG_PRINT_OS_CONTEXT && IOCMD_LOGS_TREE_OS_LOG_CONTEXT_SWITCH)
    IOCMD_Context_ID_DT previous_context;
    IOCMD_Context_ID_DT current_context;
+#endif
 #endif
    uint_fast16_t format_pos;
    uint_fast16_t len;
