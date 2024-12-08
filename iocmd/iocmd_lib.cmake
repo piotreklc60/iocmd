@@ -45,7 +45,8 @@ target_include_directories(iocmd_lib INTERFACE
 if(DEFINED IOCMD_USE_OUT)
     target_compile_definitions(iocmd_lib INTERFACE
         IOCMD_USE_OUT
-)
+    )
+endif()
 
 if(DEFINED IOCMD_USE_OUT OR DEFINED IOCMD_USE_LOG)
     target_sources(iocmd_lib INTERFACE
