@@ -26,6 +26,6 @@ cmake_minimum_required(VERSION 3.22)
 
 if(NOT DEFINED IOCMD_DO_NOT_EXECUTE_CMAKE)
 
-include(${CMAKE_CURRENT_LIST_DIR}/iocmd_lib.cmake)
+    include(${CMAKE_CURRENT_LIST_DIR}/iocmd_lib.cmake)
 
 endif()

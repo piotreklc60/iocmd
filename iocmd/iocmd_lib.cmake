@@ -43,42 +43,42 @@ target_include_directories(iocmd_lib INTERFACE
 )
 
 if(DEFINED IOCMD_USE_OUT)
-target_compile_definitions(iocmd_lib INTERFACE
-    IOCMD_USE_OUT
+    target_compile_definitions(iocmd_lib INTERFACE
+        IOCMD_USE_OUT
 )
 
 if(DEFINED IOCMD_USE_OUT OR DEFINED IOCMD_USE_LOG)
-target_sources(iocmd_lib INTERFACE
-    ${IOCMD_PATH}/imp/src/iocmd_out.c
-    ${IOCMD_PATH}/imp/src/iocmd_out_utoa.c
-    ${IOCMD_PATH}/imp/src/iocmd_out_parser.c
-    ${IOCMD_PATH}/imp/src/iocmd_out_processor.c
-)
+    target_sources(iocmd_lib INTERFACE
+        ${IOCMD_PATH}/imp/src/iocmd_out.c
+        ${IOCMD_PATH}/imp/src/iocmd_out_utoa.c
+        ${IOCMD_PATH}/imp/src/iocmd_out_parser.c
+        ${IOCMD_PATH}/imp/src/iocmd_out_processor.c
+    )
 endif()
 
 if(DEFINED IOCMD_USE_LOG)
-target_compile_definitions(iocmd_lib INTERFACE
-    IOCMD_USE_LOG
-)
-target_sources(iocmd_lib INTERFACE
-    ${IOCMD_PATH}/imp/src/iocmd_log.c
-)
+    target_compile_definitions(iocmd_lib INTERFACE
+        IOCMD_USE_LOG
+    )
+    target_sources(iocmd_lib INTERFACE
+        ${IOCMD_PATH}/imp/src/iocmd_log.c
+    )
 endif()
 
 if(DEFINED IOCMD_USE_IN)
-target_compile_definitions(iocmd_lib INTERFACE
-    IOCMD_USE_IN
-)
-target_sources(iocmd_lib INTERFACE
-    ${IOCMD_PATH}/imp/src/iocmd_in.c
-)
+    target_compile_definitions(iocmd_lib INTERFACE
+        IOCMD_USE_IN
+    )
+    target_sources(iocmd_lib INTERFACE
+        ${IOCMD_PATH}/imp/src/iocmd_in.c
+    )
 endif()
 
 if(DEFINED IOCMD_USE_CMD)
-target_compile_definitions(iocmd_lib INTERFACE
-    IOCMD_USE_CMD
-)
-target_sources(iocmd_lib INTERFACE
-    ${IOCMD_PATH}/imp/src/iocmd_cmd.c
-)
+    target_compile_definitions(iocmd_lib INTERFACE
+        IOCMD_USE_CMD
+    )
+    target_sources(iocmd_lib INTERFACE
+        ${IOCMD_PATH}/imp/src/iocmd_cmd.c
+    )
 endif()
