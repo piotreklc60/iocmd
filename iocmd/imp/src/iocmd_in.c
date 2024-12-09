@@ -811,7 +811,7 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
    return result;
 } /* IOCMD_Parse_Command */
 
-void IOCMD_Line_Collector_Parse_Byte(
+void IOCMD_Line_Collector_Parse_Bytes(
    IOCMD_Line_Collector_Params_XT *collector, const IOCMD_Print_Exe_Params_XT *exe, char *recv_bytes, size_t num_recv_bytes)
 {
    const char    *tab[1];

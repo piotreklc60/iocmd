@@ -205,7 +205,7 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
    size_t                           cmd_tree_num_elems,
    IOCMD_Bool_DT                    is_last_branch);
 
-void IOCMD_Line_Collector_Parse_Byte(
+void IOCMD_Line_Collector_Parse_Bytes(
    IOCMD_Line_Collector_Params_XT *collector, const IOCMD_Print_Exe_Params_XT *exe, char *recv_bytes, size_t num_recv_bytes);
 
 #if(IOCMD_IN_SUPPORT_TREE_PRINTING)
