@@ -27,6 +27,8 @@
 #include "iocmd.h"
 #include "iocmd_in_internal.h"
 
+#define IOCMD_IN_BACKSPACE_CHAR        0x08
+
 static const char * const iocmd_bool_patterns_false[] =
 {
    "false"       ,
@@ -808,6 +810,95 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
 
    return result;
 } /* IOCMD_Parse_Command */
+
+void IOCMD_Line_Collector_Parse_Byte(
+   IOCMD_Line_Collector_Params_XT *collector, const IOCMD_Print_Exe_Params_XT *exe, char *recv_bytes, size_t num_recv_bytes)
+{
+   const char    *tab[1];
+   size_t         pos;
+   char           recv_byte;
+   IOCMD_Bool_DT  result;
+
+   if(IOCMD_CHECK_PTR(IOCMD_Line_Collector_Params_XT, collector)
+      && IOCMD_CHECK_PTR(IOCMD_Command_Tree_List_XT, collector->cmds_tab)
+      && (IOCMD_CHECK_PTR(IOCMD_Print_Exe_Params_XT, exe)))
+   {
+      do
+      {
+         recv_byte = recv_bytes[0];
+
+         if(collector->line_pos < sizeof(collector->line))
+         {
+            if(IOCMD_IN_BACKSPACE_CHAR == recv_byte)
+            {
+               if(collector->line_pos > 0)
+               {
+                  collector->line_pos--;
+                  collector->line[collector->line_pos] = 0;
+#ifdef IOCMD_USE_OUT
+                  IOCMD_Oprintf(exe, "%c %c", recv_byte, recv_byte);
+#else
+                  IOCMD_EXTERN_PRINTF_2("%c %c", recv_byte, recv_byte);
+#endif
+               }
+            }
+            else
+            {
+               collector->line[collector->line_pos++] = recv_byte;
+               collector->line[collector->line_pos] = 0;
+#ifdef IOCMD_USE_OUT
+               IOCMD_Oprintf(exe, "%c", recv_byte);
+#else
+               IOCMD_EXTERN_PRINTF_1("%c", recv_byte);
+#endif
+            }
+         }
+
+         if(('\0' == recv_byte) || ('\n' == recv_byte) || ('\r' == recv_byte) || (sizeof(collector->line) == collector->line_pos))
+         {
+            collector->line[collector->line_pos - 1] = '\0';
+
+            tab[0] = collector->line;
+
+#ifdef IOCMD_USE_OUT
+            IOCMD_Oprintf_Line(exe, "");
+#else
+            IOCMD_EXTERN_PRINTF_LINE_0("");
+#endif
+
+            for(pos = 0; pos < collector->cmds_tab_num_elems; ++pos)
+            {
+               result = IOCMD_Parse_Command(
+                  1, tab, exe, collector->cmds_tab[pos].tree, collector->cmds_tab[pos].tree_num_elems, IOCMD_FALSE);
+
+               if(IOCMD_BOOL_IS_TRUE(result))
+               {
+                  break;
+               }
+            }
+
+#ifdef IOCMD_USE_CMD
+            if(IOCMD_BOOL_IS_FALSE(result) && (pos == collector->cmds_tab_num_elems) && IOCMD_BOOL_IS_TRUE(collector->parse_also_lib_cmds))
+            {
+               (void)IOCMD_Parse_Lib_Commands(1, tab, exe, IOCMD_TRUE);
+            }
+#endif
+
+            collector->line_pos = 0;
+            collector->line[0]  = 0;
+
+#ifdef IOCMD_USE_OUT
+            IOCMD_Oprintf(exe, ">");
+#else
+            IOCMD_EXTERN_PRINTF_0(">");
+#endif
+         }
+
+         ++recv_bytes;
+         --num_recv_bytes;
+      }while(num_recv_bytes > 0);
+   }
+} /* IOCMD_Line_Collector_Parse_Byte */
 
 #if(IOCMD_IN_SUPPORT_TREE_PRINTING)
 void IOCMD_Print_Tree_List(

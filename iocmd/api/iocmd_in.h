@@ -37,6 +37,13 @@
 
 
 /**
+ * Defines maximum length of a line of parameters to be parsed by IOCMD_Line_Collector_Parse_Byte
+ */
+#ifndef IOCMD_IN_MAX_LINE_LENGTH
+#define IOCMD_IN_MAX_LINE_LENGTH                   256
+#endif
+
+/**
  * If set to IOCMD_FEATURE_ENABLED then functions IOCMD_Print_Tree_List, IOCMD_Print_Tree_Help and IOCMD_Print_Tree_Manual exist
  * and function IOCMD_Parse_Command supports 3 special commands: for printing all sub-commands in requested tree catalogue (list),
  * for printing all sub-commands in requested tree catalogue and sub-catalogues (help), and for printing all sub-commands
@@ -58,6 +65,14 @@
 
 #if(IOCMD_FEATURE_ENABLED && (!defined(IOCMD_USE_OUT)) && (!defined(IOCMD_EXTERN_PRINTF_0)))
 #error "IOCMD_EXTERN_PRINTF_0 macro not defined! Please read above comment and define it properly!"
+#endif
+
+#if(IOCMD_FEATURE_ENABLED && (!defined(IOCMD_USE_OUT)) && (!defined(IOCMD_EXTERN_PRINTF_1)))
+#error "IOCMD_EXTERN_PRINTF_1 macro not defined! Please read above comment and define it properly!"
+#endif
+
+#if(IOCMD_FEATURE_ENABLED && (!defined(IOCMD_USE_OUT)) && (!defined(IOCMD_EXTERN_PRINTF_2)))
+#error "IOCMD_EXTERN_PRINTF_2 macro not defined! Please read above comment and define it properly!"
 #endif
 
 #if(IOCMD_FEATURE_ENABLED && (!defined(IOCMD_USE_OUT)) && (!defined(IOCMD_EXTERN_PRINTF_3)))
@@ -153,6 +168,20 @@ typedef struct IOCMD_Command_Tree_eXtended_Tag
    uint8_t           record_type;
 }IOCMD_Command_Tree_XT;
 
+typedef struct IOCMD_Command_Tree_List_eXtended_Tag
+{
+   const IOCMD_Command_Tree_XT  *tree;
+   size_t                        tree_num_elems;
+}IOCMD_Command_Tree_List_XT;
+
+typedef struct IOCMD_Line_Collector_Params_eXtended_Tag
+{
+   const IOCMD_Command_Tree_List_XT   *cmds_tab;
+   size_t                              cmds_tab_num_elems;
+   size_t   line_pos;
+   char     line[IOCMD_IN_MAX_LINE_LENGTH];
+   IOCMD_Bool_DT parse_also_lib_cmds;
+}IOCMD_Line_Collector_Params_XT;
 
 /**
  * -----------------------------------------------------------------------------------------------------------------------------
@@ -175,6 +204,9 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
    const IOCMD_Command_Tree_XT     *cmd_tree,
    size_t                           cmd_tree_num_elems,
    IOCMD_Bool_DT                    is_last_branch);
+
+void IOCMD_Line_Collector_Parse_Byte(
+   IOCMD_Line_Collector_Params_XT *collector, const IOCMD_Print_Exe_Params_XT *exe, char *recv_bytes, size_t num_recv_bytes);
 
 #if(IOCMD_IN_SUPPORT_TREE_PRINTING)
 void IOCMD_Print_Tree_List(
