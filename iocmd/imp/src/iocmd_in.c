@@ -567,7 +567,7 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
 #endif
    const char *current_string;
    IOCMD_Arg_DT arg;
-   size_t cntr;
+   size_t cntr = 0;
    size_t offset;
    size_t sub_elem_cntr = 0;
    size_t current_sub_elem_cntr = 0;
