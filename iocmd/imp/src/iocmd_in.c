@@ -567,7 +567,7 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
 #endif
    const char *current_string;
    IOCMD_Arg_DT arg;
-   size_t cntr = 0;
+   size_t cntr;
    size_t offset;
    size_t sub_elem_cntr = 0;
    size_t current_sub_elem_cntr = 0;
@@ -608,7 +608,7 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
 
          if(IOCMD_CHECK_PTR(const char, current_string))
          {
-            for(; cntr < cmd_tree_num_elems; cntr++)
+            for(cntr = 0; cntr < cmd_tree_num_elems; cntr++)
             {
                if(current_sub_elem_cntr == sub_elem_cntr)
                {
