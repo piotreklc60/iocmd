@@ -170,14 +170,14 @@ typedef struct IOCMD_Command_Tree_eXtended_Tag
 
 typedef struct IOCMD_Command_Tree_List_eXtended_Tag
 {
-   const IOCMD_Command_Tree_XT  *tree;
-   size_t                        tree_num_elems;
+   const IOCMD_Command_Tree_XT  *branch;
+   size_t                        branch_num_elems;
 }IOCMD_Command_Tree_List_XT;
 
 typedef struct IOCMD_Line_Collector_Params_eXtended_Tag
 {
-   const IOCMD_Command_Tree_List_XT   *cmds_tab;
-   size_t                              cmds_tab_num_elems;
+   const IOCMD_Command_Tree_List_XT   *cmds_tree;
+   size_t                              cmds_tree_num_elems;
    size_t   line_pos;
    char     line[IOCMD_IN_MAX_LINE_LENGTH];
    IOCMD_Bool_DT parse_also_lib_cmds;
