@@ -817,10 +817,10 @@ void IOCMD_Line_Collector_Parse_Byte(
    const char    *tab[1];
    size_t         pos;
    char           recv_byte;
-   IOCMD_Bool_DT  result;
+   IOCMD_Bool_DT  result = IOCMD_FALSE;
 
    if(IOCMD_CHECK_PTR(IOCMD_Line_Collector_Params_XT, collector)
-      && IOCMD_CHECK_PTR(IOCMD_Command_Tree_List_XT, collector->cmds_tab)
+      && IOCMD_CHECK_PTR(const IOCMD_Command_Tree_List_XT, collector->cmds_tab)
       && (IOCMD_CHECK_PTR(IOCMD_Print_Exe_Params_XT, exe)))
    {
       do
@@ -868,8 +868,11 @@ void IOCMD_Line_Collector_Parse_Byte(
 
             for(pos = 0; pos < collector->cmds_tab_num_elems; ++pos)
             {
-               result = IOCMD_Parse_Command(
-                  1, tab, exe, collector->cmds_tab[pos].tree, collector->cmds_tab[pos].tree_num_elems, IOCMD_FALSE);
+               if(IOCMD_CHECK_PTR(const IOCMD_Command_Tree_XT, collector->cmds_tab[pos].tree))
+               {
+                  result = IOCMD_Parse_Command(
+                     1, tab, exe, collector->cmds_tab[pos].tree, collector->cmds_tab[pos].tree_num_elems, IOCMD_FALSE);
+               }
 
                if(IOCMD_BOOL_IS_TRUE(result))
                {
