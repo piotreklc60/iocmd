@@ -42,13 +42,13 @@ target_include_directories(iocmd_lib INTERFACE
     ${IOCMD_PATH}/imp/inc/
 )
 
-if(DEFINED IOCMD_USE_OUT)
+if(DEFINED IOCMD_USE_OUT AND IOCMD_USE_OUT MATCHES ON)
     target_compile_definitions(iocmd_lib INTERFACE
         IOCMD_USE_OUT
     )
 endif()
 
-if(DEFINED IOCMD_USE_OUT OR DEFINED IOCMD_USE_LOG)
+if((DEFINED IOCMD_USE_OUT AND IOCMD_USE_OUT MATCHES ON) OR (DEFINED IOCMD_USE_LOG AND IOCMD_USE_LOG MATCHES ON))
     target_sources(iocmd_lib INTERFACE
         ${IOCMD_PATH}/imp/src/iocmd_out.c
         ${IOCMD_PATH}/imp/src/iocmd_out_utoa.c
@@ -57,7 +57,7 @@ if(DEFINED IOCMD_USE_OUT OR DEFINED IOCMD_USE_LOG)
     )
 endif()
 
-if(DEFINED IOCMD_USE_LOG)
+if(DEFINED IOCMD_USE_LOG AND IOCMD_USE_LOG MATCHES ON)
     target_compile_definitions(iocmd_lib INTERFACE
         IOCMD_USE_LOG
     )
@@ -66,7 +66,7 @@ if(DEFINED IOCMD_USE_LOG)
     )
 endif()
 
-if(DEFINED IOCMD_USE_IN)
+if(DEFINED IOCMD_USE_IN AND IOCMD_USE_IN MATCHES ON)
     target_compile_definitions(iocmd_lib INTERFACE
         IOCMD_USE_IN
     )
@@ -75,7 +75,7 @@ if(DEFINED IOCMD_USE_IN)
     )
 endif()
 
-if(DEFINED IOCMD_USE_CMD)
+if(DEFINED IOCMD_USE_CMD AND IOCMD_USE_CMD MATCHES ON)
     target_compile_definitions(iocmd_lib INTERFACE
         IOCMD_USE_CMD
     )
