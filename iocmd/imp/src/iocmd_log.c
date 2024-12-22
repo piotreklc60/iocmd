@@ -471,7 +471,7 @@ static uint_fast16_t IOCMD_add_u64_to_buf(IOCMD_Buffer_Convert_UT *data, uint8_t
 #endif
 
 #if(IOCMD_SUPPORT_DATA_COMPARISON || IOCMD_SUPPORT_DATA_LOGGING)
-static void IOCMD_reduce_int_in_buf(int data, uint8_t *buf, uint_fast16_t buf_size, uint_fast16_t pos)
+static void IOCMD_reduce_int_in_buf(int data, uint8_t *buf, uint_fast16_t pos)
 {
    IOCMD_Buffer_Convert_UT convert;
    uint8_t type = buf[pos++];
@@ -884,6 +884,9 @@ static uint_fast16_t IOCMD_get_rest_of_log_header_and_main_string_from_buf(
 static void IOCMD_print_main_cntr(
    const IOCMD_Print_Exe_Params_XT *exe, IOCMD_standard_header_and_main_string_XT *header, IOCMD_Bool_DT is_quiet_log)
 {
+#if(0 == IOCMD_LOG_QUIET_BUF_SIZE)
+   IOCMD_UNUSED_PARAM(is_quiet_log);
+#endif
 #if((IOCMD_LOG_MAIN_BUF_SIZE > 0) && (IOCMD_LOG_QUIET_BUF_SIZE > 0))
    if(!is_quiet_log)
    {
@@ -2485,6 +2488,10 @@ void IOCMD_Logs_Deinit(void)
 
 void IOCMD_Clear_All_Logs(IOCMD_Bool_DT clear_quiet_buf)
 {
+#if(0 == IOCMD_LOG_QUIET_BUF_SIZE)
+   IOCMD_UNUSED_PARAM(clear_quiet_buf);
+#endif
+
    IOCMD_PROTECTION_LOCK(IOCMD_Params);
 
 #if(IOCMD_LOG_MAIN_BUF_SIZE > 0)
@@ -2794,7 +2801,7 @@ void IOCMD_Log_Data_Context(
 
                data_desc_buf[0] = 1U;
 
-               IOCMD_reduce_int_in_buf((int)(table[2].size), &data_desc_buf[1], 5U, 0U);
+               IOCMD_reduce_int_in_buf((int)(table[2].size), &data_desc_buf[1], 0U);
             }
 
             /* exception in library - length is big endian!!! */
@@ -2999,11 +3006,11 @@ void IOCMD_Log_Data_Comparision(
 
                      data1_desc_buf[0] = 1U;
 
-                     (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 5U, 0U);
+                     (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 0U);
 
                      data2_desc_buf[0] = 1U;
 
-                     (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 5U, 0U);
+                     (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 0U);
                   }
                   else if(size1 > part)
                   {
@@ -3013,7 +3020,7 @@ void IOCMD_Log_Data_Comparision(
 
                      data1_desc_buf[0] = 1U;
 
-                     (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 5U, 0U);
+                     (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 0U);
                   }
                   else
                   {
@@ -3023,7 +3030,7 @@ void IOCMD_Log_Data_Comparision(
 
                      data2_desc_buf[0] = 1U;
 
-                     (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 5U, 0U);
+                     (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 0U);
                   }
 #if(!IOCMD_FORCE_STRINGS_COPYING)
                }
@@ -3036,7 +3043,7 @@ void IOCMD_Log_Data_Comparision(
 
                   data1_desc_buf[0] = 1U;
 
-                  (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 5U, 0U);
+                  (void)IOCMD_reduce_int_in_buf((int)(table[1].size), &data1_desc_buf[1], 0U);
                }
                /* only data2 is in RAM */
                else
@@ -3047,7 +3054,7 @@ void IOCMD_Log_Data_Comparision(
 
                   data2_desc_buf[0] = 1U;
 
-                  (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 5U, 0U);
+                  (void)IOCMD_reduce_int_in_buf((int)(table[3].size), &data2_desc_buf[1], 0U);
                }
 #endif
             }
@@ -3412,6 +3419,10 @@ void IOCMD_Proc_Buffered_Logs(IOCMD_Bool_DT print_quiet_logs, const IOCMD_Print_
    IOCMD_Bool_DT is_quiet_log = IOCMD_FALSE;
    IOCMD_Bool_DT continue_reading = IOCMD_FALSE;
 
+#if(0 == IOCMD_LOG_QUIET_BUF_SIZE)
+      IOCMD_UNUSED_PARAM(print_quiet_logs);
+#endif
+
    /* check function params */
    if(IOCMD_CHECK_PTR(const IOCMD_Print_Exe_Params_XT, exe) && (IOCMD_Params.levels_tab_size > 0U))
    {
@@ -3633,7 +3644,9 @@ void IOCMD_Set_Temporary_Main_Level(uint8_t level)
 
 void IOCMD_Set_Temporary_Quiet_Level(uint8_t level)
 {
-#if(IOCMD_LOG_QUIET_BUF_SIZE > 0)
+#if(0 ==IOCMD_LOG_QUIET_BUF_SIZE)
+   IOCMD_UNUSED_PARAM(level);
+#else
    IOCMD_Params.temporary_quiet_level   = level | 0x10U;
 #endif
 }
