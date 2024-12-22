@@ -581,6 +581,8 @@ static void iocmd_cmd_set_ent_mod(IOCMD_Arg_DT *arg)
 
 static void iocmd_cmd_disable(IOCMD_Arg_DT *arg)
 {
+   IOCMD_UNUSED_PARAM(arg);
+
    IOCMD_Set_All_Logs(IOCMD_LOG_LEVEL_EMERG, IOCMD_LOG_LEVEL_EMERG);
    IOCMD_Set_All_Entrances(IOCMD_ENTRANCE_DISABLED);
 } /* iocmd_cmd_disable */
