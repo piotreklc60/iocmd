@@ -93,6 +93,7 @@ int IOCMD_Utoa64(char* buf, uint64_t value, uint_fast8_t base, uint_fast8_t num_
 int IOCMD_Utoa32(char* buf, uint32_t value, uint_fast8_t base, uint_fast8_t num_pads_to_print, char pad, IOCMD_Bool_DT is_upper_case);
 
 
+#if(!IOCMD_OUT_MINIMAL_PROGRAM_MEMORY_USAGE)
 /**
  * @brief function similar to "itoa", means converts integer to string.
  *
@@ -109,8 +110,12 @@ int IOCMD_Utoa32(char* buf, uint32_t value, uint_fast8_t base, uint_fast8_t num_
  * @param is_upper_case if IOCMD_TRUE then for hexadecimal base upper case of A-F letters will be used, a-f otherwise
  */
 int IOCMD_Utoa16(char* buf, uint16_t data, uint_fast8_t base, uint_fast8_t num_pads_to_print, char pad, IOCMD_Bool_DT is_upper_case);
+#else
+#define IOCMD_Utoa16(buf, data, base, num_pads_to_print, pad, is_upper_case)     IOCMD_Utoa32(buf, (uint32_t)(data), base, num_pads_to_print, pad, is_upper_case)
+#endif
 
 
+#if(!IOCMD_OUT_MINIMAL_PROGRAM_MEMORY_USAGE)
 /**
  * @brief function similar to "itoa", means converts integer to string.
  *
@@ -127,6 +132,9 @@ int IOCMD_Utoa16(char* buf, uint16_t data, uint_fast8_t base, uint_fast8_t num_p
  * @param is_upper_case if IOCMD_TRUE then for hexadecimal base upper case of A-F letters will be used, a-f otherwise
  */
 int IOCMD_Utoa8(char* buf, uint8_t data, uint_fast8_t base, uint_fast8_t num_pads_to_print, char pad, IOCMD_Bool_DT is_upper_case);
+#else
+#define IOCMD_Utoa8(buf, data, base, num_pads_to_print, pad, is_upper_case)      IOCMD_Utoa32(buf, (uint32_t)(data), base, num_pads_to_print, pad, is_upper_case)
+#endif
 
 #endif
 

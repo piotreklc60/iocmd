@@ -297,9 +297,9 @@ int IOCMD_Utoa32(char* buf, uint32_t value, uint_fast8_t base, uint_fast8_t num_
       else
 #endif
       {
+#if(IOCMD_HEX_TO_BCD_DONT_USE_DIV && (!IOCMD_OUT_MINIMAL_PROGRAM_MEMORY_USAGE))
          if(10 == base)
          {
-#if(IOCMD_HEX_TO_BCD_DONT_USE_DIV && (!IOCMD_OUT_MINIMAL_PROGRAM_MEMORY_USAGE))
             /* h7h6h5h4h3h2h1h0 = d9d8d7d6d5d4d3d2d1d0 */
 
             hex[0] = ((uint8_t)value)                              & 0xF;
@@ -372,13 +372,6 @@ int IOCMD_Utoa32(char* buf, uint32_t value, uint_fast8_t base, uint_fast8_t num_
                cntr--;
             }
             cntr++;
-#else
-            for(cntr = 0; 0 != value; cntr++)
-            {
-               temp[cntr] = "0123456789ABCDEF"[value % 10];
-               value /= 10;
-            }
-#endif
          }
          else if(16 == base)
          {
@@ -398,6 +391,14 @@ int IOCMD_Utoa32(char* buf, uint32_t value, uint_fast8_t base, uint_fast8_t num_
                value = IOCMD_DIV_BY_POWER_OF_2(value, 3);
             }
          }
+#else
+         format = IOCMD_BOOL_IS_TRUE(is_upper_case) ? "0123456789ABCDEF" : "0123456789abcdef";
+         for(cntr = 0; 0 != value; cntr++)
+         {
+            temp[cntr] = format[value % base];
+            value /= base;
+         }
+#endif
 
          while(num_pads_to_print > cntr)
          {
@@ -416,11 +417,9 @@ int IOCMD_Utoa32(char* buf, uint32_t value, uint_fast8_t base, uint_fast8_t num_
    return result;
 } /* IOCMD_Utoa32 */
 
+#if(!IOCMD_OUT_MINIMAL_PROGRAM_MEMORY_USAGE)
 int IOCMD_Utoa16(char* buf, uint16_t value, uint_fast8_t base, uint_fast8_t num_pads_to_print, char pad, IOCMD_Bool_DT is_upper_case)
 {
-#if(IOCMD_OUT_MINIMAL_PROGRAM_MEMORY_USAGE)
-   return IOCMD_Utoa32(buf, (uint32_t)value, base, num_pads_to_print, pad, is_upper_case);
-#else
    const char  *format;
    int          result = 0;
    uint_fast8_t cntr   = 0;
@@ -432,15 +431,17 @@ int IOCMD_Utoa16(char* buf, uint16_t value, uint_fast8_t base, uint_fast8_t num_
 
    if(IOCMD_CHECK_PTR(char, buf))
    {
+#if(!IOCMD_OUT_MINIMAL_PROGRAM_MEMORY_USAGE)
       if(value < 256)
       {
          result = IOCMD_Utoa8(buf, (uint8_t)value, base, num_pads_to_print, pad, is_upper_case);
       }
       else
+#endif
       {
+#if(IOCMD_HEX_TO_BCD_DONT_USE_DIV)
          if(10 == base)
          {
-#if(IOCMD_HEX_TO_BCD_DONT_USE_DIV)
             /* h3h2h1h0 = d4d3d2d1d0 */
 
             hex[0] = ((uint8_t)value)                              & 0xF;
@@ -476,13 +477,6 @@ int IOCMD_Utoa16(char* buf, uint16_t value, uint_fast8_t base, uint_fast8_t num_
                cntr--;
             }
             cntr++;
-#else
-            for(cntr = 0; 0 != value; cntr++)
-            {
-               temp[cntr] = "0123456789ABCDEF"[value % 10];
-               value /= 10;
-            }
-#endif
          }
          else if(16 == base)
          {
@@ -502,6 +496,14 @@ int IOCMD_Utoa16(char* buf, uint16_t value, uint_fast8_t base, uint_fast8_t num_
                value = IOCMD_DIV_BY_POWER_OF_2(value, 3);
             }
          }
+#else
+         format = IOCMD_BOOL_IS_TRUE(is_upper_case) ? "0123456789ABCDEF" : "0123456789abcdef";
+         for(cntr = 0; 0 != value; cntr++)
+         {
+            temp[cntr] = format[value % base];
+            value /= base;
+         }
+#endif
 
          while(num_pads_to_print > cntr)
          {
@@ -518,14 +520,10 @@ int IOCMD_Utoa16(char* buf, uint16_t value, uint_fast8_t base, uint_fast8_t num_
    }
 
    return result;
-#endif
 } /* IOCMD_Utoa16 */
 
 int IOCMD_Utoa8(char* buf, uint8_t value, uint_fast8_t base, uint_fast8_t num_pads_to_print, char pad, IOCMD_Bool_DT is_upper_case)
 {
-#if(IOCMD_OUT_MINIMAL_PROGRAM_MEMORY_USAGE)
-   return IOCMD_Utoa32(buf, (uint32_t)value, base, num_pads_to_print, pad, is_upper_case);
-#else
    const char  *format;
    int          result = 0;
    uint_fast8_t cntr   = 0;
@@ -562,13 +560,6 @@ int IOCMD_Utoa8(char* buf, uint8_t value, uint_fast8_t base, uint_fast8_t num_pa
             cntr--;
          }
          cntr++;
-#else
-         for(cntr = 0; 0 != value; cntr++)
-         {
-            temp[cntr] = "0123456789ABCDEF"[value % 10];
-            value /= 10;
-         }
-#endif
       }
       else if(16 == base)
       {
@@ -588,6 +579,14 @@ int IOCMD_Utoa8(char* buf, uint8_t value, uint_fast8_t base, uint_fast8_t num_pa
             value = IOCMD_DIV_BY_POWER_OF_2(value, 3);
          }
       }
+#else
+      format = IOCMD_BOOL_IS_TRUE(is_upper_case) ? "0123456789ABCDEF" : "0123456789abcdef";
+      for(cntr = 0; 0 != value; cntr++)
+      {
+         temp[cntr] = format[value % base];
+         value /= base;
+      }
+#endif
 
       while(num_pads_to_print > cntr)
       {
@@ -607,8 +606,8 @@ int IOCMD_Utoa8(char* buf, uint8_t value, uint_fast8_t base, uint_fast8_t num_pa
    }
 
    return result;
-#endif
 } /* IOCMD_Utoa8 */
+#endif
 
 #endif
 
