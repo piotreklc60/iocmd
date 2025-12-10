@@ -535,9 +535,9 @@ int IOCMD_Utoa8(char* buf, uint8_t value, uint_fast8_t base, uint_fast8_t num_pa
 
    if(IOCMD_CHECK_PTR(char, buf))
    {
+#if(IOCMD_HEX_TO_BCD_DONT_USE_DIV)
       if(10 == base)
       {
-#if(IOCMD_HEX_TO_BCD_DONT_USE_DIV)
          /* h1h0 = d2d1d0 */
 
          hex[0] = ((uint8_t)value)                             & 0xF;
