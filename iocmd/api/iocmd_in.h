@@ -44,6 +44,13 @@
 #endif
 
 /**
+ * Defines maximum number of historical commands to be remembered
+ */
+#ifndef IOCMD_IN_MAX_LINE_HISTORY
+#define IOCMD_IN_MAX_LINE_HISTORY                  4
+#endif
+
+/**
  * If set to IOCMD_FEATURE_ENABLED then functions IOCMD_Print_Tree_List, IOCMD_Print_Tree_Help and IOCMD_Print_Tree_Manual exist
  * and function IOCMD_Parse_Command supports 3 special commands: for printing all sub-commands in requested tree catalogue (list),
  * for printing all sub-commands in requested tree catalogue and sub-catalogues (help), and for printing all sub-commands
@@ -174,12 +181,19 @@ typedef struct IOCMD_Command_Tree_List_eXtended_Tag
    size_t                        branch_num_elems;
 }IOCMD_Command_Tree_List_XT;
 
-typedef struct IOCMD_Line_Collector_Params_eXtended_Tag
+typedef struct IOCMD_Line_Collector_History_Record_eXtended_Tag
 {
-   const IOCMD_Command_Tree_List_XT   *cmds_tree;
-   size_t                              cmds_tree_num_elems;
    size_t   line_pos;
    char     line[IOCMD_IN_MAX_LINE_LENGTH];
+}IOCMD_Line_Collector_History_Record_XT;
+
+typedef struct IOCMD_Line_Collector_Params_eXtended_Tag
+{
+   const IOCMD_Command_Tree_List_XT      *cmds_tree;
+   size_t                                 cmds_tree_num_elems;
+   size_t                                 current_history_record;
+   IOCMD_Line_Collector_History_Record_XT history[IOCMD_IN_MAX_LINE_HISTORY + 1];
+   IOCMD_Bool_DT history_entered;
    IOCMD_Bool_DT parse_also_lib_cmds;
 }IOCMD_Line_Collector_Params_XT;
 

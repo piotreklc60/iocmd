@@ -89,6 +89,9 @@ static const IOCMD_Command_Tree_XT iocmd_in_help_tab[] =
 };
 #endif
 
+static const char iocmd_up_key[]   = "\x1B\x5B\x41";
+static const char iocmd_down_key[] = "\x1B\x5B\x42";
+
 static char iocmd_to_low_case(char current_char)
 {
    if((current_char >= 'A') && (current_char <= 'Z'))
@@ -811,13 +814,68 @@ IOCMD_Bool_DT IOCMD_Parse_Command(
    return result;
 } /* IOCMD_Parse_Command */
 
+static void iocmd_line_collector_show_history(IOCMD_Line_Collector_Params_XT *collector, const IOCMD_Print_Exe_Params_XT *exe)
+{
+   size_t pos;
+
+   if(IOCMD_BOOL_IS_TRUE(collector->history_entered))
+   {
+      for(pos = 0; pos < IOCMD_IN_MAX_LINE_HISTORY + 2; ++pos)
+      {
+#ifdef IOCMD_USE_OUT
+         IOCMD_Oprintf(exe, iocmd_up_key);
+#else
+         IOCMD_EXTERN_PRINTF_0(iocmd_up_key);
+#endif
+      }
+   }
+
+#ifdef IOCMD_USE_OUT
+   IOCMD_Oprintf_Line(exe, "\r%*s\r CMD HISTORY   ", IOCMD_IN_MAX_LINE_LENGTH, " ");
+#else
+   IOCMD_EXTERN_PRINTF_LINE_2("\r%*s\r CMD HISTORY   ", IOCMD_IN_MAX_LINE_LENGTH, " ");
+#endif
+
+   pos = IOCMD_IN_MAX_LINE_HISTORY + 1;
+   do
+   {
+      --pos;
+#ifdef IOCMD_USE_OUT
+      IOCMD_Oprintf_Line(exe, "\r%*s\r %3u %s %s        ",
+         IOCMD_IN_MAX_LINE_LENGTH,
+         " ",
+         pos,
+         (pos == collector->current_history_record) ? "->" : "  ",
+         collector->history[pos].line, " ");
+#else
+      IOCMD_EXTERN_PRINTF_LINE_5("\r%*s\r %3u %s %s        ",
+         IOCMD_IN_MAX_LINE_LENGTH,
+         " ",
+         pos,
+         (pos == collector->current_history_record) ? "->" : "  ",
+         collector->history[pos].line);
+#endif
+   }while(pos > 0);
+
+   collector->history[0].line_pos    = 0;
+   collector->history[0].line[0]     = 0;
+#ifdef IOCMD_USE_OUT
+   IOCMD_Oprintf(exe, "\r>");
+#else
+   IOCMD_EXTERN_PRINTF_0("\r>");
+#endif
+   collector->history_entered = IOCMD_TRUE;
+} /* iocmd_line_collector_show_history */
+
 void IOCMD_Line_Collector_Parse_Bytes(
    IOCMD_Line_Collector_Params_XT *collector, const IOCMD_Print_Exe_Params_XT *exe, char *recv_bytes, size_t num_recv_bytes)
 {
+   IOCMD_Line_Collector_History_Record_XT *history_record;
    const char    *tab[1];
    size_t         pos;
    char           recv_byte;
    IOCMD_Bool_DT  result = IOCMD_FALSE;
+   IOCMD_Bool_DT  print_char;
 
    if(IOCMD_CHECK_PTR(IOCMD_Line_Collector_Params_XT, collector)
       && IOCMD_CHECK_PTR(const IOCMD_Command_Tree_List_XT, collector->cmds_tree)
@@ -826,15 +884,17 @@ void IOCMD_Line_Collector_Parse_Bytes(
       do
       {
          recv_byte = recv_bytes[0];
+         history_record = &(collector->history[collector->current_history_record]);
 
-         if(collector->line_pos < sizeof(collector->line))
+         if(history_record->line_pos < sizeof(history_record->line))
          {
             if(IOCMD_IN_BACKSPACE_CHAR == recv_byte)
             {
-               if(collector->line_pos > 0)
+               if(history_record->line_pos > 0)
                {
-                  collector->line_pos--;
-                  collector->line[collector->line_pos] = 0;
+                  history_record->line_pos--;
+                  history_record->line[history_record->line_pos] = 0;
+                  print_char = IOCMD_FALSE;
 #ifdef IOCMD_USE_OUT
                   IOCMD_Oprintf(exe, "%c %c", recv_byte, recv_byte);
 #else
@@ -844,21 +904,57 @@ void IOCMD_Line_Collector_Parse_Bytes(
             }
             else
             {
-               collector->line[collector->line_pos++] = recv_byte;
-               collector->line[collector->line_pos] = 0;
-#ifdef IOCMD_USE_OUT
-               IOCMD_Oprintf(exe, "%c", recv_byte);
-#else
-               IOCMD_EXTERN_PRINTF_1("%c", recv_byte);
-#endif
+               history_record->line[history_record->line_pos++] = recv_byte;
+               history_record->line[history_record->line_pos] = 0;
+               print_char = IOCMD_TRUE;
             }
          }
 
-         if(('\0' == recv_byte) || ('\n' == recv_byte) || ('\r' == recv_byte) || (sizeof(collector->line) == collector->line_pos))
+         if((history_record->line_pos >= (sizeof(iocmd_up_key) - 1))
+            && (0 == memcmp(
+               iocmd_up_key, &(history_record->line[history_record->line_pos - sizeof(iocmd_up_key) + 1]), (sizeof(iocmd_up_key) - 1))))
          {
-            collector->line[collector->line_pos - 1] = '\0';
+            history_record->line_pos -= sizeof(iocmd_up_key) - 1;
+            history_record->line[history_record->line_pos] = 0;
+            if(collector->current_history_record < IOCMD_IN_MAX_LINE_HISTORY)
+            {
+               collector->current_history_record++;
+            }
+            print_char = IOCMD_FALSE;
 
-            tab[0] = collector->line;
+            iocmd_line_collector_show_history(collector, exe);
+            break;
+         }
+         else if((history_record->line_pos >= (sizeof(iocmd_down_key) - 1))
+            && (0 == memcmp(
+               iocmd_down_key, &(history_record->line[history_record->line_pos - sizeof(iocmd_down_key) + 1]), (sizeof(iocmd_down_key) - 1))))
+         {
+            history_record->line_pos -= sizeof(iocmd_down_key) - 1;
+            history_record->line[history_record->line_pos] = 0;
+            if(collector->current_history_record > 0)
+            {
+               collector->current_history_record--;
+            }
+            print_char = IOCMD_FALSE;
+
+            iocmd_line_collector_show_history(collector, exe);
+            break;
+         }
+
+         if(IOCMD_BOOL_IS_TRUE(print_char))
+         {
+#ifdef IOCMD_USE_OUT
+            IOCMD_Oprintf(exe, "%c", recv_byte);
+#else
+            IOCMD_EXTERN_PRINTF_1("%c", recv_byte);
+#endif
+         }
+
+         if(('\0' == recv_byte) || ('\n' == recv_byte) || ('\r' == recv_byte) || (sizeof(history_record->line) == history_record->line_pos))
+         {
+            history_record->line[history_record->line_pos - 1] = '\0';
+
+            tab[0] = history_record->line;
 
 #ifdef IOCMD_USE_OUT
             IOCMD_Oprintf_Line(exe, "");
@@ -884,17 +980,37 @@ void IOCMD_Line_Collector_Parse_Bytes(
             if(IOCMD_BOOL_IS_FALSE(result) && (pos == collector->cmds_tree_num_elems)
                && IOCMD_BOOL_IS_TRUE(collector->parse_also_lib_cmds))
             {
-               (void)IOCMD_Parse_Lib_Commands(1, tab, exe, IOCMD_TRUE);
+               result = IOCMD_Parse_Lib_Commands(1, tab, exe, IOCMD_TRUE);
             }
 #endif
 
-            collector->line_pos = 0;
-            collector->line[0]  = 0;
+            if(IOCMD_BOOL_IS_TRUE(result) && (history_record->line_pos > 0))
+            {
+               if(0 == collector->current_history_record)
+               {
+                  pos = IOCMD_IN_MAX_LINE_HISTORY;
+               }
+               else
+               {
+                  memcpy(&(collector->history[0]), &(collector->history[collector->current_history_record]), sizeof(collector->history[0]));
+                  pos = collector->current_history_record;
+               }
+               do
+               {
+                  --pos;
+                  memcpy(&(collector->history[pos + 1]), &(collector->history[pos]), sizeof(collector->history[0]));
+               } while(pos > 0);
+            }
+
+            collector->history[0].line_pos    = 0;
+            collector->history[0].line[0]     = 0;
+            collector->current_history_record = 0;
+            collector->history_entered = IOCMD_FALSE;
 
 #ifdef IOCMD_USE_OUT
-            IOCMD_Oprintf(exe, ">");
+            IOCMD_Oprintf(exe, "\r>");
 #else
-            IOCMD_EXTERN_PRINTF_0(">");
+            IOCMD_EXTERN_PRINTF_0("\r>");
 #endif
          }
 

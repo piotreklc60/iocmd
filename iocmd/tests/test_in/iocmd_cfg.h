@@ -37,25 +37,35 @@
 
 #if 1
 
-#define IOCMD_PRINT_ENDLINE                                 "<endl>"
+#define IOCMD_PRINT_ENDLINE                                          "<endl>"
 
-#define IOCMD_EXTERN_PRINTF_0(_format)                      main_printf(_format)
-#define IOCMD_EXTERN_PRINTF_1(_format, _a1)                 main_printf(_format, _a1)
-#define IOCMD_EXTERN_PRINTF_2(_format, _a1, _a2)            main_printf(_format, _a1, _a2)
-#define IOCMD_EXTERN_PRINTF_3(_format, _a1, _a2, _a3)       main_printf(_format, _a1, _a2, _a3)
-#define IOCMD_EXTERN_PRINTF_4(_format, _a1, _a2, _a3, _a4)  main_printf(_format, _a1, _a2, _a3, _a4)
-#define IOCMD_EXTERN_PRINTF_LINE_0(_format)                 main_printf(_format IOCMD_PRINT_ENDLINE)
+#define IOCMD_EXTERN_PRINTF_0(_format)                               main_printf(_format)
+#define IOCMD_EXTERN_PRINTF_1(_format, _a1)                          main_printf(_format, _a1)
+#define IOCMD_EXTERN_PRINTF_2(_format, _a1, _a2)                     main_printf(_format, _a1, _a2)
+#define IOCMD_EXTERN_PRINTF_3(_format, _a1, _a2, _a3)                main_printf(_format, _a1, _a2, _a3)
+#define IOCMD_EXTERN_PRINTF_4(_format, _a1, _a2, _a3, _a4)           main_printf(_format, _a1, _a2, _a3, _a4)
+#define IOCMD_EXTERN_PRINTF_LINE_0(_format)                          main_printf(_format IOCMD_PRINT_ENDLINE)
+#define IOCMD_EXTERN_PRINTF_LINE_1(_format, _a1)                     main_printf(_format IOCMD_PRINT_ENDLINE, _a1)
+#define IOCMD_EXTERN_PRINTF_LINE_2(_format, _a1, _a2)                main_printf(_format IOCMD_PRINT_ENDLINE, _a1, _a2)
+#define IOCMD_EXTERN_PRINTF_LINE_3(_format, _a1, _a2, _a3)           main_printf(_format IOCMD_PRINT_ENDLINE, _a1, _a2, _a3)
+#define IOCMD_EXTERN_PRINTF_LINE_4(_format, _a1, _a2, _a3, _a4)      main_printf(_format IOCMD_PRINT_ENDLINE, _a1, _a2, _a3, _a4)
+#define IOCMD_EXTERN_PRINTF_LINE_5(_format, _a1, _a2, _a3, _a4, _a5) main_printf(_format IOCMD_PRINT_ENDLINE, _a1, _a2, _a3, _a4, _a5)
 
 #else
 
-#define IOCMD_PRINT_ENDLINE                                 "\n\r"
+#define IOCMD_PRINT_ENDLINE                                          "\n\r"
 
-#define IOCMD_EXTERN_PRINTF_0(_format)                      printf(_format)
-#define IOCMD_EXTERN_PRINTF_3(_format, _a1)                 printf(_format, _a1)
-#define IOCMD_EXTERN_PRINTF_3(_format, _a1, _a2)            printf(_format, _a1, _a2)
-#define IOCMD_EXTERN_PRINTF_3(_format, _a1, _a2, _a3)       printf(_format, _a1, _a2, _a3)
-#define IOCMD_EXTERN_PRINTF_4(_format, _a1, _a2, _a3, _a4)  printf(_format, _a1, _a2, _a3, _a4)
-#define IOCMD_EXTERN_PRINTF_LINE_0(_format)                 printf(_format IOCMD_PRINT_ENDLINE)
+#define IOCMD_EXTERN_PRINTF_0(_format)                               printf(_format)
+#define IOCMD_EXTERN_PRINTF_3(_format, _a1)                          printf(_format, _a1)
+#define IOCMD_EXTERN_PRINTF_3(_format, _a1, _a2)                     printf(_format, _a1, _a2)
+#define IOCMD_EXTERN_PRINTF_3(_format, _a1, _a2, _a3)                printf(_format, _a1, _a2, _a3)
+#define IOCMD_EXTERN_PRINTF_4(_format, _a1, _a2, _a3, _a4)           printf(_format, _a1, _a2, _a3, _a4)
+#define IOCMD_EXTERN_PRINTF_LINE_0(_format)                          printf(_format IOCMD_PRINT_ENDLINE)
+#define IOCMD_EXTERN_PRINTF_LINE_1(_format, _a1)                     printf(_format IOCMD_PRINT_ENDLINE, _a1)
+#define IOCMD_EXTERN_PRINTF_LINE_2(_format, _a1, _a2)                printf(_format IOCMD_PRINT_ENDLINE, _a1, _a2)
+#define IOCMD_EXTERN_PRINTF_LINE_3(_format, _a1, _a2, _a3)           printf(_format IOCMD_PRINT_ENDLINE, _a1, _a2, _a3)
+#define IOCMD_EXTERN_PRINTF_LINE_4(_format, _a1, _a2, _a3, _a4)      printf(_format IOCMD_PRINT_ENDLINE, _a1, _a2, _a3, _a4)
+#define IOCMD_EXTERN_PRINTF_LINE_5(_format, _a1, _a2, _a3, _a4, _a5) printf(_format IOCMD_PRINT_ENDLINE, _a1, _a2, _a3, _a4, _a5)
 
 #endif
 
